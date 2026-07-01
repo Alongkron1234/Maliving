@@ -14,11 +14,13 @@ export default function BillsTable({
   billByRoom,
   tenantByRoom,
   readingTypesByRoom,
+  unitsByRoom,
 }: {
   rooms: RoomRow[]
   billByRoom: Record<string, Bill>
   tenantByRoom: Record<string, TenantInfo>
   readingTypesByRoom: Record<string, Set<'electric' | 'water'>>
+  unitsByRoom: Record<string, { electric?: number; water?: number }>
 }) {
   const router = useRouter()
   const [view, setView] = useState<'table' | 'cards'>('table')
@@ -124,6 +126,7 @@ export default function BillsTable({
             const readingTypes = readingTypesByRoom[room.id]
             const hasMeterData = !!(readingTypes?.has('electric') && readingTypes?.has('water'))
             const clickable = !!bill
+            const units = unitsByRoom[room.id]
 
             return (
               <div
@@ -148,8 +151,16 @@ export default function BillsTable({
                 {bill ? (
                   <div className="space-y-2 pt-3 border-t border-[#f0e0d4]">
                     <Row label="🏠 ค่าเช่า" value={`฿${bill.rent_amount.toLocaleString('th-TH')}`} />
-                    <Row label="⚡ ค่าไฟ" value={`฿${bill.electric_amount.toLocaleString('th-TH')}`} />
-                    <Row label="💧 ค่าน้ำ" value={`฿${bill.water_amount.toLocaleString('th-TH')}`} />
+                    <Row
+                      label="⚡ ค่าไฟ"
+                      sub={units?.electric != null ? `${units.electric.toLocaleString('th-TH')} หน่วย` : undefined}
+                      value={`฿${bill.electric_amount.toLocaleString('th-TH')}`}
+                    />
+                    <Row
+                      label="💧 ค่าน้ำ"
+                      sub={units?.water != null ? `${units.water.toLocaleString('th-TH')} หน่วย` : undefined}
+                      value={`฿${bill.water_amount.toLocaleString('th-TH')}`}
+                    />
                     <div className="flex items-center justify-between pt-2 border-t border-[#f0e0d4]">
                       <span className="text-sm font-bold text-[#241912]">รวม</span>
                       <span className="text-base font-bold text-[#ff8c00]">฿{bill.total_amount.toLocaleString('th-TH')}</span>
@@ -206,10 +217,13 @@ function StatusBadge({
   )
 }
 
-function Row({ label, value }: { label: string; value: string }) {
+function Row({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
     <div className="flex items-center justify-between text-sm text-[#564334]">
-      <span>{label}</span>
+      <span>
+        {label}
+        {sub && <span className="text-xs text-[#c9a990] ml-1.5">({sub})</span>}
+      </span>
       <span className="font-semibold">{value}</span>
     </div>
   )

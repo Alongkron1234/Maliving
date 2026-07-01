@@ -6,7 +6,7 @@ import BillsTable from './BillsTable'
 
 type RoomRow = { id: string; room_number: string; floor: number | null; rent_price: number }
 type TenantRow = { id: string; room_id: string; move_in_date: string; profiles: { full_name: string } | null }
-type ReadingRow = { room_id: string; meter_type: 'electric' | 'water' }
+type ReadingRow = { room_id: string; meter_type: 'electric' | 'water'; units_used: number }
 
 export default async function BillsPage({
   searchParams,
@@ -34,7 +34,7 @@ export default async function BillsPage({
       .eq('billing_year', year),
     supabase
       .from('meter_readings')
-      .select('room_id, meter_type')
+      .select('room_id, meter_type, units_used')
       .eq('reading_month', month)
       .eq('reading_year', year),
   ])
@@ -56,9 +56,12 @@ export default async function BillsPage({
   for (const b of bills) billByRoom[b.room_id] = b
 
   const readingTypesByRoom: Record<string, Set<'electric' | 'water'>> = {}
+  const unitsByRoom: Record<string, { electric?: number; water?: number }> = {}
   for (const r of readings) {
     if (!readingTypesByRoom[r.room_id]) readingTypesByRoom[r.room_id] = new Set()
     readingTypesByRoom[r.room_id].add(r.meter_type)
+    if (!unitsByRoom[r.room_id]) unitsByRoom[r.room_id] = {}
+    unitsByRoom[r.room_id][r.meter_type] = r.units_used
   }
 
   const billedCount = rooms.filter(r => billByRoom[r.id]).length
@@ -115,6 +118,7 @@ export default async function BillsPage({
         billByRoom={billByRoom}
         tenantByRoom={tenantByRoom}
         readingTypesByRoom={readingTypesByRoom}
+        unitsByRoom={unitsByRoom}
       />
     </div>
   )
