@@ -27,7 +27,7 @@ function normalizePhone(input: string): string {
 }
 
 async function replyText(replyToken: string, text: string) {
-  await fetch('https://api.line.me/v2/bot/message/reply', {
+  const res = await fetch('https://api.line.me/v2/bot/message/reply', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -35,16 +35,36 @@ async function replyText(replyToken: string, text: string) {
     },
     body: JSON.stringify({ replyToken, messages: [{ type: 'text', text }] }),
   })
+  if (!res.ok) {
+    const body = await res.text()
+    console.error(`[line/webhook] reply failed: ${res.status} ${body}`)
+  }
 }
 
 export async function POST(req: Request) {
+  if (!process.env.LINE_CHANNEL_SECRET || !process.env.LINE_CHANNEL_ACCESS_TOKEN) {
+    console.error('[line/webhook] LINE_CHANNEL_SECRET or LINE_CHANNEL_ACCESS_TOKEN is missing — set both in Vercel Project Settings → Environment Variables, then redeploy')
+    return NextResponse.json({ error: 'Server not configured' }, { status: 500 })
+  }
+
   const rawBody = await req.text()
   const signature = req.headers.get('x-line-signature')
 
   if (!verifySignature(rawBody, signature)) {
+    console.error('[line/webhook] signature verification failed — check LINE_CHANNEL_SECRET matches the channel this webhook belongs to')
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
+  try {
+    await handleEvents(rawBody)
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    console.error('[line/webhook] unhandled error:', err)
+    return NextResponse.json({ error: 'Internal error' }, { status: 500 })
+  }
+}
+
+async function handleEvents(rawBody: string) {
   const { events } = JSON.parse(rawBody) as { events: LineEvent[] }
   const supabase = createAdminClient()
 
@@ -126,6 +146,4 @@ export async function POST(req: Request) {
       `${greeting}\nยอดค้างชำระรวม: ฿${total.toLocaleString('th-TH')}\n\n${lines.join('\n')}`
     )
   }
-
-  return NextResponse.json({ ok: true })
 }
