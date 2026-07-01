@@ -103,13 +103,13 @@ async function handleEvents(rawBody: string) {
 
     const { data: rawTenant } = await supabase
       .from('tenants')
-      .select('id, rooms(room_number)')
+      .select('id, room_id, rooms(room_number)')
       .eq('profile_id', profile.id)
       .eq('status', 'active')
       .order('move_in_date', { ascending: false })
       .limit(1)
       .maybeSingle()
-    const activeTenant = rawTenant as unknown as { id: string; rooms: { room_number: string } | null } | null
+    const activeTenant = rawTenant as unknown as { id: string; room_id: string; rooms: { room_number: string } | null } | null
 
     if (!activeTenant) {
       await replyText(event.replyToken, 'คุณไม่มีห้องพักที่ใช้งานอยู่ในระบบขณะนี้ กรุณาติดต่อผู้ดูแลหอพัก')
@@ -118,12 +118,16 @@ async function handleEvents(rawBody: string) {
 
     const { data: rawBills } = await supabase
       .from('bills')
-      .select('billing_month, billing_year, total_amount, status, due_date')
+      .select('billing_month, billing_year, rent_amount, electric_amount, water_amount, total_amount, status, due_date')
       .eq('tenant_id', activeTenant.id)
       .eq('status', 'unpaid')
       .order('billing_year', { ascending: true })
       .order('billing_month', { ascending: true })
-    type UnpaidBill = { billing_month: number; billing_year: number; total_amount: number; status: 'unpaid'; due_date: string | null }
+    type UnpaidBill = {
+      billing_month: number; billing_year: number
+      rent_amount: number; electric_amount: number; water_amount: number; total_amount: number
+      status: 'unpaid'; due_date: string | null
+    }
     const unpaidBills = (rawBills ?? []) as UnpaidBill[]
 
     const roomLabel = activeTenant.rooms?.room_number ? `ห้อง ${activeTenant.rooms.room_number}` : ''
@@ -134,16 +138,37 @@ async function handleEvents(rawBody: string) {
       continue
     }
 
+    // Units aren't stored on bills — pull them from the confirmed meter readings for this room
+    const { data: rawReadings } = await supabase
+      .from('meter_readings')
+      .select('meter_type, units_used, reading_month, reading_year')
+      .eq('room_id', activeTenant.room_id)
+    type ReadingRow = { meter_type: 'electric' | 'water'; units_used: number; reading_month: number; reading_year: number }
+    const unitsByPeriod: Record<string, { electric?: number; water?: number }> = {}
+    for (const r of (rawReadings ?? []) as ReadingRow[]) {
+      const key = `${r.reading_month}-${r.reading_year}`
+      if (!unitsByPeriod[key]) unitsByPeriod[key] = {}
+      unitsByPeriod[key][r.meter_type] = r.units_used
+    }
+
     const total = unpaidBills.reduce((sum, b) => sum + b.total_amount, 0)
-    const lines = unpaidBills.map(b => {
+    const blocks = unpaidBills.map(b => {
       const isOverdue = getEffectiveBillStatus(b) === 'overdue'
       const label = billStatusConfig[getEffectiveBillStatus(b)].label
-      return `- ${monthNames[b.billing_month - 1]} ${b.billing_year}: ฿${b.total_amount.toLocaleString('th-TH')}${isOverdue ? ` (${label})` : ''}`
+      const units = unitsByPeriod[`${b.billing_month}-${b.billing_year}`] ?? {}
+      const eUnits = units.electric != null ? `${units.electric} หน่วย` : '—'
+      const wUnits = units.water != null ? `${units.water} หน่วย` : '—'
+
+      return `📅 ${monthNames[b.billing_month - 1]} ${b.billing_year}${isOverdue ? ` (${label})` : ''}\n`
+        + `🏠 ค่าเช่า: ฿${b.rent_amount.toLocaleString('th-TH')}\n`
+        + `⚡ ค่าไฟ: ${eUnits} = ฿${b.electric_amount.toLocaleString('th-TH')}\n`
+        + `💧 ค่าน้ำ: ${wUnits} = ฿${b.water_amount.toLocaleString('th-TH')}\n`
+        + `รวม: ฿${b.total_amount.toLocaleString('th-TH')}`
     })
 
     await replyText(
       event.replyToken,
-      `${greeting}\nยอดค้างชำระรวม: ฿${total.toLocaleString('th-TH')}\n\n${lines.join('\n')}`
+      `${greeting}\nยอดค้างชำระรวม: ฿${total.toLocaleString('th-TH')}\n\n${blocks.join('\n\n')}`
     )
   }
 }
