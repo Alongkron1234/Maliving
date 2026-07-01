@@ -58,9 +58,9 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-7">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-[#241912]">{request.title}</h1>
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusConfig[request.status].className}`}>
               {statusConfig[request.status].label}
@@ -71,7 +71,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
           </div>
           <p className="text-sm text-[#897362] mt-0.5">แจ้งเมื่อ {createdAt}</p>
         </div>
-        <div className="flex items-start gap-3">
+        <div className="flex flex-wrap items-start gap-3">
           {room && (
             <Link
               href={`/admin/rooms/${room.id}`}

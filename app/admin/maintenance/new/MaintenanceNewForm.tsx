@@ -70,7 +70,7 @@ export default function MaintenanceNewForm({
         <h2 className="text-base font-bold text-[#241912] mb-1">Request Details</h2>
         <p className="text-sm text-[#897362] mb-7">Describe the issue and where it&apos;s located.</p>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Room">
             <select name="room_id" defaultValue={startId} className={inputClass}>
               {rooms.map(r => (

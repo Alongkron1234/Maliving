@@ -195,7 +195,7 @@ export default function MeterManualForm({
             </p>
 
             {/* Room + Period */}
-            <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
               <Field label="Room">
                 <select value={roomId} onChange={e => setRoomId(e.target.value)} className={inputClass}>
                   {rooms.map(r => (
@@ -235,7 +235,7 @@ export default function MeterManualForm({
                 <h3 className="text-sm font-bold text-[#241912]">ไฟฟ้า (Electricity)</h3>
                 {eField.origin === 'draft' && <OcrHint />}
               </div>
-              <div className="grid grid-cols-2 gap-x-5 gap-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
                 <Field label="เลขมิเตอร์ก่อน">
                   <input type="number" value={eField.prev} onChange={e => setEField(f => ({ ...f, prev: e.target.value }))} min={0} className={inputClass} />
                 </Field>
@@ -260,7 +260,7 @@ export default function MeterManualForm({
                 <h3 className="text-sm font-bold text-[#241912]">น้ำ (Water)</h3>
                 {wField.origin === 'draft' && <OcrHint />}
               </div>
-              <div className="grid grid-cols-2 gap-x-5 gap-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
                 <Field label="เลขมิเตอร์ก่อน">
                   <input type="number" value={wField.prev} onChange={e => setWField(f => ({ ...f, prev: e.target.value }))} min={0} className={inputClass} />
                 </Field>

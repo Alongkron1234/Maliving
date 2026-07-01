@@ -57,7 +57,7 @@ export default function RecordPaymentPanel({
       </div>
       <p className="text-sm text-[#897362] mb-6">บันทึกการชำระเงินเต็มจำนวนของบิลนี้</p>
 
-      <div className="grid grid-cols-2 gap-x-5 gap-y-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 mb-6">
         <div>
           <label className="block text-sm font-semibold text-[#241912] mb-2">จำนวนเงิน</label>
           <div className="h-[42px] px-3.5 flex items-center bg-[#f5f5f5] border border-[#ddc1ae] rounded-lg text-sm font-bold text-[#241912]">

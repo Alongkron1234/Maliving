@@ -44,7 +44,7 @@ export default function PaymentInfoCard({
       </div>
       <p className="text-sm text-[#897362] mb-6">บิลนี้ชำระเรียบร้อยแล้ว</p>
 
-      <div className="grid grid-cols-2 gap-x-5 gap-y-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 mb-6">
         <InfoField label="จำนวนเงิน" value={`฿${amount.toLocaleString('th-TH')}`} />
         <InfoField label="วิธีชำระ" value={methodLabels[method] ?? method} />
         <InfoField label="วันที่ชำระ" value={paidAtLabel} />

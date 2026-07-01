@@ -65,8 +65,8 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
         <p className="text-sm text-[#564334]">ใบเสร็จรับเงิน / Receipt</p>
       </div>
 
-      <div className="flex items-center justify-between gap-3 mb-7">
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3 mb-7 flex-wrap">
+        <div className="flex items-center gap-3 flex-wrap">
           <h1 className="text-2xl font-bold text-[#241912]">{period}</h1>
           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${className}`}>{label}</span>
         </div>
@@ -80,7 +80,7 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
           <h2 className="text-base font-bold text-[#241912] mb-1">Bill Information</h2>
           <p className="text-sm text-[#897362] mb-6">Details for this billing period.</p>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
             <InfoField label="Billing Period" value={period} />
             <InfoField label="Status" value={label} />
             <InfoField label="Due Date" value={dueDate} />
@@ -108,7 +108,7 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
             <h2 className="text-base font-bold text-[#241912] mb-1">Payment Information</h2>
             <p className="text-sm text-[#897362] mb-6">บิลนี้ชำระเรียบร้อยแล้ว</p>
 
-            <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
               <InfoField label="วิธีชำระ" value={methodLabels[payment.method] ?? payment.method} />
               <InfoField
                 label="วันที่ชำระ"

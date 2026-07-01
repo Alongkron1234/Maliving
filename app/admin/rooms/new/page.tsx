@@ -61,7 +61,7 @@ export default function NewRoomPage() {
             <h2 className="text-base font-bold text-[#241912] mb-1">Room Specifications</h2>
             <p className="text-sm text-[#897362] mb-7">Complete the details below to add a new unit to the inventory.</p>
 
-            <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
               {/* Row 1 */}
               <Field label="Room Number">
                 <input

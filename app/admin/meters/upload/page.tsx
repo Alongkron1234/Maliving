@@ -82,7 +82,7 @@ export default function MeterUploadPage() {
             </p>
 
             {/* Month + Year */}
-            <div className="grid grid-cols-2 gap-x-5 gap-y-6 mb-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6 mb-7">
               <div>
                 <label className="block text-sm font-semibold text-[#241912] mb-2">Month</label>
                 <select

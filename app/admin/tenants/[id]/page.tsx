@@ -71,13 +71,13 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-7">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-full bg-[#ffeadd] flex items-center justify-center text-lg font-bold text-[#904d00] shrink-0">
             {initials}
           </div>
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <h1 className="text-2xl font-bold text-[#241912]">{profile?.full_name ?? '—'}</h1>
               <span className={`px-3 py-1 rounded-full text-xs font-semibold ${isActive ? 'bg-[#ff8c00] text-white' : 'bg-[#fff1e9] text-[#897362]'}`}>
                 {isActive ? 'Active' : 'Inactive'}
@@ -86,7 +86,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
             <p className="text-sm text-[#897362] mt-0.5">{profile?.phone ?? 'No phone'}</p>
           </div>
         </div>
-        <div className="flex items-start gap-3">
+        <div className="flex flex-wrap items-start gap-3">
           {profile && room && isActive && (
             <RemoveTenantButton
               tenantId={tenant.id}
@@ -120,7 +120,7 @@ export default async function TenantDetailPage({ params }: { params: Promise<{ i
           <h2 className="text-base font-bold text-[#241912] mb-1">Tenant Information</h2>
           <p className="text-sm text-[#897362] mb-6">Current details for this occupant.</p>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
             <InfoField label="Full Name" value={profile?.full_name ?? '—'} />
             <InfoField label="Email" value={email ?? '—'} />
             <InfoField label="Phone" value={profile?.phone ?? 'No phone'} />

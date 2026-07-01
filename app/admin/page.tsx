@@ -59,14 +59,14 @@ export default async function AdminDashboard() {
   return (
     <div className="p-8">
       {/* Page Header */}
-      <div className="flex items-start justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-[#241912]">แดชบอร์ด</h1>
           <p className="text-sm text-[#897362] mt-1">ภาพรวมระบบจัดการหอพัก Maliving</p>
         </div>
         <Link
           href="/admin/rooms/new"
-          className="flex items-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+          className="flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
         >
           <Plus size={16} />
           เพิ่มห้องพัก

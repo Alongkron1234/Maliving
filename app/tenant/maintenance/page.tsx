@@ -38,14 +38,14 @@ export default async function TenantMaintenancePage() {
 
   return (
     <div className="p-8">
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#241912]">แจ้งซ่อม</h1>
           <p className="text-sm text-[#897362] mt-1">รายการแจ้งซ่อมของคุณ</p>
         </div>
         <Link
           href="/tenant/maintenance/new"
-          className="flex items-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+          className="flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
         >
           <Plus size={16} />
           แจ้งซ่อมใหม่

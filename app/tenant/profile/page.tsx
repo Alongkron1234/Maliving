@@ -42,7 +42,7 @@ export default async function TenantProfilePage() {
             <h2 className="text-base font-bold text-[#241912] mb-1">ข้อมูลห้องพัก</h2>
             <p className="text-sm text-[#897362] mb-6">จัดการโดยผู้ดูแลหอพัก แก้ไขเองไม่ได้</p>
 
-            <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
               <InfoField
                 label="Room"
                 value={activeTenant.rooms ? `Room ${activeTenant.rooms.room_number}${activeTenant.rooms.floor != null ? ` · Floor ${activeTenant.rooms.floor}` : ''}` : '—'}

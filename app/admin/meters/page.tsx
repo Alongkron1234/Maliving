@@ -93,24 +93,24 @@ export default async function MetersPage({
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#241912]">Meter Readings</h1>
           <p className="text-sm text-[#897362] mt-1">
             Water &amp; electricity readings for {MONTH_NAMES[month - 1]} {year}.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/admin/meters/upload"
-            className="flex items-center gap-2 border border-[#ddc1ae] text-[#564334] text-sm font-semibold px-4 py-2.5 rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
+            className="flex items-center justify-center gap-2 border border-[#ddc1ae] text-[#564334] text-sm font-semibold px-4 py-2.5 rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors whitespace-nowrap"
           >
             <Camera size={15} />
             Upload Photo (OCR)
           </Link>
           <Link
             href={`/admin/meters/new?month=${month}&year=${year}`}
-            className="flex items-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+            className="flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
           >
             <Plus size={15} />
             Manual Entry

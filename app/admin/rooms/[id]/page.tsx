@@ -50,7 +50,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
       </Link>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-7">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold text-[#241912]">Room {room.room_number}</h1>
@@ -60,7 +60,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
             {room.floor != null ? `Floor ${room.floor}` : 'No floor assigned'}
           </p>
         </div>
-        <div className="flex items-start gap-3">
+        <div className="flex flex-wrap items-start gap-3">
           <DeleteRoomButton roomId={room.id} hasActiveTenants={tenants.length > 0} />
           <Link
             href={`/admin/rooms/${room.id}/edit`}
@@ -78,7 +78,7 @@ export default async function RoomDetailPage({ params }: { params: Promise<{ id:
           <h2 className="text-base font-bold text-[#241912] mb-1">Room Specifications</h2>
           <p className="text-sm text-[#897362] mb-6">Current details for this room unit.</p>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
             <InfoField label="Room Number" value={room.room_number} />
             <InfoField label="Floor" value={room.floor != null ? `Floor ${room.floor}` : '—'} />
             <InfoField label="Monthly Rent" value={`฿${room.rent_price.toLocaleString('th-TH')}`} />

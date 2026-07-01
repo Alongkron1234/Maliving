@@ -58,7 +58,7 @@ export default function MaintenanceNewForm({
         <h2 className="text-base font-bold text-[#241912] mb-1">Request Details</h2>
         <p className="text-sm text-[#897362] mb-7">อธิบายปัญหาและความเร่งด่วน</p>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Room">
             <div className="h-[42px] px-3.5 flex items-center bg-[#f5f5f5] border border-[#ddc1ae] rounded-lg text-sm font-semibold text-[#241912]">
               {roomLabel}

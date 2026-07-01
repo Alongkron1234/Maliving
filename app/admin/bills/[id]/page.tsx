@@ -74,9 +74,9 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
       </div>
 
       {/* Header */}
-      <div className="flex items-start justify-between mb-7">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-[#241912]">
               Room {room?.room_number ?? '—'} · {period}
             </h1>
@@ -88,7 +88,7 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
             ฿{bill.total_amount.toLocaleString('th-TH')} รวมทั้งหมด
           </p>
         </div>
-        <div className="flex items-start gap-3 print:hidden">
+        <div className="flex flex-wrap items-start gap-3 print:hidden">
           {tenant && (
             <Link
               href={`/admin/tenants/${tenant.id}`}
@@ -118,7 +118,7 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
           <h2 className="text-base font-bold text-[#241912] mb-1">Bill Information</h2>
           <p className="text-sm text-[#897362] mb-6">Details for this billing period.</p>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
             <InfoField label="Billing Period" value={period} />
             <InfoField label="Status" value={label} />
             <InfoField label="Due Date" value={dueDate} />
@@ -131,7 +131,7 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
           <h2 className="text-base font-bold text-[#241912] mb-1">Tenant &amp; Room</h2>
           <p className="text-sm text-[#897362] mb-6">Who and where this bill applies to.</p>
 
-          <div className="grid grid-cols-2 gap-x-5 gap-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
             <InfoField label="Tenant" value={profile?.full_name ?? '—'} />
             <InfoField label="Phone" value={profile?.phone ?? 'No phone'} />
             <InfoField

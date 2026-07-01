@@ -23,7 +23,7 @@ export default async function TenantsPage() {
   return (
     <div className="p-8">
       {/* Header */}
-      <div className="flex items-start justify-between mb-7">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div>
           <h1 className="text-2xl font-bold text-[#241912]">Tenant Management</h1>
           <p className="text-sm text-[#897362] mt-1">

@@ -57,7 +57,7 @@ export default function UpdateMaintenanceForm({
       <h2 className="text-base font-bold text-[#241912] mb-1">Update Status</h2>
       <p className="text-sm text-[#897362] mb-6">Track progress on this request.</p>
 
-      <div className="grid grid-cols-2 gap-x-5 gap-y-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 mb-6">
         <div>
           <label className="block text-sm font-semibold text-[#241912] mb-2">Status</label>
           <select value={status} onChange={e => setStatus(e.target.value as MaintenanceStatus)} className={inputClass}>

@@ -51,7 +51,7 @@ export default function ProfileEditForm({ profile }: { profile: ProfileData }) {
       <h2 className="text-base font-bold text-[#241912] mb-1">แก้ไขข้อมูลส่วนตัว</h2>
       <p className="text-sm text-[#897362] mb-6">อัปเดตชื่อและเบอร์โทรของคุณ</p>
 
-      <div className="grid grid-cols-2 gap-x-5 gap-y-5 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 mb-6">
         <Field label="ชื่อ-นามสกุล">
           <input name="full_name" type="text" required defaultValue={profile.full_name} className={inputClass} />
         </Field>

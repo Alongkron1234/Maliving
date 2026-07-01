@@ -62,7 +62,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
         <h2 className="text-base font-bold text-[#241912] mb-1">Room Specifications</h2>
         <p className="text-sm text-[#897362] mb-7">Update the details for this room unit.</p>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Room Number">
             <input
               name="room_number"

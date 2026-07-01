@@ -60,7 +60,7 @@ export default function TenantNewForm({
           Fill in the details to register a new tenant and assign them a room.
         </p>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Full Name">
             <input
               name="full_name"

@@ -80,7 +80,7 @@ export default function TenantEditForm({ tenant }: { tenant: TenantForEdit }) {
         <h2 className="text-base font-bold text-[#241912] mb-1">Tenant Information</h2>
         <p className="text-sm text-[#897362] mb-7">Update the personal details for this tenant.</p>
 
-        <div className="grid grid-cols-2 gap-x-5 gap-y-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Full Name">
             <input
               name="full_name"
