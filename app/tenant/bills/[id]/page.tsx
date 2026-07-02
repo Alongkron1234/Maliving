@@ -12,7 +12,12 @@ const methodLabels: Record<string, string> = {
   qr: 'QR พร้อมเพย์',
 }
 
-const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const monthNames = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
+
+function formatThaiDate(dateStr: string): string {
+  const d = new Date(dateStr)
+  return `${d.getDate()} ${monthNames[d.getMonth()]} ${d.getFullYear()}`
+}
 
 export default async function TenantBillDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -67,9 +72,7 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
   const waterUnits = readings.find(r => r.meter_type === 'water')?.units_used
 
   const period = `${monthNames[bill.billing_month - 1]} ${bill.billing_year}`
-  const dueDate = bill.due_date
-    ? new Date(bill.due_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    : '—'
+  const dueDate = bill.due_date ? formatThaiDate(bill.due_date) : '—'
   const createdAt = new Date(bill.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
   const { label, className } = billStatusConfig[getEffectiveBillStatus(bill)]
   const payment = bill.payments[0]
@@ -89,7 +92,7 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
         <div className="flex items-start justify-between mb-6 pb-4 border-b-2 border-[#241912]">
           <div>
             <p className="text-xl font-bold text-[#904d00]">Maliving</p>
-            <p className="text-sm text-[#564334]">ใบเสร็จรับเงิน / Receipt</p>
+            <p className="text-sm text-[#564334]">ใบแจ้งค่าห้องที่ต้องชำระ</p>
           </div>
           <span className={`px-3 py-1 rounded-full text-xs font-semibold ${className}`}>{label}</span>
         </div>
