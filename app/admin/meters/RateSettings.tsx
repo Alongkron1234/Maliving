@@ -13,8 +13,8 @@ export default function RateSettings() {
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    setERate(localStorage.getItem('maliving_electric_rate') ?? '')
-    setWRate(localStorage.getItem('maliving_water_rate') ?? '')
+    setERate(localStorage.getItem('maliving_electric_rate') ?? '8')
+    setWRate(localStorage.getItem('maliving_water_rate') ?? '18')
   }, [])
 
   function handleSave() {
@@ -41,7 +41,7 @@ export default function RateSettings() {
             onChange={e => setERate(e.target.value)}
             min={0}
             step={0.5}
-            placeholder="5"
+            placeholder="8"
             className={inputClass}
           />
           <span className="text-xs text-[#897362]">฿/หน่วย</span>

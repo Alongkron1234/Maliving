@@ -23,8 +23,8 @@ export default function GenerateBillsPanel({
   const [result, setResult] = useState<{ created: number; errors: { room: string; reason: string }[] } | null>(null)
 
   useEffect(() => {
-    setERate(localStorage.getItem('maliving_electric_rate') ?? '')
-    setWRate(localStorage.getItem('maliving_water_rate') ?? '')
+    setERate(localStorage.getItem('maliving_electric_rate') ?? '8')
+    setWRate(localStorage.getItem('maliving_water_rate') ?? '18')
   }, [])
 
   async function handleGenerate() {
@@ -71,7 +71,7 @@ export default function GenerateBillsPanel({
               onChange={e => setERate(e.target.value)}
               min={0}
               step={0.5}
-              placeholder="5"
+              placeholder="8"
               className={inputClass}
             />
             <span className="text-xs text-[#897362]">฿/หน่วย</span>

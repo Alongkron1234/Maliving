@@ -77,13 +77,13 @@ export default function MeterManualForm({
   const [eField, setEField] = useState<FieldState>(initElectric)
   const [wField, setWField] = useState<FieldState>(initWater)
 
-  // Rates loaded from localStorage (set once on Meter list page)
-  const [eRate, setERate] = useState(0)
-  const [wRate, setWRate] = useState(0)
+  // Rates loaded from localStorage (set once on Meter list page) — 8/18 is the fixed default
+  const [eRate, setERate] = useState(8)
+  const [wRate, setWRate] = useState(18)
 
   useEffect(() => {
-    const e = parseFloat(localStorage.getItem('maliving_electric_rate') ?? '0')
-    const w = parseFloat(localStorage.getItem('maliving_water_rate') ?? '0')
+    const e = parseFloat(localStorage.getItem('maliving_electric_rate') ?? '8')
+    const w = parseFloat(localStorage.getItem('maliving_water_rate') ?? '18')
     if (e > 0) setERate(e)
     if (w > 0) setWRate(w)
   }, [])
