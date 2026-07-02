@@ -2,7 +2,7 @@ import { createAdminClient } from '@/lib/supabase/admin'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-  const { month, year, electric_rate, water_rate } = await req.json()
+  const { month, year, electric_rate, water_rate, room_id } = await req.json()
 
   const reading_month = parseInt(month)
   const reading_year = parseInt(year)
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
   type ReadingRow = { room_id: string; meter_type: string; units_used: number }
   type BillRow = { room_id: string; status: string }
 
-  const rooms = (roomsRaw ?? []) as RoomRow[]
+  const rooms = ((roomsRaw ?? []) as RoomRow[]).filter(r => !room_id || r.id === room_id)
   const tenants = (tenantsRaw ?? []) as TenantRow[]
   const readings = (readingsRaw ?? []) as ReadingRow[]
   const existingBills = (existingBillsRaw ?? []) as BillRow[]

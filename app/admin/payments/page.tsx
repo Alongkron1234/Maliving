@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import PaymentsTable from './PaymentsTable'
+import PaymentsMonthFilter from './PaymentsMonthFilter'
 
 type PaymentRaw = {
   id: string
@@ -17,13 +18,31 @@ type PaymentRaw = {
   } | null
 }
 
-export default async function PaymentsPage() {
+const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+
+export default async function PaymentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ month?: string; year?: string; view?: string }>
+}) {
+  const { month: monthStr, year: yearStr, view } = await searchParams
+  const now = new Date()
+  const month = parseInt(monthStr ?? String(now.getMonth() + 1))
+  const year = parseInt(yearStr ?? String(now.getFullYear()))
+  const showAll = view === 'all'
+
   const supabase = await createClient()
 
-  const { data: rawPayments } = await supabase
+  let query = supabase
     .from('payments')
-    .select('id, amount, method, paid_at, bill_id, bills(billing_month, billing_year, rooms(room_number, floor)), tenants(profiles(full_name))')
+    .select('id, amount, method, paid_at, bill_id, bills!inner(billing_month, billing_year, rooms(room_number, floor)), tenants(profiles(full_name))')
     .order('paid_at', { ascending: false })
+
+  if (!showAll) {
+    query = query.eq('bills.billing_month', month).eq('bills.billing_year', year)
+  }
+
+  const { data: rawPayments } = await query
 
   const payments = ((rawPayments as unknown as PaymentRaw[]) ?? []).map(p => ({
     id: p.id,
@@ -43,8 +62,14 @@ export default async function PaymentsPage() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#241912]">Payments</h1>
         <p className="text-sm text-[#897362] mt-1">
-          {payments.length} รายการชำระเงินทั้งหมด
+          {showAll
+            ? `${payments.length} รายการชำระเงินทั้งหมด`
+            : `${payments.length} รายการชำระเงินเดือน ${MONTH_NAMES[month - 1]} ${year}`}
         </p>
+      </div>
+
+      <div className="mb-6">
+        <PaymentsMonthFilter currentMonth={month} currentYear={year} showAll={showAll} />
       </div>
 
       <PaymentsTable payments={payments} />

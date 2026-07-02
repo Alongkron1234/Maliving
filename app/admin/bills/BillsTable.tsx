@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Table, LayoutGrid } from 'lucide-react'
+import { Table, LayoutGrid, Zap } from 'lucide-react'
 import type { Bill } from '@/lib/types/database'
 import { billStatusConfig, getEffectiveBillStatus } from '@/lib/bills'
 
@@ -15,15 +15,48 @@ export default function BillsTable({
   tenantByRoom,
   readingTypesByRoom,
   unitsByRoom,
+  month,
+  year,
 }: {
   rooms: RoomRow[]
   billByRoom: Record<string, Bill>
   tenantByRoom: Record<string, TenantInfo>
   readingTypesByRoom: Record<string, Set<'electric' | 'water'>>
   unitsByRoom: Record<string, { electric?: number; water?: number }>
+  month: number
+  year: number
 }) {
   const router = useRouter()
   const [view, setView] = useState<'table' | 'cards'>('table')
+  const [generatingRoomId, setGeneratingRoomId] = useState<string | null>(null)
+
+  async function handleGenerateOne(e: React.MouseEvent, roomId: string) {
+    e.stopPropagation()
+    setGeneratingRoomId(roomId)
+
+    const electric_rate = localStorage.getItem('maliving_electric_rate') ?? '8'
+    const water_rate = localStorage.getItem('maliving_water_rate') ?? '18'
+
+    const res = await fetch('/api/admin/generate-bills', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ month, year, electric_rate, water_rate, room_id: roomId }),
+    })
+    const body = await res.json()
+
+    setGeneratingRoomId(null)
+
+    if (!res.ok) {
+      window.alert(body.error ?? 'Something went wrong')
+      return
+    }
+    if (body.errors?.length > 0) {
+      window.alert(body.errors[0].reason)
+      return
+    }
+
+    router.refresh()
+  }
 
   if (rooms.length === 0) {
     return (
@@ -72,6 +105,7 @@ export default function BillsTable({
                   <th className="text-right px-4 py-3 text-xs font-semibold text-[#897362] uppercase tracking-wide">ค่าน้ำ</th>
                   <th className="text-right px-4 py-3 text-xs font-semibold text-[#897362] uppercase tracking-wide">รวม</th>
                   <th className="text-left px-4 py-3 text-xs font-semibold text-[#897362] uppercase tracking-wide">สถานะ</th>
+                  <th className="px-4 py-3" />
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#f0e0d4]">
@@ -110,6 +144,18 @@ export default function BillsTable({
                       </td>
                       <td className="px-4 py-3.5">
                         <StatusBadge bill={bill} hasTenant={!!tenant} hasMeterData={hasMeterData} />
+                      </td>
+                      <td className="px-4 py-3.5">
+                        {!bill && tenant && hasMeterData && (
+                          <button
+                            onClick={e => handleGenerateOne(e, room.id)}
+                            disabled={generatingRoomId === room.id}
+                            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#ff8c00] hover:bg-[#904d00] text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                          >
+                            <Zap size={12} />
+                            {generatingRoomId === room.id ? 'กำลังออก…' : 'ออกบิล'}
+                          </button>
+                        )}
                       </td>
                     </tr>
                   )
@@ -167,8 +213,18 @@ export default function BillsTable({
                     </div>
                   </div>
                 ) : (
-                  <div className="pt-3 border-t border-[#f0e0d4]">
+                  <div className="pt-3 border-t border-[#f0e0d4] flex items-center justify-between gap-2">
                     <p className="text-xs text-[#c9a990]">ค่าเช่า ฿{room.rent_price.toLocaleString('th-TH')} — ยังไม่มีบิลเดือนนี้</p>
+                    {tenant && hasMeterData && (
+                      <button
+                        onClick={e => handleGenerateOne(e, room.id)}
+                        disabled={generatingRoomId === room.id}
+                        className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#ff8c00] hover:bg-[#904d00] text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        <Zap size={12} />
+                        {generatingRoomId === room.id ? 'กำลังออก…' : 'ออกบิล'}
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -119,6 +119,8 @@ export default async function BillsPage({
         tenantByRoom={tenantByRoom}
         readingTypesByRoom={readingTypesByRoom}
         unitsByRoom={unitsByRoom}
+        month={month}
+        year={year}
       />
     </div>
   )
