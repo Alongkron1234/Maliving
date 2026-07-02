@@ -49,6 +49,19 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
   const tenant = bill.tenants
   const profile = tenant?.profiles
 
+  const { data: rawReadings } = room
+    ? await supabase
+        .from('meter_readings')
+        .select('meter_type, units_used')
+        .eq('room_id', room.id)
+        .eq('reading_month', bill.billing_month)
+        .eq('reading_year', bill.billing_year)
+    : { data: null }
+  type ReadingRow = { meter_type: 'electric' | 'water'; units_used: number }
+  const readings = (rawReadings ?? []) as ReadingRow[]
+  const electricUnits = readings.find(r => r.meter_type === 'electric')?.units_used
+  const waterUnits = readings.find(r => r.meter_type === 'water')?.units_used
+
   const period = `${monthNames[bill.billing_month - 1]} ${bill.billing_year}`
   const dueDate = bill.due_date
     ? new Date(bill.due_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
@@ -67,14 +80,79 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
         Back to Bills
       </Link>
 
-      {/* Print-only receipt header */}
+      {/* Print-only receipt — a single self-contained layout, independent of the on-screen cards below */}
       <div className="hidden print:block mb-6">
-        <p className="text-lg font-bold text-[#904d00]">Maliving</p>
-        <p className="text-sm text-[#564334]">ใบเสร็จรับเงิน / Receipt</p>
+        <div className="flex items-start justify-between mb-6 pb-4 border-b-2 border-[#241912]">
+          <div>
+            <p className="text-xl font-bold text-[#904d00]">Maliving</p>
+            <p className="text-sm text-[#564334]">ใบเสร็จรับเงิน / Receipt</p>
+          </div>
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${className}`}>{label}</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-6 text-sm">
+          <div>
+            <p className="text-[#897362]">ห้อง</p>
+            <p className="font-semibold text-[#241912]">{room?.room_number ?? '—'}{room?.floor != null ? ` (ชั้น ${room.floor})` : ''}</p>
+          </div>
+          <div>
+            <p className="text-[#897362]">งวดบิล</p>
+            <p className="font-semibold text-[#241912]">{period}</p>
+          </div>
+          <div>
+            <p className="text-[#897362]">ผู้เช่า</p>
+            <p className="font-semibold text-[#241912]">{profile?.full_name ?? '—'}</p>
+          </div>
+          <div>
+            <p className="text-[#897362]">เบอร์โทร</p>
+            <p className="font-semibold text-[#241912]">{profile?.phone ?? '—'}</p>
+          </div>
+          <div>
+            <p className="text-[#897362]">ครบกำหนดชำระ</p>
+            <p className="font-semibold text-[#241912]">{dueDate}</p>
+          </div>
+        </div>
+
+        <table className="w-full text-sm mb-6">
+          <thead>
+            <tr className="border-b-2 border-[#241912]">
+              <th className="text-left py-2 font-semibold text-[#241912]">รายการ</th>
+              <th className="text-right py-2 font-semibold text-[#241912]">จำนวนหน่วย</th>
+              <th className="text-right py-2 font-semibold text-[#241912]">จำนวนเงิน</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-[#ddc1ae]">
+              <td className="py-2.5 text-[#564334]">🏠 ค่าเช่า</td>
+              <td className="py-2.5 text-right text-[#897362]">—</td>
+              <td className="py-2.5 text-right font-semibold text-[#241912]">฿{bill.rent_amount.toLocaleString('th-TH')}</td>
+            </tr>
+            <tr className="border-b border-[#ddc1ae]">
+              <td className="py-2.5 text-[#564334]">⚡ ค่าไฟฟ้า</td>
+              <td className="py-2.5 text-right text-[#897362]">{electricUnits != null ? `${electricUnits} หน่วย` : '—'}</td>
+              <td className="py-2.5 text-right font-semibold text-[#241912]">฿{bill.electric_amount.toLocaleString('th-TH')}</td>
+            </tr>
+            <tr className="border-b border-[#ddc1ae]">
+              <td className="py-2.5 text-[#564334]">💧 ค่าน้ำประปา</td>
+              <td className="py-2.5 text-right text-[#897362]">{waterUnits != null ? `${waterUnits} หน่วย` : '—'}</td>
+              <td className="py-2.5 text-right font-semibold text-[#241912]">฿{bill.water_amount.toLocaleString('th-TH')}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr className="border-t-2 border-[#241912]">
+              <td colSpan={2} className="py-3 font-bold text-[#241912]">รวมทั้งหมด</td>
+              <td className="py-3 text-right text-lg font-bold text-[#ff8c00]">฿{bill.total_amount.toLocaleString('th-TH')}</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <p className="text-xs text-[#c9a990]">
+          พิมพ์เมื่อ {new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })}
+        </p>
       </div>
 
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
+      <div className="print:hidden flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-[#241912]">
@@ -112,7 +190,7 @@ export default async function BillDetailPage({ params }: { params: Promise<{ id:
         </div>
       </div>
 
-      <div className="max-w-2xl space-y-5">
+      <div className="print:hidden max-w-2xl space-y-5">
         {/* Bill Information */}
         <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
           <h2 className="text-base font-bold text-[#241912] mb-1">Bill Information</h2>
