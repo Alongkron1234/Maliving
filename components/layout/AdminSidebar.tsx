@@ -13,6 +13,7 @@ import {
   CreditCard,
   Wrench,
   Megaphone,
+  Bot,
   HelpCircle,
   LogOut,
   Menu,
@@ -28,6 +29,7 @@ const navItems = [
   { href: '/admin/payments', label: 'ชำระเงิน', icon: CreditCard },
   { href: '/admin/maintenance', label: 'แจ้งซ่อม', icon: Wrench },
   { href: '/admin/announcements', label: 'ประกาศ', icon: Megaphone },
+  { href: '/admin/agent', label: 'ผู้ช่วย AI', icon: Bot },
 ]
 
 export default function AdminSidebar() {
