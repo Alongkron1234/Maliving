@@ -76,11 +76,26 @@ Role เก็บใน `profiles.role` (+ `app_metadata.role` ฝั่ง auth
 
 ## Line OA Bot Flow
 
-- Webhook endpoint: `/api/line/webhook` (`app/api/line/webhook/route.ts`) — **โค้ดเขียนเสร็จแล้ว** แต่ยังเชื่อม/ทดสอบกับ Line จริงไม่ได้จนกว่าจะ Deploy (Phase 8) เพราะ Line ต้องการ HTTPS public URL
+- Webhook endpoint: `/api/line/webhook` (`app/api/line/webhook/route.ts`) — **เชื่อมกับ Line จริงแล้ว** (deploy บน Vercel ให้ HTTPS public URL ตามที่ Line ต้องการ), verify ผ่านและทดสอบพิมพ์เบอร์โทรจริงแล้วได้ยอดบิลค้างชำระถูกต้อง
 - ผู้เช่าพิมพ์ **เบอร์โทร** ใน Line (ไม่ใช้ชื่อ — ชื่อซ้ำกันได้ เบอร์โทรแม่นยำกว่า) → bot normalize เบอร์ทั้งสองฝั่งก่อนเทียบ (ตัด `-`, เว้นวรรค, แปลง `+66`/`66` นำหน้าเป็น `0`)
 - เทียบกับ `profiles.phone` (เฉพาะ role = tenant) — เจอ 0 คนหรือมากกว่า 1 คน (เบอร์ซ้ำ) จะไม่เดา ตอบให้ติดต่อ admin โดยตรงแทน
 - เจอตรง 1 คน → หา active tenant record → ตอบ **ยอดค้างชำระรวมของทุกบิลที่ยังไม่จ่าย** (ไม่ใช่แค่บิลล่าสุด) พร้อม flag บิลที่เกินกำหนด
 - ต้อง verify `X-Line-Signature` ทุก request (HMAC-SHA256 ด้วย `LINE_CHANNEL_SECRET`) ก่อนเชื่อถือ body เสมอ
+
+---
+
+## AI Agent (function calling) — `/admin/agent`
+
+หน้าแชท AI สำหรับ admin คุยเป็นภาษาไทยธรรมชาติ แล้วให้ agent เรียกใช้ backend function ที่มีอยู่แล้วของระบบแทนการกดปุ่มเอง (ไม่ใช่ browser automation)
+
+- **สมอง**: Groq (`llama-3.3-70b-versatile` — คนละ model กับ OCR vision ที่ใช้ `llama-4-scout`)
+- **Tool registry**: `lib/agent/tools.ts` — schema ของทุก tool + `mode: 'read' | 'write'`
+- **Executors**: `lib/agent/executors/*.ts` แยกตาม domain (rooms, tenants, meters, bills, payments, maintenance, announcements, dashboard) — tool ที่มี API route อยู่แล้วจะเรียกผ่าน internal `fetch()` ไปที่ route เดิม (ไม่เขียน logic ซ้ำ), ส่วน tool ที่เดิมมีแค่ direct-Supabase CRUD ในฟอร์ม (rooms/tenant profile/maintenance/announcements) executor จะใช้ `createClient()` (RLS ปกติ) เหมือนที่ฟอร์มเดิมทำ
+- **Agent loop**: `lib/agent/loop.ts` — เรียก Groq วนอัตโนมัติ, execute tool ที่เป็น `read` ทันทีแล้ววนต่อ, พอเจอ tool ที่เป็น `write` จะ**หยุดทั้ง batch รอ user confirm ก่อนเสมอ** (กฎตายตัว ไม่ใช่แค่ prompt บอก AI ให้ระวัง)
+- **Route**: `POST /api/admin/agent/chat` (เริ่ม/ต่อบทสนทนา) และ `POST /api/admin/agent/confirm` (ส่ง decision ของแต่ละ pending tool call พร้อม args ที่แก้ไขได้ก่อน confirm) — ทั้งสอง route เช็ค `role === 'admin'` เองตรงๆ เพราะ `proxy.ts` เช็คแค่ path ที่ขึ้นต้นด้วย `/admin` ไม่ครอบคลุม `/api/admin/*`
+- **การยกเลิก (cancel)**: ถ้า user กด "ยกเลิกทั้งหมด" ระบบจะ**หยุดแบบเด็ดขาดในโค้ดเลย ไม่ส่งกลับไปให้ AI ตัดสินใจต่อ** — กัน AI เผลอเรียก tool เดิมซ้ำทันทีหลังโดนปฏิเสธ
+- **OCR ผ่าน agent**: แนบรูปในแชท → upload ผ่าน `/api/admin/agent/upload` ก่อน → เรียก `run_meter_ocr` (auto, ไม่ต้อง confirm เพราะยังเป็นแค่ draft) → ผลลัพธ์ให้ user ตรวจ/แก้ก่อน confirm `save_meter_reading` ทีละห้อง → confirm `generate_bill` ต่อ
+- **ข้อจำกัดที่รู้อยู่แล้ว**: ทุก request ต้องแนบ schema ของ tools ทั้งหมด (~5,300 token/ครั้ง) ทำให้ Groq free tier (100,000 token/วัน) หมดเร็วถ้าทดสอบถี่ๆ — ใช้งานจริงเดือนละ 1-2 ครั้งไม่มีปัญหา
 
 ---
 
@@ -125,10 +140,9 @@ LINE_CHANNEL_SECRET=
 | **5** | Admin Features | ✅ ครบทั้งหมด — 5.1 Layout+Dashboard (มี stat การเงิน/operations, ไม่มี Quick Actions), 5.2 Rooms, 5.3 Tenants (+ ตั้ง/reset รหัสผ่าน, แสดง email), 5.4 Meters (Manual + OCR แบบ draft/confirm), 5.5 Bills (+ พิมพ์/ดาวน์โหลดใบเสร็จ), 5.6 Payments, 5.7 Maintenance, 5.8 Announcements |
 | **6** | Tenant Features | ✅ Dashboard, ดูบิล (+ พิมพ์/ดาวน์โหลดใบเสร็จ), แจ้งซ่อม, ดูประกาศ, แก้ไขโปรไฟล์ตัวเอง — **ตัด upload สลิปออกจากแผนเดิม** |
 | **7** | Components | ข้าม — ไม่มี `components/ui/`/`components/forms/` แยก ใช้วิธี duplicate component เล็กๆ ต่อหน้าแทน (ตามแบบที่ codebase ทำมาตลอด) |
-| **8** | Deploy | ❌ ยังไม่ทำ — เชื่อม Vercel + push + ตั้งค่า env vars + Supabase Auth redirect URL |
-| **9** | Line OA Bot | โค้ด webhook เสร็จแล้ว (`app/api/line/webhook/route.ts`) ✅ — รอ Deploy (8) ก่อนถึงจะตั้ง Webhook URL ใน Line Console และทดสอบจริงได้ |
+| **8** | Deploy | ✅ Deploy ขึ้น Vercel แล้ว เชื่อมกับ GitHub repo `Alongkron1234/Maliving` — push ขึ้น `main` = auto-deploy |
+| **9** | Line OA Bot | ✅ webhook เชื่อมจริงแล้ว (`app/api/line/webhook/route.ts`), verify ผ่าน, ทดสอบพิมพ์เบอร์โทรแล้วได้ยอดบิลค้างชำระถูกต้อง |
+| **10** | AI Agent | ✅ หน้าแชท `/admin/agent` (function calling ผ่าน Groq) — ดูรายละเอียดหัวข้อ "AI Agent" ด้านบน |
 
 **หมายเหตุ:**
-- Phase 0 ยังไม่ต้องสร้าง Line OA หรือเชื่อม Vercel — ทำใน Phase 8–9 หลัง feature เสร็จแล้ว
-- Line OA Bot (Phase 9) เขียนโค้ดไว้ก่อนได้ แต่ทดสอบ/เชื่อมจริงกับ Line ต้องรอ Deploy (Phase 8) เสมอ เพราะ Line Webhook ต้องการ HTTPS public URL
-- **สิ่งที่เหลือทั้งหมดตอนนี้คือ Phase 8 (Deploy)** — ทำเสร็จแล้วจะ unblock การทดสอบ Line OA Bot ได้ทันที
+- ทุก Phase ทำเสร็จแล้ว — งานที่เหลือต่อจากนี้เป็น feature เพิ่มเติม/แก้บั๊ก/ปรับปรุงบนฐานที่ deploy จริงแล้ว ไม่ใช่การ build เริ่มต้นอีกต่อไป
