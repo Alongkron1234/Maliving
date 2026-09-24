@@ -52,3 +52,19 @@ body {
   color: #241912;
   font-family: var(--font-inter), Inter, sans-serif;
 }
+
+/* Admin panel page-enter flourish — see components/layout/PageTransition.tsx */
+@keyframes admin-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-admin-page-in {
+  animation: admin-page-in 0.28s ease-out both;
+}
