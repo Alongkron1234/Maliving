@@ -1,9 +1,13 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { requireAdmin } from '@/lib/supabase/requireAdmin'
 import { NextResponse } from 'next/server'
 
 // DELETE /api/admin/delete-room?id=<room_id>
 // Removes all related records in FK-dependency order, then deletes the room.
 export async function DELETE(req: Request) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const { searchParams } = new URL(req.url)
   const id = searchParams.get('id')
   if (!id) return NextResponse.json({ error: 'Missing room id' }, { status: 400 })

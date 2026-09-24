@@ -40,7 +40,7 @@ export async function get_bill(args: ToolArgs, ctx: ExecutorCtx) {
 
 export async function generate_bill(args: ToolArgs, ctx: ExecutorCtx) {
   const room_id = args.room_number ? await resolveRoomId(ctx.supabase, args) : undefined
-  return internalFetch(ctx.origin, '/api/admin/generate-bills', {
+  return internalFetch(ctx.origin, '/api/admin/generate-bills', ctx.cookie, {
     method: 'POST',
     body: JSON.stringify({
       month: args.month,
@@ -53,5 +53,5 @@ export async function generate_bill(args: ToolArgs, ctx: ExecutorCtx) {
 }
 
 export async function delete_bill(args: ToolArgs, ctx: ExecutorCtx) {
-  return internalFetch(ctx.origin, `/api/admin/delete-bill?id=${encodeURIComponent(args.bill_id)}`, { method: 'DELETE' })
+  return internalFetch(ctx.origin, `/api/admin/delete-bill?id=${encodeURIComponent(args.bill_id)}`, ctx.cookie, { method: 'DELETE' })
 }

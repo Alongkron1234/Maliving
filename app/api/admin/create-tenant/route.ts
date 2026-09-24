@@ -1,7 +1,11 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { requireAdmin } from '@/lib/supabase/requireAdmin'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const { full_name, phone, email, password, room_id, move_in_date } = await req.json()
 
   if (!full_name || !email || !password || !room_id || !move_in_date) {

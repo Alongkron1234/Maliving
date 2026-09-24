@@ -61,5 +61,5 @@ export async function update_room(args: ToolArgs, ctx: ExecutorCtx) {
 }
 
 export async function delete_room(args: ToolArgs, ctx: ExecutorCtx) {
-  return internalFetch(ctx.origin, `/api/admin/delete-room?id=${encodeURIComponent(args.room_id)}`, { method: 'DELETE' })
+  return internalFetch(ctx.origin, `/api/admin/delete-room?id=${encodeURIComponent(args.room_id)}`, ctx.cookie, { method: 'DELETE' })
 }

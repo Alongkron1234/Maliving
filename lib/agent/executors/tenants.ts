@@ -73,7 +73,7 @@ export async function get_tenant(args: ToolArgs, ctx: ExecutorCtx) {
 
 export async function create_tenant(args: ToolArgs, ctx: ExecutorCtx) {
   const room_id = await resolveRoomId(ctx.supabase, args)
-  return internalFetch(ctx.origin, '/api/admin/create-tenant', {
+  return internalFetch(ctx.origin, '/api/admin/create-tenant', ctx.cookie, {
     method: 'POST',
     body: JSON.stringify({
       full_name: args.full_name,
@@ -117,14 +117,14 @@ export async function update_tenant(args: ToolArgs, ctx: ExecutorCtx) {
 
 export async function move_out_tenant(args: ToolArgs, ctx: ExecutorCtx) {
   const tenant = await findTenant(ctx, { tenant_id: args.tenant_id })
-  return internalFetch(ctx.origin, '/api/admin/remove-tenant', {
+  return internalFetch(ctx.origin, '/api/admin/remove-tenant', ctx.cookie, {
     method: 'POST',
     body: JSON.stringify({ tenant_id: tenant.id, profile_id: tenant.profile_id, room_id: tenant.room_id }),
   })
 }
 
 export async function reset_tenant_password(args: ToolArgs, ctx: ExecutorCtx) {
-  return internalFetch(ctx.origin, '/api/admin/reset-tenant-password', {
+  return internalFetch(ctx.origin, '/api/admin/reset-tenant-password', ctx.cookie, {
     method: 'POST',
     body: JSON.stringify({ profile_id: args.profile_id, password: args.password }),
   })

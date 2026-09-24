@@ -1,7 +1,11 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { requireAdmin } from '@/lib/supabase/requireAdmin'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const { month, year, electric_rate, water_rate, room_id } = await req.json()
 
   const reading_month = parseInt(month)

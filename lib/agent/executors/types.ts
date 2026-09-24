@@ -5,6 +5,10 @@ export type ServerSupabase = Awaited<ReturnType<typeof createClient>>
 export interface ExecutorCtx {
   origin: string
   supabase: ServerSupabase
+  // Forwarded to internalFetch so the target /api/admin/* route's own admin check
+  // (reading cookies via createClient()) sees the same session as this request —
+  // internal fetches are a fresh HTTP request and don't inherit cookies otherwise.
+  cookie: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -29,10 +33,10 @@ export async function resolveRoomId(
   return data.id
 }
 
-export async function internalFetch(origin: string, path: string, init?: RequestInit) {
+export async function internalFetch(origin: string, path: string, cookie: string, init?: RequestInit) {
   const res = await fetch(new URL(path, origin), {
     ...init,
-    headers: { 'Content-Type': 'application/json', ...(init?.headers ?? {}) },
+    headers: { 'Content-Type': 'application/json', Cookie: cookie, ...(init?.headers ?? {}) },
   })
   const body = await res.json().catch(() => ({}))
   if (!res.ok) {

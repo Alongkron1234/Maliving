@@ -1,8 +1,12 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { requireAdmin } from '@/lib/supabase/requireAdmin'
 import { NextResponse } from 'next/server'
 import { runOcrOnImage } from '@/lib/agent/executors/meters'
 
 export async function POST(req: Request) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const formData = await req.formData()
   const file = formData.get('file') as File | null
   const reading_month = parseInt(formData.get('reading_month') as string)
