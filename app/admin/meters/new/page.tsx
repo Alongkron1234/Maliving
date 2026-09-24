@@ -111,15 +111,15 @@ export default async function NewMeterPage({
     <div className="p-6 sm:p-8 max-w-5xl mx-auto">
       <Link
         href="/admin/meters"
-        className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
         กลับไปหน้าจดมิเตอร์
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#241912]">กรอกเลขมิเตอร์</h1>
-        <p className="text-sm text-[#897362] mt-1">กรอกหรือตรวจสอบเลขมิเตอร์ไฟฟ้าและน้ำของห้องนี้</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">กรอกเลขมิเตอร์</h1>
+        <p className="text-sm text-[#71717A] mt-1">กรอกหรือตรวจสอบเลขมิเตอร์ไฟฟ้าและน้ำของห้องนี้</p>
       </div>
 
       <div>

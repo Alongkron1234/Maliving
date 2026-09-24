@@ -92,12 +92,12 @@ export default async function RoomsPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#241912] tracking-tight">จัดการห้องพัก</h1>
-          <p className="text-sm text-[#897362] mt-1.5">ดูสถานะห้องและจัดการผู้เช่าแบบเรียลไทม์</p>
+          <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">จัดการห้องพัก</h1>
+          <p className="text-sm text-[#71717A] mt-1.5">ดูสถานะห้องและจัดการผู้เช่าแบบเรียลไทม์</p>
         </div>
         <Link
           href="/admin/rooms/new"
-          className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
+          className="inline-flex items-center justify-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
         >
           <Plus size={16} />
           เพิ่มห้องพัก
@@ -123,7 +123,7 @@ export default async function RoomsPage({
                   ชั้น {f}
                 </FilterLink>
               ))}
-              <span className="w-px h-5 bg-[#ddc1ae] mx-1" />
+              <span className="w-px h-5 bg-[#E4E4E7] mx-1" />
             </>
           )}
           <FilterLink href={floor ? `/admin/rooms?floor=${floor}` : '/admin/rooms'} active={!statusFilter}>
@@ -148,11 +148,11 @@ export default async function RoomsPage({
         return (
           <div key={floorNum ?? 'none'} className="mb-8">
             <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-bold text-[#241912]">
+              <h2 className="text-sm font-bold text-[#18181B]">
                 {floorNum != null ? `ชั้น ${floorNum}` : 'ไม่ระบุชั้น'}
-                <span className="text-[#897362] font-medium ml-1.5">· {floorRooms.length} ห้อง</span>
+                <span className="text-[#71717A] font-medium ml-1.5">· {floorRooms.length} ห้อง</span>
               </h2>
-              <span className="text-xs font-medium text-[#897362]">มีผู้เช่า {occupiedOnFloor}/{floorRooms.length}</span>
+              <span className="text-xs font-medium text-[#71717A]">มีผู้เช่า {occupiedOnFloor}/{floorRooms.length}</span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {floorRooms.map(room => {
@@ -175,7 +175,7 @@ export default async function RoomsPage({
       })}
 
       {total === 0 ? (
-        <p className="text-center text-sm text-[#897362] py-12">
+        <p className="text-center text-sm text-[#71717A] py-12">
           {floor || statusFilter || q
             ? 'ไม่พบห้องที่ตรงกับเงื่อนไขที่เลือก'
             : 'ยังไม่มีห้องพัก — คลิก "เพิ่มห้องใหม่" เพื่อเริ่มต้น'}
@@ -183,14 +183,14 @@ export default async function RoomsPage({
       ) : (
         <Link
           href="/admin/rooms/new"
-          className="flex flex-col sm:flex-row items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#ddc1ae] p-6 text-center hover:border-[#ff8c00] hover:bg-white transition-colors"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#E4E4E7] p-6 text-center hover:border-[#FF6A00] hover:bg-white transition-colors"
         >
-          <div className="w-11 h-11 rounded-full bg-[#fff1e9] flex items-center justify-center shrink-0">
-            <Plus size={22} className="text-[#897362]" />
+          <div className="w-11 h-11 rounded-full bg-[#FFE8D1] flex items-center justify-center shrink-0">
+            <Plus size={22} className="text-[#71717A]" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-[#564334]">เพิ่มห้องใหม่</p>
-            <p className="text-xs text-[#897362] mt-0.5">ขยายจำนวนห้องพักในระบบ</p>
+            <p className="text-sm font-semibold text-[#3F3F46]">เพิ่มห้องใหม่</p>
+            <p className="text-xs text-[#71717A] mt-0.5">ขยายจำนวนห้องพักในระบบ</p>
           </div>
         </Link>
       )}
@@ -199,7 +199,7 @@ export default async function RoomsPage({
 }
 
 const summaryTones = {
-  brand:   'bg-[#fff1e9] text-[#904d00]',
+  brand:   'bg-[#FFE8D1] text-[#C2410C]',
   info:    'bg-[#eef4ff] text-[#2563eb]',
   success: 'bg-[#e3f5ea] text-[#1e7e46]',
   danger:  'bg-[#fee2e2] text-[#dc2626]',
@@ -211,8 +211,8 @@ function FilterLink({ href, active, children }: { href: string; active: boolean;
       href={href}
       className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
         active
-          ? 'bg-[#ff8c00] text-white shadow-sm shadow-[#ff8c00]/30'
-          : 'bg-white border border-[#ddc1ae] text-[#564334] hover:border-[#ff8c00] hover:text-[#904d00]'
+          ? 'bg-[#FF6A00] text-white shadow-sm shadow-[#FF6A00]/30'
+          : 'bg-white border border-[#E4E4E7] text-[#3F3F46] hover:border-[#FF6A00] hover:text-[#C2410C]'
       }`}
     >
       {children}
@@ -237,8 +237,8 @@ function SummaryPill({
         <Icon size={16} strokeWidth={2.25} />
       </span>
       <div className="min-w-0">
-        <p className="text-lg font-bold text-[#241912] leading-tight truncate">{value}</p>
-        <p className="text-[11px] text-[#897362] truncate">{label}</p>
+        <p className="text-lg font-bold text-[#18181B] leading-tight truncate">{value}</p>
+        <p className="text-[11px] text-[#71717A] truncate">{label}</p>
       </div>
     </div>
   )
@@ -262,13 +262,13 @@ function RoomCard({
   const status = room.status as RoomStatus
 
   const iconConfig: Record<RoomStatus, { bg: string; icon: React.ReactNode }> = {
-    occupied:    { bg: 'bg-[#fff1e9]', icon: <BedDouble size={20} className="text-[#904d00]" /> },
+    occupied:    { bg: 'bg-[#FFE8D1]', icon: <BedDouble size={20} className="text-[#C2410C]" /> },
     available:   { bg: 'bg-[#e3f5ea]', icon: <DoorOpen size={20} className="text-[#1e7e46]" /> },
     maintenance: { bg: 'bg-[#fee2e2]', icon: <Wrench size={20} className="text-[#dc2626]" /> },
   }
 
   const badgeConfig: Record<RoomStatus, { label: string; className: string }> = {
-    occupied:    { label: 'มีผู้เช่า', className: 'bg-[#fff1e9] text-[#904d00]' },
+    occupied:    { label: 'มีผู้เช่า', className: 'bg-[#FFE8D1] text-[#C2410C]' },
     available:   { label: 'ว่าง',      className: 'bg-[#e3f5ea] text-[#1e7e46]' },
     maintenance: { label: 'ซ่อมบำรุง', className: 'bg-[#fee2e2] text-[#dc2626]' },
   }
@@ -305,8 +305,8 @@ function RoomCard({
 
       {/* Room info */}
       <div className="relative z-10">
-        <p className="text-base font-bold text-[#241912]">ห้อง {room.room_number}</p>
-        <p className="text-xs text-[#897362] mt-0.5">
+        <p className="text-base font-bold text-[#18181B]">ห้อง {room.room_number}</p>
+        <p className="text-xs text-[#71717A] mt-0.5">
           {room.floor != null ? `ชั้น ${room.floor}` : 'ไม่ระบุชั้น'}
           {' • '}
           {room.rent_price.toLocaleString('th-TH')} ฿/เดือน
@@ -316,25 +316,25 @@ function RoomCard({
       {/* Status-specific content */}
       <div className="relative z-10 flex flex-col gap-2.5">
         {status === 'occupied' && tenant && (
-          <div className="flex items-center gap-2.5 bg-[#fff8f5] rounded-xl p-3">
-            <div className="w-8 h-8 rounded-full bg-[#ffeadd] flex items-center justify-center text-xs font-bold text-[#904d00] shrink-0">
+          <div className="flex items-center gap-2.5 bg-[#FFFAF7] rounded-xl p-3">
+            <div className="w-8 h-8 rounded-full bg-[#FFD9B3] flex items-center justify-center text-xs font-bold text-[#C2410C] shrink-0">
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-[#241912] truncate">{tenant.profile?.full_name ?? '—'}</p>
-              <p className="text-[10px] text-[#897362]">เข้าพักเมื่อ {checkInDate}</p>
+              <p className="text-xs font-semibold text-[#18181B] truncate">{tenant.profile?.full_name ?? '—'}</p>
+              <p className="text-[10px] text-[#71717A]">เข้าพักเมื่อ {checkInDate}</p>
             </div>
           </div>
         )}
 
         {status === 'available' && (
-          <div className="rounded-xl border border-dashed border-[#ddc1ae] p-3 text-center">
-            <p className="text-xs text-[#897362]">ยังไม่มีผู้เช่า</p>
+          <div className="rounded-xl border border-dashed border-[#E4E4E7] p-3 text-center">
+            <p className="text-xs text-[#71717A]">ยังไม่มีผู้เช่า</p>
           </div>
         )}
 
         {status === 'maintenance' && (
-          <div className="bg-[#fff8f5] rounded-xl p-3">
+          <div className="bg-[#FFFAF7] rounded-xl p-3">
             <p className="text-xs text-[#dc2626] font-medium">อยู่ระหว่างซ่อมบำรุง</p>
           </div>
         )}
@@ -342,10 +342,10 @@ function RoomCard({
         {/* This month's meter status — only meaningful for occupied rooms */}
         {status === 'occupied' && (
           <div className="flex items-center gap-2 text-[11px]">
-            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${hasElectric ? 'bg-[#fff1e9] text-[#904d00]' : 'bg-[#f5f0ea] text-[#c9a990]'}`}>
+            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${hasElectric ? 'bg-[#FFE8D1] text-[#C2410C]' : 'bg-[#F4F4F5] text-[#A1A1AA]'}`}>
               <Zap size={11} /> {hasElectric ? `${readings!.electric} หน่วย` : '—'}
             </span>
-            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${hasWater ? 'bg-[#eef4ff] text-[#2563eb]' : 'bg-[#f5f0ea] text-[#c9a990]'}`}>
+            <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg ${hasWater ? 'bg-[#eef4ff] text-[#2563eb]' : 'bg-[#F4F4F5] text-[#A1A1AA]'}`}>
               <Droplet size={11} /> {hasWater ? `${readings!.water} หน่วย` : '—'}
             </span>
             {!meterReady && (
@@ -360,7 +360,7 @@ function RoomCard({
         {status === 'available' && (
           <Link
             href={`/admin/tenants/new?room=${room.id}`}
-            className="flex-1 py-2 rounded-lg bg-[#ff8c00] hover:bg-[#904d00] text-white text-xs font-semibold transition-colors text-center"
+            className="flex-1 py-2 rounded-lg bg-[#FF6A00] hover:bg-[#C2410C] text-white text-xs font-semibold transition-colors text-center"
           >
             มอบหมายผู้เช่า
           </Link>
@@ -377,7 +377,7 @@ function RoomCard({
 
         <Link
           href={`/admin/rooms/${room.id}/edit`}
-          className="w-8 h-8 rounded-lg border border-[#ddc1ae] flex items-center justify-center hover:border-[#904d00] hover:text-[#904d00] text-[#897362] transition-colors shrink-0 ml-auto"
+          className="w-8 h-8 rounded-lg border border-[#E4E4E7] flex items-center justify-center hover:border-[#C2410C] hover:text-[#C2410C] text-[#71717A] transition-colors shrink-0 ml-auto"
         >
           <Pencil size={13} />
         </Link>

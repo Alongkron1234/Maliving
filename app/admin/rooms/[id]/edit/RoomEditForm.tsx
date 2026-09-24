@@ -51,16 +51,16 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
   }
 
   const statusOptions: { value: RoomStatus; label: string; active: string; inactive: string }[] = [
-    { value: 'available',   label: 'Available',   active: 'bg-[#ff8c00] text-white shadow-sm', inactive: 'bg-[#fff1e9] text-[#897362] hover:bg-[#ffeadd] hover:text-[#564334]' },
-    { value: 'occupied',    label: 'Occupied',    active: 'bg-[#ffeadd] text-[#904d00] shadow-sm', inactive: 'bg-[#fff1e9] text-[#897362] hover:bg-[#ffeadd] hover:text-[#564334]' },
-    { value: 'maintenance', label: 'Maintenance', active: 'bg-[#ba1a1a] text-white shadow-sm', inactive: 'bg-[#fff1e9] text-[#897362] hover:bg-[#ffeadd] hover:text-[#564334]' },
+    { value: 'available',   label: 'Available',   active: 'bg-[#FF6A00] text-white shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
+    { value: 'occupied',    label: 'Occupied',    active: 'bg-[#FFD9B3] text-[#C2410C] shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
+    { value: 'maintenance', label: 'Maintenance', active: 'bg-[#DC2626] text-white shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
   ]
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-        <h2 className="text-base font-bold text-[#241912] mb-1">Room Specifications</h2>
-        <p className="text-sm text-[#897362] mb-7">Update the details for this room unit.</p>
+      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+        <h2 className="text-base font-bold text-[#18181B] mb-1">Room Specifications</h2>
+        <p className="text-sm text-[#71717A] mb-7">Update the details for this room unit.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Room Number">
@@ -84,7 +84,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
 
           <Field label="Monthly Rent (฿)">
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#897362] font-medium select-none">฿</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#71717A] font-medium select-none">฿</span>
               <input
                 name="rent_price"
                 type="number"
@@ -109,7 +109,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
                     title={locked ? 'Room still has active tenants — move them out first' : undefined}
                     className={`flex-1 rounded-lg text-xs font-semibold transition-colors ${
                       locked
-                        ? 'opacity-40 cursor-not-allowed bg-[#fff1e9] text-[#897362]'
+                        ? 'opacity-40 cursor-not-allowed bg-[#FFE8D1] text-[#71717A]'
                         : status === opt.value ? opt.active : opt.inactive
                     }`}
                   >
@@ -119,7 +119,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
               })}
             </div>
             {hasActiveTenants && (
-              <p className="text-xs text-[#897362] mt-2">
+              <p className="text-xs text-[#71717A] mt-2">
                 "Available" is locked — move out all tenants before changing status.
               </p>
             )}
@@ -127,21 +127,21 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
         </div>
 
         {error && (
-          <p className="text-sm text-[#ba1a1a] bg-[#ffdad6] px-4 py-2.5 rounded-lg mt-6">{error}</p>
+          <p className="text-sm text-[#DC2626] bg-[#FEE2E2] px-4 py-2.5 rounded-lg mt-6">{error}</p>
         )}
       </div>
 
       <div className="flex justify-end gap-3 mt-5">
         <Link
           href={`/admin/rooms/${room.id}`}
-          className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
+          className="px-6 py-2.5 bg-white border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
         >
           Cancel
         </Link>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? 'Saving…' : 'Save Changes'}
         </button>
@@ -153,13 +153,13 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#241912] mb-2">{label}</label>
+      <label className="block text-sm font-semibold text-[#18181B] mb-2">{label}</label>
       {children}
     </div>
   )
 }
 
 const inputClass =
-  'w-full h-[42px] px-3.5 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] ' +
-  'outline-none focus:border-[#ff8c00] focus:ring-2 focus:ring-[#ff8c00]/20 transition-all ' +
-  'placeholder:text-[#c9a990]'
+  'w-full h-[42px] px-3.5 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] ' +
+  'outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/20 transition-all ' +
+  'placeholder:text-[#A1A1AA]'

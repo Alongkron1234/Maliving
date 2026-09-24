@@ -54,9 +54,9 @@ export default function TenantNewForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-        <h2 className="text-base font-bold text-[#241912] mb-1">ข้อมูลผู้เช่า</h2>
-        <p className="text-sm text-[#897362] mb-7">
+      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+        <h2 className="text-base font-bold text-[#18181B] mb-1">ข้อมูลผู้เช่า</h2>
+        <p className="text-sm text-[#71717A] mb-7">
           กรอกรายละเอียดเพื่อลงทะเบียนผู้เช่าใหม่และมอบหมายห้องพัก
         </p>
 
@@ -103,7 +103,7 @@ export default function TenantNewForm({
 
           <Field label="ห้องพัก">
             {rooms.length === 0 ? (
-              <div className={`${inputClass} flex items-center text-[#897362] bg-[#fff1e9]`}>
+              <div className={`${inputClass} flex items-center text-[#71717A] bg-[#FFE8D1]`}>
                 ไม่มีห้องว่าง
               </div>
             ) : (
@@ -130,13 +130,13 @@ export default function TenantNewForm({
         </div>
 
         {error && (
-          <p className="text-sm text-[#ba1a1a] bg-[#ffdad6] px-4 py-2.5 rounded-lg mt-6">{error}</p>
+          <p className="text-sm text-[#DC2626] bg-[#FEE2E2] px-4 py-2.5 rounded-lg mt-6">{error}</p>
         )}
 
         {rooms.length === 0 && (
-          <p className="text-sm text-[#897362] bg-[#fff1e9] px-4 py-2.5 rounded-lg mt-6">
+          <p className="text-sm text-[#71717A] bg-[#FFE8D1] px-4 py-2.5 rounded-lg mt-6">
             ทุกห้องมีผู้เช่าหรืออยู่ระหว่างซ่อมบำรุง{' '}
-            <Link href="/admin/rooms/new" className="text-[#ff8c00] font-semibold hover:text-[#904d00]">
+            <Link href="/admin/rooms/new" className="text-[#FF6A00] font-semibold hover:text-[#C2410C]">
               เพิ่มห้องใหม่
             </Link>{' '}
             ก่อน
@@ -147,14 +147,14 @@ export default function TenantNewForm({
       <div className="flex justify-end gap-3 mt-5">
         <Link
           href="/admin/tenants"
-          className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
+          className="px-6 py-2.5 bg-white border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
         >
           ยกเลิก
         </Link>
         <button
           type="submit"
           disabled={loading || rooms.length === 0}
-          className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? 'กำลังเพิ่ม…' : 'เพิ่มผู้เช่า'}
         </button>
@@ -166,13 +166,13 @@ export default function TenantNewForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#241912] mb-2">{label}</label>
+      <label className="block text-sm font-semibold text-[#18181B] mb-2">{label}</label>
       {children}
     </div>
   )
 }
 
 const inputClass =
-  'w-full h-[42px] px-3.5 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] ' +
-  'outline-none focus:border-[#ff8c00] focus:ring-2 focus:ring-[#ff8c00]/20 transition-all ' +
-  'placeholder:text-[#c9a990]'
+  'w-full h-[42px] px-3.5 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] ' +
+  'outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/20 transition-all ' +
+  'placeholder:text-[#A1A1AA]'

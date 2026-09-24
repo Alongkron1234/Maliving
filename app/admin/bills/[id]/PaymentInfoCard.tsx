@@ -37,12 +37,12 @@ export default function PaymentInfoCard({
   })
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+    <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
       <div className="flex items-center gap-2 mb-1">
         <CheckCircle2 size={16} className="text-[#16a34a]" />
-        <h2 className="text-base font-bold text-[#241912]">Payment Information</h2>
+        <h2 className="text-base font-bold text-[#18181B]">Payment Information</h2>
       </div>
-      <p className="text-sm text-[#897362] mb-6">บิลนี้ชำระเรียบร้อยแล้ว</p>
+      <p className="text-sm text-[#71717A] mb-6">บิลนี้ชำระเรียบร้อยแล้ว</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5 mb-6">
         <InfoField label="จำนวนเงิน" value={`฿${amount.toLocaleString('th-TH')}`} />
@@ -53,7 +53,7 @@ export default function PaymentInfoCard({
       <button
         onClick={handleUndo}
         disabled={loading}
-        className="print:hidden inline-flex items-center gap-2 border border-[#ffdad6] text-[#93000a] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#ffdad6] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+        className="print:hidden inline-flex items-center gap-2 border border-[#FEE2E2] text-[#B91C1C] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#FEE2E2] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
       >
         <Undo2 size={15} />
         {loading ? 'กำลังยกเลิก…' : 'Undo Payment'}
@@ -65,8 +65,8 @@ export default function PaymentInfoCard({
 function InfoField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-semibold text-[#897362] uppercase tracking-wide mb-1.5">{label}</p>
-      <p className="text-sm font-semibold text-[#241912]">{value}</p>
+      <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-1.5">{label}</p>
+      <p className="text-sm font-semibold text-[#18181B]">{value}</p>
     </div>
   )
 }

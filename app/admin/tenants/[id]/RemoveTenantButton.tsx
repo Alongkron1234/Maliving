@@ -53,13 +53,13 @@ export default function RemoveTenantButton({
       <button
         onClick={handleRemove}
         disabled={loading}
-        className="inline-flex items-center gap-2 border border-[#ffdad6] text-[#93000a] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#ffdad6] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="inline-flex items-center gap-2 border border-[#FEE2E2] text-[#B91C1C] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#FEE2E2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <LogOut size={15} />
         {loading ? 'Moving out…' : 'Move Out'}
       </button>
       {error && (
-        <p className="text-xs text-[#ba1a1a] max-w-xs text-right">{error}</p>
+        <p className="text-xs text-[#DC2626] max-w-xs text-right">{error}</p>
       )}
     </div>
   )

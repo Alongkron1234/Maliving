@@ -80,8 +80,8 @@ export default async function BillsPage({
     <div className="p-8">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#241912]">Bills</h1>
-        <p className="text-sm text-[#897362] mt-1">
+        <h1 className="text-2xl font-bold text-[#18181B]">Bills</h1>
+        <p className="text-sm text-[#71717A] mt-1">
           Monthly bills for {MONTH_NAMES[month - 1]} {year}.
         </p>
       </div>
@@ -92,21 +92,21 @@ export default async function BillsPage({
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <BillMonthFilter currentMonth={month} currentYear={year} />
         <div className="flex items-center gap-2 text-sm">
-          <span className="px-3 py-1 bg-[#fff1e9] text-[#897362] rounded-full font-medium">
+          <span className="px-3 py-1 bg-[#FFE8D1] text-[#71717A] rounded-full font-medium">
             {rooms.length} ห้องทั้งหมด
           </span>
           {billedCount > 0 && (
-            <span className="px-3 py-1 bg-[#ffeadd] text-[#904d00] rounded-full font-medium">
+            <span className="px-3 py-1 bg-[#FFD9B3] text-[#C2410C] rounded-full font-medium">
               {billedCount} ออกบิลแล้ว
             </span>
           )}
           {readyCount > 0 && (
-            <span className="px-3 py-1 bg-[#fff3cd] text-[#8a6100] rounded-full font-medium">
+            <span className="px-3 py-1 bg-[#FEF3C7] text-[#B45309] rounded-full font-medium">
               {readyCount} พร้อมออกบิล
             </span>
           )}
           {missingCount > 0 && (
-            <span className="px-3 py-1 bg-[#ffdad6] text-[#93000a] rounded-full font-medium">
+            <span className="px-3 py-1 bg-[#FEE2E2] text-[#B91C1C] rounded-full font-medium">
               {missingCount} ข้อมูลมิเตอร์ไม่ครบ
             </span>
           )}

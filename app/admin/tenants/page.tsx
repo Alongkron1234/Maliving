@@ -28,8 +28,8 @@ export default async function TenantsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#241912] tracking-tight">ข้อมูลผู้เช่า</h1>
-          <p className="text-sm text-[#897362] mt-1.5">
+          <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">ข้อมูลผู้เช่า</h1>
+          <p className="text-sm text-[#71717A] mt-1.5">
             ผู้เช่าที่ยัง active อยู่ {tenants.length} คน จากทุกห้อง
           </p>
         </div>
@@ -37,7 +37,7 @@ export default async function TenantsPage() {
           <TenantsToolbar tenants={tenants} />
           <Link
             href="/admin/tenants/new"
-            className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
           >
             <Plus size={16} />
             เพิ่มผู้เช่า
@@ -57,15 +57,15 @@ export default async function TenantsPage() {
       </div>
 
       {tenants.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-[#ddc1ae] p-16 text-center">
-          <div className="w-14 h-14 rounded-full bg-[#fff1e9] flex items-center justify-center mx-auto mb-4">
-            <User size={28} className="text-[#897362]" />
+        <div className="rounded-2xl border-2 border-dashed border-[#E4E4E7] p-16 text-center">
+          <div className="w-14 h-14 rounded-full bg-[#FFE8D1] flex items-center justify-center mx-auto mb-4">
+            <User size={28} className="text-[#71717A]" />
           </div>
-          <p className="text-sm font-semibold text-[#564334]">ยังไม่มีผู้เช่า</p>
-          <p className="text-sm text-[#897362] mt-1">เพิ่มผู้เช่าคนแรกเพื่อเริ่มต้นใช้งาน</p>
+          <p className="text-sm font-semibold text-[#3F3F46]">ยังไม่มีผู้เช่า</p>
+          <p className="text-sm text-[#71717A] mt-1">เพิ่มผู้เช่าคนแรกเพื่อเริ่มต้นใช้งาน</p>
           <Link
             href="/admin/tenants/new"
-            className="inline-block mt-4 text-sm font-semibold text-[#ff8c00] hover:text-[#904d00] transition-colors"
+            className="inline-block mt-4 text-sm font-semibold text-[#FF6A00] hover:text-[#C2410C] transition-colors"
           >
             เพิ่มผู้เช่าคนแรก →
           </Link>
@@ -93,7 +93,7 @@ export default async function TenantsPage() {
 
                 {/* Avatar + room badge */}
                 <div className="relative z-10 flex items-start justify-between">
-                  <div className="w-10 h-10 rounded-full bg-[#ffeadd] flex items-center justify-center text-sm font-bold text-[#904d00] shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-[#FFD9B3] flex items-center justify-center text-sm font-bold text-[#C2410C] shrink-0">
                     {initials}
                   </div>
                   {room && (
@@ -105,28 +105,28 @@ export default async function TenantsPage() {
 
                 {/* Name + phone */}
                 <div className="relative z-10">
-                  <p className="text-base font-bold text-[#241912] truncate">{profile?.full_name ?? '—'}</p>
+                  <p className="text-base font-bold text-[#18181B] truncate">{profile?.full_name ?? '—'}</p>
                   <div className="flex items-center gap-1.5 mt-1">
-                    <Phone size={11} className={profile?.phone ? 'text-[#897362]' : 'text-[#dc2626]'} />
-                    <p className={`text-xs ${profile?.phone ? 'text-[#897362]' : 'text-[#dc2626] font-medium'}`}>
+                    <Phone size={11} className={profile?.phone ? 'text-[#71717A]' : 'text-[#dc2626]'} />
+                    <p className={`text-xs ${profile?.phone ? 'text-[#71717A]' : 'text-[#dc2626] font-medium'}`}>
                       {profile?.phone ?? 'ไม่มีเบอร์โทร'}
                     </p>
                   </div>
                 </div>
 
                 {/* Move-in */}
-                <div className="relative z-10 flex items-center gap-2 bg-[#fff8f5] rounded-xl p-3">
-                  <Calendar size={14} className="text-[#897362] shrink-0" />
+                <div className="relative z-10 flex items-center gap-2 bg-[#FFFAF7] rounded-xl p-3">
+                  <Calendar size={14} className="text-[#71717A] shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-[10px] text-[#897362] uppercase tracking-wide font-semibold">เข้าพักเมื่อ</p>
-                    <p className="text-xs font-semibold text-[#564334]">{moveIn}</p>
+                    <p className="text-[10px] text-[#71717A] uppercase tracking-wide font-semibold">เข้าพักเมื่อ</p>
+                    <p className="text-xs font-semibold text-[#3F3F46]">{moveIn}</p>
                   </div>
                 </div>
 
                 {/* Line bot status — real, set by the webhook on a successful phone match */}
                 <div className="relative z-10">
                   <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium ${
-                    lineConnectedAt ? 'bg-[#e3f5ea] text-[#1e7e46]' : 'bg-[#f5f0ea] text-[#897362]'
+                    lineConnectedAt ? 'bg-[#e3f5ea] text-[#1e7e46]' : 'bg-[#F4F4F5] text-[#71717A]'
                   }`}>
                     <MessageCircle size={11} /> {lineConnectedAt ? 'เชื่อม Line แล้ว' : 'ยังไม่เชื่อม Line'}
                   </span>
@@ -138,14 +138,14 @@ export default async function TenantsPage() {
           {/* Add card */}
           <Link
             href="/admin/tenants/new"
-            className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#ddc1ae] p-8 text-center hover:border-[#ff8c00] hover:bg-white transition-colors min-h-[200px]"
+            className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#E4E4E7] p-8 text-center hover:border-[#FF6A00] hover:bg-white transition-colors min-h-[200px]"
           >
-            <div className="w-12 h-12 rounded-full bg-[#fff1e9] flex items-center justify-center">
-              <Plus size={24} className="text-[#897362]" />
+            <div className="w-12 h-12 rounded-full bg-[#FFE8D1] flex items-center justify-center">
+              <Plus size={24} className="text-[#71717A]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-[#564334]">เพิ่มผู้เช่า</p>
-              <p className="text-xs text-[#897362] mt-0.5">ลงทะเบียนผู้เช่าใหม่</p>
+              <p className="text-sm font-semibold text-[#3F3F46]">เพิ่มผู้เช่า</p>
+              <p className="text-xs text-[#71717A] mt-0.5">ลงทะเบียนผู้เช่าใหม่</p>
             </div>
           </Link>
         </div>
@@ -157,7 +157,7 @@ export default async function TenantsPage() {
 const summaryTones = {
   info:    'bg-[#eef4ff] text-[#2563eb]',
   success: 'bg-[#e3f5ea] text-[#1e7e46]',
-  brand:   'bg-[#fff1e9] text-[#904d00]',
+  brand:   'bg-[#FFE8D1] text-[#C2410C]',
 } as const
 
 function SummaryPill({
@@ -177,8 +177,8 @@ function SummaryPill({
         <Icon size={16} strokeWidth={2.25} />
       </span>
       <div className="min-w-0">
-        <p className="text-lg font-bold text-[#241912] leading-tight">{value}</p>
-        <p className="text-[11px] text-[#897362] truncate">{label}</p>
+        <p className="text-lg font-bold text-[#18181B] leading-tight">{value}</p>
+        <p className="text-[11px] text-[#71717A] truncate">{label}</p>
       </div>
     </div>
   )

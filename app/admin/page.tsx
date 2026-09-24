@@ -121,8 +121,8 @@ export default async function AdminDashboard() {
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
         <div>
           <p className="text-xs font-semibold text-[#2563eb] uppercase tracking-widest mb-1">{thaiDate}</p>
-          <h1 className="text-3xl font-bold text-[#241912] tracking-tight">สวัสดีค่ะ 👋</h1>
-          <p className="text-sm text-[#897362] mt-1.5">ภาพรวมระบบจัดการหอพัก Maliving วันนี้</p>
+          <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">สวัสดีค่ะ 👋</h1>
+          <p className="text-sm text-[#71717A] mt-1.5">ภาพรวมระบบจัดการหอพัก Maliving วันนี้</p>
         </div>
 
         {/* Quick actions */}
@@ -143,7 +143,7 @@ export default async function AdminDashboard() {
           </Link>
           <Link
             href="/admin/rooms/new"
-            className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
           >
             <Plus size={16} />
             เพิ่มห้องพัก
@@ -214,13 +214,13 @@ export default async function AdminDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-8">
         {/* Floor plan status */}
         <div className="lg:col-span-2 bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] p-5">
-          <h2 className="text-sm font-bold text-[#241912] mb-1">ผังห้องพักและสถานะ</h2>
-          <p className="text-xs text-[#897362] mb-4">{totalRooms} ห้อง · {occupiedRooms} มีผู้เช่า · {totalRooms - occupiedRooms} ว่าง</p>
+          <h2 className="text-sm font-bold text-[#18181B] mb-1">ผังห้องพักและสถานะ</h2>
+          <p className="text-xs text-[#71717A] mb-4">{totalRooms} ห้อง · {occupiedRooms} มีผู้เช่า · {totalRooms - occupiedRooms} ว่าง</p>
 
           <div className="space-y-5">
             {floorGroups.map(([floorNum, floorRooms]) => (
               <div key={floorNum ?? 'none'}>
-                <p className="text-xs font-semibold text-[#897362] mb-2">
+                <p className="text-xs font-semibold text-[#71717A] mb-2">
                   {floorNum != null ? `ชั้น ${floorNum}` : 'ไม่ระบุชั้น'}
                 </p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-2.5">
@@ -236,7 +236,7 @@ export default async function AdminDashboard() {
                         ? 'border-[#bbf0d1] bg-[#e3f5ea]'
                         : room.status === 'maintenance'
                           ? 'border-[#fecaca] bg-[#fee2e2]'
-                          : 'border-black/5 bg-[#fff8f5]'
+                          : 'border-black/5 bg-[#FFFAF7]'
 
                     return (
                       <Link
@@ -245,18 +245,18 @@ export default async function AdminDashboard() {
                         className={`rounded-xl border p-2.5 transition-transform hover:-translate-y-0.5 ${tone}`}
                       >
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-bold text-[#241912]">ห้อง {room.room_number}</span>
+                          <span className="text-xs font-bold text-[#18181B]">ห้อง {room.room_number}</span>
                           {isOverdue && <AlertTriangle size={11} className="text-[#dc2626]" />}
                         </div>
                         {room.status === 'occupied' ? (
                           <>
-                            <p className="text-[11px] text-[#564334] truncate">{tenant?.profiles?.full_name ?? '—'}</p>
-                            <p className={`text-[10px] mt-0.5 font-medium ${isOverdue ? 'text-[#dc2626]' : isUnpaid ? 'text-[#ff8c00]' : bill ? 'text-[#1e7e46]' : 'text-[#897362]'}`}>
+                            <p className="text-[11px] text-[#3F3F46] truncate">{tenant?.profiles?.full_name ?? '—'}</p>
+                            <p className={`text-[10px] mt-0.5 font-medium ${isOverdue ? 'text-[#dc2626]' : isUnpaid ? 'text-[#FF6A00]' : bill ? 'text-[#1e7e46]' : 'text-[#71717A]'}`}>
                               {isOverdue ? `ค้าง ฿${bill!.total_amount.toLocaleString('th-TH')}` : isUnpaid ? 'รอชำระ' : bill ? 'ชำระแล้ว' : 'ยังไม่ออกบิล'}
                             </p>
                           </>
                         ) : (
-                          <p className="text-[11px] text-[#897362]">
+                          <p className="text-[11px] text-[#71717A]">
                             {room.status === 'maintenance' ? 'ซ่อมบำรุง' : 'ห้องว่าง'}
                           </p>
                         )}
@@ -271,7 +271,7 @@ export default async function AdminDashboard() {
 
         {/* Action items */}
         <div className="bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] p-5">
-          <h2 className="text-sm font-bold text-[#241912] mb-4">สิ่งที่ต้องดำเนินการ</h2>
+          <h2 className="text-sm font-bold text-[#18181B] mb-4">สิ่งที่ต้องดำเนินการ</h2>
 
           <div className="space-y-2.5">
             {missingMeterCount > 0 && (
@@ -306,7 +306,7 @@ export default async function AdminDashboard() {
               />
             ))}
             {missingMeterCount === 0 && overdueCount === 0 && (openMaintenance ?? []).length === 0 && (
-              <p className="text-sm text-[#897362] text-center py-8">ไม่มีรายการที่ต้องดำเนินการด่วน 🎉</p>
+              <p className="text-sm text-[#71717A] text-center py-8">ไม่มีรายการที่ต้องดำเนินการด่วน 🎉</p>
             )}
           </div>
         </div>
@@ -314,19 +314,19 @@ export default async function AdminDashboard() {
 
       {/* Revenue trend */}
       <div className="bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] p-5 mt-8">
-        <h2 className="text-sm font-bold text-[#241912] mb-1">แนวโน้มรายรับย้อนหลัง 5 เดือน</h2>
-        <p className="text-xs text-[#897362] mb-5">ยอดชำระที่รับแล้วจริง ตามวันที่ชำระ</p>
+        <h2 className="text-sm font-bold text-[#18181B] mb-1">แนวโน้มรายรับย้อนหลัง 5 เดือน</h2>
+        <p className="text-xs text-[#71717A] mb-5">ยอดชำระที่รับแล้วจริง ตามวันที่ชำระ</p>
         <div className="flex items-end justify-between gap-3 h-40">
           {revenueByMonth.map(m => (
             <div key={m.label} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-              <span className="text-[11px] font-semibold text-[#564334]">
+              <span className="text-[11px] font-semibold text-[#3F3F46]">
                 {m.total > 0 ? `฿${(m.total / 1000).toFixed(1)}k` : '—'}
               </span>
               <div
-                className="w-full rounded-t-lg bg-gradient-to-t from-[#ff8c00] to-[#ffb77d] min-h-[4px]"
+                className="w-full rounded-t-lg bg-gradient-to-t from-[#FF6A00] to-[#FDBA74] min-h-[4px]"
                 style={{ height: `${Math.max(4, (m.total / maxRevenue) * 100)}%` }}
               />
-              <span className="text-[11px] text-[#897362]">{m.label}</span>
+              <span className="text-[11px] text-[#71717A]">{m.label}</span>
             </div>
           ))}
         </div>
@@ -336,14 +336,14 @@ export default async function AdminDashboard() {
 }
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
-  return <h2 className="text-xs font-bold text-[#897362] uppercase tracking-widest mb-3">{children}</h2>
+  return <h2 className="text-xs font-bold text-[#71717A] uppercase tracking-widest mb-3">{children}</h2>
 }
 
 const toneStyles = {
-  brand:   { icon: 'bg-[#fff1e9] text-[#904d00]', value: 'text-[#241912]' },
-  info:    { icon: 'bg-[#eef4ff] text-[#2563eb]', value: 'text-[#241912]' },
-  success: { icon: 'bg-[#e3f5ea] text-[#1e7e46]', value: 'text-[#241912]' },
-  warning: { icon: 'bg-[#fff1e9] text-[#ff8c00]', value: 'text-[#ff8c00]' },
+  brand:   { icon: 'bg-[#FFE8D1] text-[#C2410C]', value: 'text-[#18181B]' },
+  info:    { icon: 'bg-[#eef4ff] text-[#2563eb]', value: 'text-[#18181B]' },
+  success: { icon: 'bg-[#e3f5ea] text-[#1e7e46]', value: 'text-[#18181B]' },
+  warning: { icon: 'bg-[#FFE8D1] text-[#FF6A00]', value: 'text-[#FF6A00]' },
   danger:  { icon: 'bg-[#fee2e2] text-[#dc2626]', value: 'text-[#dc2626]' },
 } as const
 
@@ -368,18 +368,18 @@ function StatCard({
           <Icon size={18} strokeWidth={2.25} />
         </span>
       </div>
-      <p className="text-xs font-semibold text-[#897362] uppercase tracking-wide">{label}</p>
+      <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wide">{label}</p>
       <p className={`text-[28px] leading-tight font-bold mt-1.5 ${styles.value}`}>
         {typeof value === 'number' ? value.toLocaleString('th-TH') : value}
       </p>
-      <p className="text-xs text-[#897362] mt-1.5 truncate">{note}</p>
+      <p className="text-xs text-[#71717A] mt-1.5 truncate">{note}</p>
     </div>
   )
 }
 
 const actionTones = {
-  brand:   'bg-[#fff1e9] text-[#904d00]',
-  warning: 'bg-[#fff1e9] text-[#ff8c00]',
+  brand:   'bg-[#FFE8D1] text-[#C2410C]',
+  warning: 'bg-[#FFE8D1] text-[#FF6A00]',
   danger:  'bg-[#fee2e2] text-[#dc2626]',
 } as const
 
@@ -401,16 +401,16 @@ function ActionItem({
   return (
     <Link
       href={href}
-      className="flex items-start gap-3 p-3 rounded-xl border border-black/5 hover:border-[#ff8c00]/30 hover:bg-[#fff8f5] transition-colors group"
+      className="flex items-start gap-3 p-3 rounded-xl border border-black/5 hover:border-[#FF6A00]/30 hover:bg-[#FFFAF7] transition-colors group"
     >
       <span className={`inline-flex items-center justify-center w-8 h-8 rounded-lg shrink-0 ${actionTones[tone]}`}>
         <Icon size={14} strokeWidth={2.25} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-[#241912] truncate">{title}</p>
-        <p className="text-[11px] text-[#897362] mt-0.5 truncate">{subtitle}</p>
+        <p className="text-xs font-semibold text-[#18181B] truncate">{title}</p>
+        <p className="text-[11px] text-[#71717A] mt-0.5 truncate">{subtitle}</p>
       </div>
-      <span className="flex items-center gap-1 text-[11px] font-semibold text-[#ff8c00] shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <span className="flex items-center gap-1 text-[11px] font-semibold text-[#FF6A00] shrink-0 mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
         {cta} <ArrowRight size={11} />
       </span>
     </Link>

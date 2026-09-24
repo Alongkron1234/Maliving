@@ -25,15 +25,15 @@ export default async function NewTenantPage({
     <div className="p-8">
       <Link
         href="/admin/tenants"
-        className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
         Back to Tenants
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#241912]">Add New Tenant</h1>
-        <p className="text-sm text-[#897362] mt-1">
+        <h1 className="text-2xl font-bold text-[#18181B]">Add New Tenant</h1>
+        <p className="text-sm text-[#71717A] mt-1">
           Register a new tenant and assign them to an available room.
         </p>
       </div>

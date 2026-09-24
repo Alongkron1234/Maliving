@@ -18,12 +18,12 @@ export default async function AnnouncementsPage() {
     <div className="p-8">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#241912]">Announcements</h1>
-          <p className="text-sm text-[#897362] mt-1">Post updates for all tenants to see.</p>
+          <h1 className="text-2xl font-bold text-[#18181B]">Announcements</h1>
+          <p className="text-sm text-[#71717A] mt-1">Post updates for all tenants to see.</p>
         </div>
         <Link
           href="/admin/announcements/new"
-          className="flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+          className="flex items-center justify-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
         >
           <Plus size={16} />
           New Announcement
@@ -31,14 +31,14 @@ export default async function AnnouncementsPage() {
       </div>
 
       {announcements.length === 0 ? (
-        <div className="rounded-2xl border-2 border-dashed border-[#ddc1ae] p-16 text-center">
-          <div className="w-14 h-14 rounded-full bg-[#fff1e9] flex items-center justify-center mx-auto mb-4">
-            <Megaphone size={28} className="text-[#897362]" />
+        <div className="rounded-2xl border-2 border-dashed border-[#E4E4E7] p-16 text-center">
+          <div className="w-14 h-14 rounded-full bg-[#FFE8D1] flex items-center justify-center mx-auto mb-4">
+            <Megaphone size={28} className="text-[#71717A]" />
           </div>
-          <p className="text-sm font-semibold text-[#564334]">ยังไม่มีประกาศ</p>
+          <p className="text-sm font-semibold text-[#3F3F46]">ยังไม่มีประกาศ</p>
           <Link
             href="/admin/announcements/new"
-            className="inline-block mt-4 text-sm font-semibold text-[#ff8c00] hover:text-[#904d00] transition-colors"
+            className="inline-block mt-4 text-sm font-semibold text-[#FF6A00] hover:text-[#C2410C] transition-colors"
           >
             สร้างประกาศแรก →
           </Link>

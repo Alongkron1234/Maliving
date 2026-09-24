@@ -60,8 +60,8 @@ export default async function PaymentsPage({
   return (
     <div className="p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#241912]">Payments</h1>
-        <p className="text-sm text-[#897362] mt-1">
+        <h1 className="text-2xl font-bold text-[#18181B]">Payments</h1>
+        <p className="text-sm text-[#71717A] mt-1">
           {showAll
             ? `${payments.length} รายการชำระเงินทั้งหมด`
             : `${payments.length} รายการชำระเงินเดือน ${MONTH_NAMES[month - 1]} ${year}`}

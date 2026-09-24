@@ -20,7 +20,7 @@ export default function MeterMonthFilter({
       <select
         defaultValue={currentMonth}
         onChange={e => router.replace(`/admin/meters?month=${e.target.value}&year=${currentYear}`)}
-        className="h-[36px] px-3 bg-white border border-[#ddc1ae] rounded-lg text-sm text-[#241912] outline-none focus:border-[#ff8c00] transition-all cursor-pointer"
+        className="h-[36px] px-3 bg-white border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] outline-none focus:border-[#FF6A00] transition-all cursor-pointer"
       >
         {MONTHS.map((name, i) => (
           <option key={i + 1} value={i + 1}>{name}</option>
@@ -29,7 +29,7 @@ export default function MeterMonthFilter({
       <select
         defaultValue={currentYear}
         onChange={e => router.replace(`/admin/meters?month=${currentMonth}&year=${e.target.value}`)}
-        className="h-[36px] px-3 bg-white border border-[#ddc1ae] rounded-lg text-sm text-[#241912] outline-none focus:border-[#ff8c00] transition-all cursor-pointer"
+        className="h-[36px] px-3 bg-white border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] outline-none focus:border-[#FF6A00] transition-all cursor-pointer"
       >
         {years.map(y => (
           <option key={y} value={y}>{y}</option>

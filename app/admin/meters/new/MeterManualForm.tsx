@@ -172,9 +172,9 @@ export default function MeterManualForm({
 
   if (rooms.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
-        <p className="text-sm text-[#897362]">ไม่มีห้องที่มีผู้เช่า — เพิ่มผู้เช่าก่อน</p>
-        <Link href="/admin/tenants/new" className="inline-block mt-4 text-sm font-semibold text-[#ff8c00] hover:text-[#904d00] transition-colors">
+      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
+        <p className="text-sm text-[#71717A]">ไม่มีห้องที่มีผู้เช่า — เพิ่มผู้เช่าก่อน</p>
+        <Link href="/admin/tenants/new" className="inline-block mt-4 text-sm font-semibold text-[#FF6A00] hover:text-[#C2410C] transition-colors">
           เพิ่มผู้เช่า →
         </Link>
       </div>
@@ -188,9 +188,9 @@ export default function MeterManualForm({
 
         {/* ── LEFT: form card + buttons ── */}
         <div className="space-y-5">
-          <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-            <h2 className="text-base font-bold text-[#241912] mb-1">รายละเอียดมิเตอร์</h2>
-            <p className="text-sm text-[#897362] mb-5">
+          <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+            <h2 className="text-base font-bold text-[#18181B] mb-1">รายละเอียดมิเตอร์</h2>
+            <p className="text-sm text-[#71717A] mb-5">
               {isEditingConfirmed
                 ? 'ห้องนี้บันทึกมิเตอร์เดือนนี้ไว้แล้ว — แก้ไขแล้วกด Save Reading เพื่ออัปเดต'
                 : 'เลือกห้องแล้วกรอกเลขมิเตอร์ปัจจุบัน'}
@@ -198,12 +198,12 @@ export default function MeterManualForm({
 
             {(eField.origin === 'draft' || wField.origin === 'draft') && ocrImageUrl && (
               <div className="mb-7">
-                <p className="text-xs font-semibold text-[#897362] uppercase tracking-wide mb-2">รูปมิเตอร์ที่ใช้อ่านค่า (Groq Vision)</p>
+                <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-2">รูปมิเตอร์ที่ใช้อ่านค่า (Groq Vision)</p>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={ocrImageUrl}
                   alt="รูปมิเตอร์ที่อัปโหลด"
-                  className="w-full max-w-xs rounded-xl border border-[#ddc1ae] object-cover"
+                  className="w-full max-w-xs rounded-xl border border-[#E4E4E7] object-cover"
                 />
               </div>
             )}
@@ -240,13 +240,13 @@ export default function MeterManualForm({
               </Field>
             </div>
 
-            <hr className="my-7 border-[#f0e0d4]" />
+            <hr className="my-7 border-[#F4F4F5]" />
 
             {/* Electric */}
             <div className="mb-6">
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-base">⚡</span>
-                <h3 className="text-sm font-bold text-[#241912]">ไฟฟ้า (Electricity)</h3>
+                <h3 className="text-sm font-bold text-[#18181B]">ไฟฟ้า (Electricity)</h3>
                 {eField.origin === 'draft' && <OcrHint />}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
@@ -271,7 +271,7 @@ export default function MeterManualForm({
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-base">💧</span>
-                <h3 className="text-sm font-bold text-[#241912]">น้ำ (Water)</h3>
+                <h3 className="text-sm font-bold text-[#18181B]">น้ำ (Water)</h3>
                 {wField.origin === 'draft' && <OcrHint />}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-4">
@@ -293,7 +293,7 @@ export default function MeterManualForm({
             </div>
 
             {error && (
-              <p className="text-sm text-[#ba1a1a] bg-[#ffdad6] px-4 py-2.5 rounded-lg mt-6">{error}</p>
+              <p className="text-sm text-[#DC2626] bg-[#FEE2E2] px-4 py-2.5 rounded-lg mt-6">{error}</p>
             )}
           </div>
 
@@ -301,14 +301,14 @@ export default function MeterManualForm({
           <div className="flex justify-end gap-3">
             <Link
               href="/admin/meters"
-              className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
+              className="px-6 py-2.5 bg-white border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
             >
               ยกเลิก
             </Link>
             <button
               type="submit"
               disabled={loading}
-              className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {loading ? 'กำลังบันทึก…' : 'บันทึกมิเตอร์'}
             </button>
@@ -317,53 +317,53 @@ export default function MeterManualForm({
 
         {/* ── RIGHT: sticky preview ── */}
         <div className="sticky top-6">
-          <div className="bg-white rounded-2xl border border-[#ddc1ae] p-6 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-            <h2 className="text-sm font-bold text-[#241912] mb-0.5">สรุปก่อนบันทึก</h2>
-            <p className="text-xs text-[#897362] mb-5">
+          <div className="bg-white rounded-2xl border border-[#E4E4E7] p-6 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+            <h2 className="text-sm font-bold text-[#18181B] mb-0.5">สรุปก่อนบันทึก</h2>
+            <p className="text-xs text-[#71717A] mb-5">
               ห้อง {selectedRoom?.room_number} · {MONTHS[month - 1]?.label} {year}
             </p>
 
             {!hasAny ? (
               /* Placeholder */
-              <div className="rounded-xl border border-dashed border-[#ddc1ae] px-4 py-8 text-center">
-                <p className="text-xs text-[#c9a990]">กรอกเลขมิเตอร์หลัง</p>
-                <p className="text-xs text-[#c9a990]">เพื่อดูสรุปที่นี่</p>
+              <div className="rounded-xl border border-dashed border-[#E4E4E7] px-4 py-8 text-center">
+                <p className="text-xs text-[#A1A1AA]">กรอกเลขมิเตอร์หลัง</p>
+                <p className="text-xs text-[#A1A1AA]">เพื่อดูสรุปที่นี่</p>
               </div>
             ) : (
               <>
                 {/* Electric row */}
-                <div className="rounded-xl bg-[#fff8f5] px-4 py-3.5 mb-2">
+                <div className="rounded-xl bg-[#FFFAF7] px-4 py-3.5 mb-2">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-[#897362]">⚡ ไฟฟ้า</span>
+                    <span className="text-xs font-semibold text-[#71717A]">⚡ ไฟฟ้า</span>
                     {eUnits != null && (
-                      <span className="text-lg font-bold text-[#904d00]">{eUnits} หน่วย</span>
+                      <span className="text-lg font-bold text-[#C2410C]">{eUnits} หน่วย</span>
                     )}
                   </div>
                   {eUnits != null && (
-                    <div className="text-xs text-[#564334]">
+                    <div className="text-xs text-[#3F3F46]">
                       {ePrevInt} → {eCurrInt}
                     </div>
                   )}
                   {eAmount != null && (
-                    <div className="text-xs text-[#904d00] mt-1 font-medium">
+                    <div className="text-xs text-[#C2410C] mt-1 font-medium">
                       {eUnits} × ฿{eRate} = <span className="font-bold">฿{eAmount.toLocaleString('th-TH')}</span>
                     </div>
                   )}
                   {eUnits != null && eRate === 0 && (
-                    <div className="text-xs text-[#c9a990] mt-1">— ยังไม่ได้ตั้งค่าอัตรา</div>
+                    <div className="text-xs text-[#A1A1AA] mt-1">— ยังไม่ได้ตั้งค่าอัตรา</div>
                   )}
                 </div>
 
                 {/* Water row */}
-                <div className="rounded-xl bg-[#eff6ff] px-4 py-3.5 mb-5">
+                <div className="rounded-xl bg-[#EEF4FF] px-4 py-3.5 mb-5">
                   <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs font-semibold text-[#897362]">💧 น้ำ</span>
+                    <span className="text-xs font-semibold text-[#71717A]">💧 น้ำ</span>
                     {wUnits != null && (
                       <span className="text-lg font-bold text-[#3b82f6]">{wUnits} หน่วย</span>
                     )}
                   </div>
                   {wUnits != null && (
-                    <div className="text-xs text-[#564334]">
+                    <div className="text-xs text-[#3F3F46]">
                       {wPrevInt} → {wCurrInt}
                     </div>
                   )}
@@ -373,28 +373,28 @@ export default function MeterManualForm({
                     </div>
                   )}
                   {wUnits != null && wRate === 0 && (
-                    <div className="text-xs text-[#c9a990] mt-1">— ยังไม่ได้ตั้งค่าอัตรา</div>
+                    <div className="text-xs text-[#A1A1AA] mt-1">— ยังไม่ได้ตั้งค่าอัตรา</div>
                   )}
                 </div>
 
                 {/* Total breakdown */}
                 {showTotal ? (
-                  <div className="space-y-2 border-t border-[#f0e0d4] pt-4">
+                  <div className="space-y-2 border-t border-[#F4F4F5] pt-4">
                     <Row label={`⚡ ค่าไฟ`} value={`฿${eAmount!.toLocaleString('th-TH')}`} />
                     <Row label={`💧 ค่าน้ำ`} value={`฿${wAmount!.toLocaleString('th-TH')}`} />
                     <Row label="🏠 ค่าเช่า" value={`฿${rent.toLocaleString('th-TH')}`} />
-                    <div className="flex items-center justify-between pt-2 border-t border-[#ddc1ae]">
-                      <span className="text-sm font-bold text-[#241912]">รวม (ประมาณ)</span>
-                      <span className="text-base font-bold text-[#ff8c00]">฿{total.toLocaleString('th-TH')}</span>
+                    <div className="flex items-center justify-between pt-2 border-t border-[#E4E4E7]">
+                      <span className="text-sm font-bold text-[#18181B]">รวม (ประมาณ)</span>
+                      <span className="text-base font-bold text-[#FF6A00]">฿{total.toLocaleString('th-TH')}</span>
                     </div>
-                    <p className="text-[10px] text-[#c9a990]">* ยอดจริงคำนวณตอนออกบิล</p>
+                    <p className="text-[10px] text-[#A1A1AA]">* ยอดจริงคำนวณตอนออกบิล</p>
                   </div>
                 ) : (
                   /* Rates not set yet */
                   !hasRates && (
                     <Link
                       href="/admin/meters"
-                      className="flex items-center gap-1.5 text-xs text-[#897362] hover:text-[#564334] transition-colors"
+                      className="flex items-center gap-1.5 text-xs text-[#71717A] hover:text-[#3F3F46] transition-colors"
                     >
                       <Settings2 size={12} />
                       ตั้งค่าอัตราที่หน้า Meter Readings
@@ -412,7 +412,7 @@ export default function MeterManualForm({
 
 function OcrHint() {
   return (
-    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fff3cd] text-[#8a6100]">
+    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FEF3C7] text-[#B45309]">
       <Sparkles size={10} />
       จาก OCR — ตรวจสอบก่อนบันทึก
     </span>
@@ -422,7 +422,7 @@ function OcrHint() {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#241912] mb-2">{label}</label>
+      <label className="block text-sm font-semibold text-[#18181B] mb-2">{label}</label>
       {children}
     </div>
   )
@@ -430,7 +430,7 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center justify-between text-sm text-[#564334]">
+    <div className="flex items-center justify-between text-sm text-[#3F3F46]">
       <span>{label}</span>
       <span className="font-semibold">{value}</span>
     </div>
@@ -438,6 +438,6 @@ function Row({ label, value }: { label: string; value: string }) {
 }
 
 const inputClass =
-  'w-full h-[42px] px-3.5 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] ' +
-  'outline-none focus:border-[#ff8c00] focus:ring-2 focus:ring-[#ff8c00]/20 transition-all ' +
-  'placeholder:text-[#c9a990]'
+  'w-full h-[42px] px-3.5 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] ' +
+  'outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/20 transition-all ' +
+  'placeholder:text-[#A1A1AA]'

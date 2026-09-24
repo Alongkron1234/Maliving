@@ -95,8 +95,8 @@ export default async function MetersPage({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-[#241912] tracking-tight">จดมิเตอร์น้ำ-ไฟ</h1>
-          <p className="text-sm text-[#897362] mt-1.5">
+          <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">จดมิเตอร์น้ำ-ไฟ</h1>
+          <p className="text-sm text-[#71717A] mt-1.5">
             ข้อมูลมิเตอร์ประจำเดือน{MONTH_NAMES[month - 1]} {year}
           </p>
         </div>
@@ -110,7 +110,7 @@ export default async function MetersPage({
           </Link>
           <Link
             href={`/admin/meters/new?month=${month}&year=${year}`}
-            className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
           >
             <Plus size={15} />
             กรอกเอง
@@ -169,8 +169,8 @@ function SummaryPill({
         <Icon size={16} strokeWidth={2.25} />
       </span>
       <div className="min-w-0">
-        <p className="text-lg font-bold text-[#241912] leading-tight">{value}</p>
-        <p className="text-[11px] text-[#897362] truncate">{label}</p>
+        <p className="text-lg font-bold text-[#18181B] leading-tight">{value}</p>
+        <p className="text-[11px] text-[#71717A] truncate">{label}</p>
       </div>
     </div>
   )
