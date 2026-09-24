@@ -68,3 +68,21 @@ body {
 .animate-admin-page-in {
   animation: admin-page-in 0.28s ease-out both;
 }
+
+/* Blanket "soften everything" pass for the admin panel — a lot of the stiffness
+   complaint came from buttons/rows/badges/inputs that had no transition at all,
+   so any color or shadow change snapped instantly. Scoped to .admin-shell so it
+   never touches the tenant portal or landing page. Deliberately excludes
+   `transform` here — elements that need a hover-lift already opt in with
+   Tailwind's `transition-all`/`transition-transform`, and animating transform
+   on every button/row/input by default caused odd flicker on unrelated re-renders. */
+.admin-shell button,
+.admin-shell a,
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea,
+.admin-shell tr {
+  transition-property: background-color, border-color, color, box-shadow, opacity;
+  transition-duration: 180ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}

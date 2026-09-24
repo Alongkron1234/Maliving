@@ -1,6 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
+import { Inbox } from 'lucide-react'
 
 type PaymentRow = {
   id: string
@@ -21,21 +22,25 @@ const methodConfig: Record<string, { label: string; className: string }> = {
   qr: { label: 'QR', className: 'bg-[#f0fdf4] text-[#16a34a]' },
 }
 
-const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const monthNames = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
 
 export default function PaymentsTable({ payments }: { payments: PaymentRow[] }) {
   const router = useRouter()
 
   if (payments.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
-        <p className="text-sm text-[#71717A]">ยังไม่มีรายการชำระเงิน</p>
+      <div className="bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] p-14 text-center">
+        <div className="w-14 h-14 rounded-full bg-[#FFE8D1] flex items-center justify-center mx-auto mb-4">
+          <Inbox size={24} className="text-[#C2410C]" />
+        </div>
+        <p className="text-sm font-semibold text-[#3F3F46]">ยังไม่มีรายการชำระเงิน</p>
+        <p className="text-xs text-[#71717A] mt-1">รายการจะขึ้นที่นี่หลังบันทึกการชำระเงินในหน้าใบบิล</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E4E4E7] shadow-[0_0_15px_rgba(144,77,0,0.06)] overflow-hidden">
+    <div className="bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">
           <thead>
@@ -51,17 +56,17 @@ export default function PaymentsTable({ payments }: { payments: PaymentRow[] }) 
           <tbody className="divide-y divide-[#F4F4F5]">
             {payments.map(p => {
               const method = methodConfig[p.method] ?? { label: p.method, className: 'bg-[#F4F4F5] text-[#71717A]' }
-              const paidAt = new Date(p.paid_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+              const paidAt = new Date(p.paid_at).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' })
 
               return (
                 <tr
                   key={p.id}
                   onClick={() => router.push(`/admin/bills/${p.bill_id}`)}
-                  className="cursor-pointer hover:bg-[#FFFAF7] transition-colors"
+                  className="cursor-pointer hover:bg-[#FFFAF7] hover:shadow-[inset_3px_0_0_#FF6A00]"
                 >
                   <td className="px-5 py-3.5 font-semibold text-[#18181B]">{p.tenant_name}</td>
                   <td className="px-4 py-3.5 text-[#3F3F46]">
-                    Room {p.room_number}{p.floor != null ? ` (F${p.floor})` : ''}
+                    ห้อง {p.room_number}{p.floor != null ? ` (ชั้น ${p.floor})` : ''}
                   </td>
                   <td className="px-4 py-3.5 text-[#3F3F46]">
                     {monthNames[p.billing_month - 1]} {p.billing_year}

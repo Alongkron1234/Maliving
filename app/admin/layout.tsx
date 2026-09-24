@@ -14,7 +14,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FFFAF7]">
+    <div className="admin-shell flex flex-col min-h-screen bg-[#FFFAF7]">
       <AdminSidebar />
       {/* lg:pl matches the sidebar's collapsed rail width — the sidebar itself is
           position:fixed so it never pushes this layout; it overlays on hover instead. */}

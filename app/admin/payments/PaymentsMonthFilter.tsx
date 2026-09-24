@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const MONTHS = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
 
 export default function PaymentsMonthFilter({
   currentMonth,
@@ -23,7 +23,7 @@ export default function PaymentsMonthFilter({
         onClick={() => router.replace('/admin/payments?view=all')}
         className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
           showAll
-            ? 'bg-[#FF6A00] text-white'
+            ? 'bg-[#FF6A00] text-white shadow-sm shadow-[#FF6A00]/30'
             : 'bg-white border border-[#E4E4E7] text-[#3F3F46] hover:border-[#FF6A00] hover:text-[#C2410C]'
         }`}
       >

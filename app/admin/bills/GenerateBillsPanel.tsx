@@ -54,7 +54,7 @@ export default function GenerateBillsPanel({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#E4E4E7] px-5 py-4 shadow-[0_0_15px_rgba(144,77,0,0.06)] mb-6">
+    <div className="bg-white rounded-2xl border border-black/5 px-5 py-4 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] mb-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-2">
           <Zap size={14} className="text-[#71717A]" />
@@ -94,9 +94,9 @@ export default function GenerateBillsPanel({
           <button
             onClick={handleGenerate}
             disabled={loading || !eRate || !wRate}
-            className="flex items-center gap-1.5 h-[34px] px-4 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 h-[34px] px-4 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-xs font-semibold rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
           >
-            {loading ? 'กำลังออกบิล…' : 'Generate Bills'}
+            {loading ? 'กำลังออกบิล…' : 'ออกบิลตอนนี้'}
           </button>
         </div>
       </div>
@@ -117,7 +117,7 @@ export default function GenerateBillsPanel({
                 <div key={i} className="flex items-center gap-2 bg-[#FEF3C7] rounded-lg px-3 py-2">
                   <AlertCircle size={13} className="text-[#B45309] shrink-0" />
                   <span className="text-xs font-medium text-[#B45309]">
-                    Room {err.room}: {err.reason}
+                    ห้อง {err.room}: {err.reason}
                   </span>
                 </div>
               ))}

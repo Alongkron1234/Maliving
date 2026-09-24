@@ -60,7 +60,7 @@ export default function BillsTable({
 
   if (rooms.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
+      <div className="bg-white rounded-2xl border border-black/5 p-12 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] text-center">
         <p className="text-sm text-[#71717A]">ยังไม่มีห้องพัก</p>
       </div>
     )
@@ -93,7 +93,7 @@ export default function BillsTable({
       </div>
 
       {view === 'table' ? (
-        <div className="bg-white rounded-2xl border border-[#E4E4E7] shadow-[0_0_15px_rgba(144,77,0,0.06)] overflow-hidden">
+        <div className="bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm min-w-[760px]">
               <thead>
@@ -124,7 +124,7 @@ export default function BillsTable({
                     >
                       <td className="px-5 py-3.5">
                         <span className="font-semibold text-[#18181B]">
-                          Room {room.room_number}{room.floor != null ? ` (F${room.floor})` : ''}
+                          ห้อง {room.room_number}{room.floor != null ? ` (ชั้น ${room.floor})` : ''}
                         </span>
                       </td>
                       <td className="px-4 py-3.5 text-[#3F3F46]">
@@ -185,7 +185,7 @@ export default function BillsTable({
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <p className="text-sm font-bold text-[#18181B]">
-                      Room {room.room_number}{room.floor != null ? ` (F${room.floor})` : ''}
+                      ห้อง {room.room_number}{room.floor != null ? ` (ชั้น ${room.floor})` : ''}
                     </p>
                     <p className="text-xs text-[#71717A] mt-0.5">
                       {tenant?.full_name ?? 'ไม่มีผู้เช่า'}

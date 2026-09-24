@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Wallet, Receipt, TrendingUp, type LucideIcon } from 'lucide-react'
 import PaymentsTable from './PaymentsTable'
 import PaymentsMonthFilter from './PaymentsMonthFilter'
 
@@ -18,7 +19,7 @@ type PaymentRaw = {
   } | null
 }
 
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const MONTH_NAMES = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
 
 export default async function PaymentsPage({
   searchParams,
@@ -57,15 +58,24 @@ export default async function PaymentsPage({
     billing_year: p.bills?.billing_year ?? 0,
   }))
 
+  const total = payments.reduce((sum, p) => sum + p.amount, 0)
+  const avg = payments.length > 0 ? Math.round(total / payments.length) : 0
+
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-7xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#18181B]">Payments</h1>
-        <p className="text-sm text-[#71717A] mt-1">
+        <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">ประวัติการชำระเงิน</h1>
+        <p className="text-sm text-[#71717A] mt-1.5">
           {showAll
             ? `${payments.length} รายการชำระเงินทั้งหมด`
-            : `${payments.length} รายการชำระเงินเดือน ${MONTH_NAMES[month - 1]} ${year}`}
+            : `${payments.length} รายการชำระเงินเดือน${MONTH_NAMES[month - 1]} ${year}`}
         </p>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        <SummaryPill icon={Wallet} tone="success" label="ยอดรับรวม" value={`฿${total.toLocaleString('th-TH')}`} />
+        <SummaryPill icon={Receipt} tone="info" label="จำนวนรายการ" value={payments.length} />
+        <SummaryPill icon={TrendingUp} tone="brand" label="เฉลี่ยต่อรายการ" value={`฿${avg.toLocaleString('th-TH')}`} />
       </div>
 
       <div className="mb-6">
@@ -73,6 +83,36 @@ export default async function PaymentsPage({
       </div>
 
       <PaymentsTable payments={payments} />
+    </div>
+  )
+}
+
+const summaryTones = {
+  brand:   'bg-[#FFE8D1] text-[#C2410C]',
+  info:    'bg-[#EEF4FF] text-[#2563EB]',
+  success: 'bg-[#e3f5ea] text-[#1e7e46]',
+} as const
+
+function SummaryPill({
+  icon: Icon,
+  tone,
+  label,
+  value,
+}: {
+  icon: LucideIcon
+  tone: keyof typeof summaryTones
+  label: string
+  value: number | string
+}) {
+  return (
+    <div className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04)] hover:shadow-[0_4px_16px_rgba(36,25,18,0.08)] transition-shadow">
+      <span className={`inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0 ${summaryTones[tone]}`}>
+        <Icon size={16} strokeWidth={2.25} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-lg font-bold text-[#18181B] leading-tight truncate">{value}</p>
+        <p className="text-[11px] text-[#71717A] truncate">{label}</p>
+      </div>
     </div>
   )
 }
