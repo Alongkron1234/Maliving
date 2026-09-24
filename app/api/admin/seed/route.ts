@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { requireAdmin } from '@/lib/supabase/requireAdmin'
 
 // One-time seed endpoint — creates 2 rooms + 2 tenants + last month's meter readings
 // Hit GET /api/admin/seed once, then delete this file
 export async function GET() {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const supabase = createAdminClient()
   const now = new Date()
   const prevMonth = now.getMonth() === 0 ? 12 : now.getMonth()       // Jan → Dec

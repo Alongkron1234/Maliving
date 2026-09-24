@@ -21,12 +21,12 @@ export async function list_payments(args: ToolArgs, ctx: ExecutorCtx) {
 }
 
 export async function record_payment(args: ToolArgs, ctx: ExecutorCtx) {
-  return internalFetch(ctx.origin, '/api/admin/record-payment', {
+  return internalFetch(ctx.origin, '/api/admin/record-payment', ctx.cookie, {
     method: 'POST',
     body: JSON.stringify({ bill_id: args.bill_id, method: args.method, paid_at: args.paid_at ?? null }),
   })
 }
 
 export async function undo_payment(args: ToolArgs, ctx: ExecutorCtx) {
-  return internalFetch(ctx.origin, `/api/admin/record-payment?bill_id=${encodeURIComponent(args.bill_id)}`, { method: 'DELETE' })
+  return internalFetch(ctx.origin, `/api/admin/record-payment?bill_id=${encodeURIComponent(args.bill_id)}`, ctx.cookie, { method: 'DELETE' })
 }

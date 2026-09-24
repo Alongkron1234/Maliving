@@ -1,9 +1,13 @@
 import { createAdminClient } from '@/lib/supabase/admin'
+import { requireAdmin } from '@/lib/supabase/requireAdmin'
 import { NextResponse } from 'next/server'
 
 const VALID_METHODS = ['cash', 'transfer', 'qr']
 
 export async function POST(req: Request) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const { bill_id, method, paid_at } = await req.json()
 
   if (!bill_id || !method) {
@@ -74,6 +78,9 @@ export async function POST(req: Request) {
 
 // DELETE /api/admin/record-payment?bill_id=<bill_id>
 export async function DELETE(req: Request) {
+  const unauthorized = await requireAdmin()
+  if (unauthorized) return unauthorized
+
   const { searchParams } = new URL(req.url)
   const bill_id = searchParams.get('bill_id')
   if (!bill_id) return NextResponse.json({ error: 'Missing bill_id' }, { status: 400 })

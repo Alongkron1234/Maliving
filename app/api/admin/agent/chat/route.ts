@@ -15,9 +15,10 @@ export async function POST(req: Request) {
   }
 
   const origin = new URL(req.url).origin
+  const cookie = req.headers.get('cookie') ?? ''
 
   try {
-    const result = await runAgentLoop(messages, { origin, supabase })
+    const result = await runAgentLoop(messages, { origin, supabase, cookie })
     return NextResponse.json(result)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)

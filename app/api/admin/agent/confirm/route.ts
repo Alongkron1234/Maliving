@@ -27,7 +27,8 @@ export async function POST(req: Request) {
   }
 
   const origin = new URL(req.url).origin
-  const ctx = { origin, supabase }
+  const cookie = req.headers.get('cookie') ?? ''
+  const ctx = { origin, supabase, cookie }
 
   const allRejected = pendingCalls.every(tc => !decisions.find(d => d.id === tc.id)?.approved)
 

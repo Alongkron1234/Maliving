@@ -148,7 +148,7 @@ export async function run_meter_ocr(args: ToolArgs) {
 
 export async function save_meter_reading(args: ToolArgs, ctx: ExecutorCtx) {
   const room_id = await resolveRoomId(ctx.supabase, args)
-  return internalFetch(ctx.origin, '/api/admin/meter-reading', {
+  return internalFetch(ctx.origin, '/api/admin/meter-reading', ctx.cookie, {
     method: 'POST',
     body: JSON.stringify({
       room_id,
