@@ -1,14 +1,15 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { BedDouble, Wrench, DoorOpen, Plus, Pencil, Building2, Zap, Droplet } from 'lucide-react'
+import { BedDouble, Wrench, DoorOpen, Plus, Pencil, Building2, Zap, Droplet, Wallet } from 'lucide-react'
 import type { Room, RoomStatus } from '@/lib/types/database'
+import RoomsSearch from './RoomsSearch'
 
 export default async function RoomsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ floor?: string }>
+  searchParams: Promise<{ floor?: string; status?: string; q?: string }>
 }) {
-  const { floor } = await searchParams
+  const { floor, status: statusFilter, q } = await searchParams
   const supabase = await createClient()
 
   const now = new Date()
@@ -16,13 +17,14 @@ export default async function RoomsPage({
   const currentYear = now.getFullYear()
 
   // Fetch filtered rooms separately to avoid ternary type inference issues
-  const roomsResult = floor
-    ? await supabase.from('rooms').select('*').eq('floor', parseInt(floor)).order('room_number')
-    : await supabase.from('rooms').select('*').order('room_number')
-  const rooms = (roomsResult.data ?? []) as Room[]
+  let roomsQuery = supabase.from('rooms').select('*').order('room_number')
+  if (floor) roomsQuery = roomsQuery.eq('floor', parseInt(floor))
+  if (statusFilter) roomsQuery = roomsQuery.eq('status', statusFilter)
+  const roomsResult = await roomsQuery
+  let rooms = (roomsResult.data ?? []) as Room[]
 
   const [{ data: allRoomsRaw }, { data: tenantsRaw }, { data: readingsRaw }] = await Promise.all([
-    supabase.from('rooms').select('floor, status'),
+    supabase.from('rooms').select('floor, status, rent_price'),
     supabase.from('tenants').select('*, profiles(*)').eq('status', 'active'),
     supabase
       .from('meter_readings')
@@ -40,17 +42,32 @@ export default async function RoomsPage({
     ),
   ].sort((a, b) => a - b)
 
-  const allRooms = (allRoomsRaw ?? []) as { status: RoomStatus }[]
+  const allRooms = (allRoomsRaw ?? []) as { status: RoomStatus; rent_price: number }[]
   const summary = {
     total: allRooms.length,
     occupied: allRooms.filter(r => r.status === 'occupied').length,
     available: allRooms.filter(r => r.status === 'available').length,
     maintenance: allRooms.filter(r => r.status === 'maintenance').length,
   }
+  const monthlyRentRevenue = allRooms
+    .filter(r => r.status === 'occupied')
+    .reduce((sum, r) => sum + r.rent_price, 0)
 
   type TenantRow = { id: string; room_id: string; move_in_date: string; profiles: unknown }
   const activeTenants = (tenantsRaw ?? []) as TenantRow[]
   const tenantByRoom = Object.fromEntries(activeTenants.map(t => [t.room_id, t]))
+
+  // Client search box filters by room number OR the active tenant's name
+  if (q) {
+    const needle = q.trim().toLowerCase()
+    rooms = rooms.filter(room => {
+      if (room.room_number.toLowerCase().includes(needle)) return true
+      const tenant = tenantByRoom[room.id] as { profiles?: unknown } | undefined
+      const profile = tenant?.profiles
+      const name = Array.isArray(profile) ? profile[0]?.full_name : (profile as { full_name?: string } | null)?.full_name
+      return name?.toLowerCase().includes(needle) ?? false
+    })
+  }
 
   const readingsByRoom: Record<string, { electric?: number; water?: number }> = {}
   for (const r of readingsRaw ?? []) {
@@ -90,39 +107,40 @@ export default async function RoomsPage({
       {/* Summary strip */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
         <SummaryPill icon={Building2} tone="info" label="ห้องทั้งหมด" value={summary.total} />
-        <SummaryPill icon={BedDouble} tone="brand" label="มีผู้เช่า" value={summary.occupied} />
         <SummaryPill icon={DoorOpen} tone="success" label="ว่าง" value={summary.available} />
         <SummaryPill icon={Wrench} tone="danger" label="ซ่อมบำรุง" value={summary.maintenance} />
+        <SummaryPill icon={Wallet} tone="brand" label="รายได้ค่าเช่ารวม/เดือน" value={`฿${monthlyRentRevenue.toLocaleString('th-TH')}`} />
       </div>
 
-      {/* Floor Filter Tabs */}
-      {floors.length > 0 && (
-        <div className="flex items-center gap-2 mb-8 flex-wrap">
-          <Link
-            href="/admin/rooms"
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              !floor
-                ? 'bg-[#ff8c00] text-white shadow-sm shadow-[#ff8c00]/30'
-                : 'bg-white border border-[#ddc1ae] text-[#564334] hover:border-[#ff8c00] hover:text-[#904d00]'
-            }`}
-          >
-            ทุกชั้น
-          </Link>
-          {floors.map(f => (
-            <Link
-              key={f}
-              href={`/admin/rooms?floor=${f}`}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                floor === String(f)
-                  ? 'bg-[#ff8c00] text-white shadow-sm shadow-[#ff8c00]/30'
-                  : 'bg-white border border-[#ddc1ae] text-[#564334] hover:border-[#ff8c00] hover:text-[#904d00]'
-              }`}
-            >
-              ชั้น {f}
-            </Link>
-          ))}
+      {/* Filters: floor tabs, status tabs, search */}
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 mb-8">
+        <div className="flex items-center gap-2 flex-wrap">
+          {floors.length > 0 && (
+            <>
+              <FilterLink href="/admin/rooms" active={!floor}>ทุกชั้น</FilterLink>
+              {floors.map(f => (
+                <FilterLink key={f} href={`/admin/rooms?floor=${f}`} active={floor === String(f)}>
+                  ชั้น {f}
+                </FilterLink>
+              ))}
+              <span className="w-px h-5 bg-[#ddc1ae] mx-1" />
+            </>
+          )}
+          <FilterLink href={floor ? `/admin/rooms?floor=${floor}` : '/admin/rooms'} active={!statusFilter}>
+            ทั้งหมด
+          </FilterLink>
+          <FilterLink href={`/admin/rooms?status=occupied${floor ? `&floor=${floor}` : ''}`} active={statusFilter === 'occupied'}>
+            มีผู้เช่า ({summary.occupied})
+          </FilterLink>
+          <FilterLink href={`/admin/rooms?status=available${floor ? `&floor=${floor}` : ''}`} active={statusFilter === 'available'}>
+            ห้องว่าง ({summary.available})
+          </FilterLink>
+          <FilterLink href={`/admin/rooms?status=maintenance${floor ? `&floor=${floor}` : ''}`} active={statusFilter === 'maintenance'}>
+            แจ้งซ่อม ({summary.maintenance})
+          </FilterLink>
         </div>
-      )}
+        <RoomsSearch initialQuery={q} />
+      </div>
 
       {/* Rooms grouped by floor */}
       {floorGroups.map(([floorNum, floorRooms]) => {
@@ -156,22 +174,25 @@ export default async function RoomsPage({
         )
       })}
 
-      {/* Add New Room Card */}
-      <Link
-        href="/admin/rooms/new"
-        className="flex flex-col sm:flex-row items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#ddc1ae] p-6 text-center hover:border-[#ff8c00] hover:bg-white transition-colors"
-      >
-        <div className="w-11 h-11 rounded-full bg-[#fff1e9] flex items-center justify-center shrink-0">
-          <Plus size={22} className="text-[#897362]" />
-        </div>
-        <div>
-          <p className="text-sm font-semibold text-[#564334]">เพิ่มห้องใหม่</p>
-          <p className="text-xs text-[#897362] mt-0.5">ขยายจำนวนห้องพักในระบบ</p>
-        </div>
-      </Link>
-
-      {total === 0 && !floor && (
-        <p className="text-center text-sm text-[#897362] mt-12">ยังไม่มีห้องพัก — คลิก &quot;เพิ่มห้องพัก&quot; เพื่อเริ่มต้น</p>
+      {total === 0 ? (
+        <p className="text-center text-sm text-[#897362] py-12">
+          {floor || statusFilter || q
+            ? 'ไม่พบห้องที่ตรงกับเงื่อนไขที่เลือก'
+            : 'ยังไม่มีห้องพัก — คลิก "เพิ่มห้องใหม่" เพื่อเริ่มต้น'}
+        </p>
+      ) : (
+        <Link
+          href="/admin/rooms/new"
+          className="flex flex-col sm:flex-row items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-[#ddc1ae] p-6 text-center hover:border-[#ff8c00] hover:bg-white transition-colors"
+        >
+          <div className="w-11 h-11 rounded-full bg-[#fff1e9] flex items-center justify-center shrink-0">
+            <Plus size={22} className="text-[#897362]" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-[#564334]">เพิ่มห้องใหม่</p>
+            <p className="text-xs text-[#897362] mt-0.5">ขยายจำนวนห้องพักในระบบ</p>
+          </div>
+        </Link>
       )}
     </div>
   )
@@ -184,6 +205,21 @@ const summaryTones = {
   danger:  'bg-[#fee2e2] text-[#dc2626]',
 } as const
 
+function FilterLink({ href, active, children }: { href: string; active: boolean; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
+        active
+          ? 'bg-[#ff8c00] text-white shadow-sm shadow-[#ff8c00]/30'
+          : 'bg-white border border-[#ddc1ae] text-[#564334] hover:border-[#ff8c00] hover:text-[#904d00]'
+      }`}
+    >
+      {children}
+    </Link>
+  )
+}
+
 function SummaryPill({
   icon: Icon,
   tone,
@@ -193,7 +229,7 @@ function SummaryPill({
   icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
   tone: keyof typeof summaryTones
   label: string
-  value: number
+  value: number | string
 }) {
   return (
     <div className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04)]">
@@ -201,7 +237,7 @@ function SummaryPill({
         <Icon size={16} strokeWidth={2.25} />
       </span>
       <div className="min-w-0">
-        <p className="text-lg font-bold text-[#241912] leading-tight">{value}</p>
+        <p className="text-lg font-bold text-[#241912] leading-tight truncate">{value}</p>
         <p className="text-[11px] text-[#897362] truncate">{label}</p>
       </div>
     </div>

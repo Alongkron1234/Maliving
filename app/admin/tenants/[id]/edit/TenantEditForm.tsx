@@ -77,11 +77,11 @@ export default function TenantEditForm({ tenant }: { tenant: TenantForEdit }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-        <h2 className="text-base font-bold text-[#241912] mb-1">Tenant Information</h2>
-        <p className="text-sm text-[#897362] mb-7">Update the personal details for this tenant.</p>
+        <h2 className="text-base font-bold text-[#241912] mb-1">ข้อมูลผู้เช่า</h2>
+        <p className="text-sm text-[#897362] mb-7">แก้ไขข้อมูลส่วนตัวของผู้เช่าคนนี้</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
-          <Field label="Full Name">
+          <Field label="ชื่อ-นามสกุล">
             <input
               name="full_name"
               type="text"
@@ -91,17 +91,17 @@ export default function TenantEditForm({ tenant }: { tenant: TenantForEdit }) {
             />
           </Field>
 
-          <Field label="Phone Number">
+          <Field label="เบอร์โทรศัพท์">
             <input
               name="phone"
               type="tel"
               defaultValue={tenant.profiles.phone ?? ''}
-              placeholder="e.g. 0812345678"
+              placeholder="เช่น 0812345678"
               className={inputClass}
             />
           </Field>
 
-          <Field label="Move-in Date">
+          <Field label="วันที่เข้าพัก">
             <input
               name="move_in_date"
               type="date"
@@ -112,7 +112,7 @@ export default function TenantEditForm({ tenant }: { tenant: TenantForEdit }) {
           </Field>
 
           <div className="col-span-2">
-            <Field label="Reset Password">
+            <Field label="ตั้งรหัสผ่านใหม่">
               <input
                 name="password"
                 type="text"
@@ -137,14 +137,14 @@ export default function TenantEditForm({ tenant }: { tenant: TenantForEdit }) {
           href={`/admin/tenants/${tenant.id}`}
           className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
         >
-          Cancel
+          ยกเลิก
         </Link>
         <button
           type="submit"
           disabled={loading}
           className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {loading ? 'Saving…' : 'Save Changes'}
+          {loading ? 'กำลังบันทึก…' : 'บันทึกการเปลี่ยนแปลง'}
         </button>
       </div>
     </form>

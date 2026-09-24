@@ -1,11 +1,12 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, User, Phone, Calendar, Users, UserPlus, PhoneOff, type LucideIcon } from 'lucide-react'
+import { Plus, User, Phone, Calendar, Users, MessageCircle, type LucideIcon } from 'lucide-react'
+import TenantsToolbar from './TenantsToolbar'
 
 type TenantRow = {
   id: string
   move_in_date: string
-  profiles: { full_name: string; phone: string | null } | null
+  profiles: { full_name: string; phone: string | null; line_connected_at: string | null } | null
   rooms: { room_number: string; floor: number | null } | null
 }
 
@@ -20,10 +21,7 @@ export default async function TenantsPage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const tenants: TenantRow[] = (raw as any) ?? []
 
-  const now = new Date()
-  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-  const movedInThisMonth = tenants.filter(t => new Date(t.move_in_date) >= firstOfMonth).length
-  const missingPhone = tenants.filter(t => !t.profiles?.phone).length
+  const lineConnected = tenants.filter(t => t.profiles?.line_connected_at).length
 
   return (
     <div className="p-6 sm:p-8 max-w-7xl mx-auto">
@@ -35,24 +33,26 @@ export default async function TenantsPage() {
             ผู้เช่าที่ยัง active อยู่ {tenants.length} คน จากทุกห้อง
           </p>
         </div>
-        <Link
-          href="/admin/tenants/new"
-          className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
-        >
-          <Plus size={16} />
-          เพิ่มผู้เช่า
-        </Link>
+        <div className="flex items-center gap-2.5">
+          <TenantsToolbar tenants={tenants} />
+          <Link
+            href="/admin/tenants/new"
+            className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
+          >
+            <Plus size={16} />
+            เพิ่มผู้เช่า
+          </Link>
+        </div>
       </div>
 
       {/* Summary strip */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-2 gap-3 mb-8">
         <SummaryPill icon={Users} tone="info" label="ผู้เช่าทั้งหมด" value={tenants.length} />
-        <SummaryPill icon={UserPlus} tone="success" label="เข้าพักเดือนนี้" value={movedInThisMonth} />
         <SummaryPill
-          icon={PhoneOff}
-          tone={missingPhone > 0 ? 'danger' : 'success'}
-          label="ไม่มีเบอร์โทร"
-          value={missingPhone}
+          icon={MessageCircle}
+          tone={lineConnected === tenants.length && tenants.length > 0 ? 'success' : 'brand'}
+          label="เชื่อมต่อ Line Bot แล้ว"
+          value={tenants.length > 0 ? `${lineConnected}/${tenants.length}` : '0/0'}
         />
       </div>
 
@@ -81,6 +81,7 @@ export default async function TenantsPage() {
             const moveIn = new Date(t.move_in_date).toLocaleDateString('th-TH', {
               day: 'numeric', month: 'short', year: 'numeric',
             })
+            const lineConnectedAt = profile?.line_connected_at
 
             return (
               <div
@@ -121,6 +122,15 @@ export default async function TenantsPage() {
                     <p className="text-xs font-semibold text-[#564334]">{moveIn}</p>
                   </div>
                 </div>
+
+                {/* Line bot status — real, set by the webhook on a successful phone match */}
+                <div className="relative z-10">
+                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium ${
+                    lineConnectedAt ? 'bg-[#e3f5ea] text-[#1e7e46]' : 'bg-[#f5f0ea] text-[#897362]'
+                  }`}>
+                    <MessageCircle size={11} /> {lineConnectedAt ? 'เชื่อม Line แล้ว' : 'ยังไม่เชื่อม Line'}
+                  </span>
+                </div>
               </div>
             )
           })}
@@ -147,7 +157,7 @@ export default async function TenantsPage() {
 const summaryTones = {
   info:    'bg-[#eef4ff] text-[#2563eb]',
   success: 'bg-[#e3f5ea] text-[#1e7e46]',
-  danger:  'bg-[#fee2e2] text-[#dc2626]',
+  brand:   'bg-[#fff1e9] text-[#904d00]',
 } as const
 
 function SummaryPill({
@@ -159,7 +169,7 @@ function SummaryPill({
   icon: LucideIcon
   tone: keyof typeof summaryTones
   label: string
-  value: number
+  value: number | string
 }) {
   return (
     <div className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04)]">

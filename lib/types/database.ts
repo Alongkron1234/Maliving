@@ -15,6 +15,10 @@ export interface Profile {
   phone: string | null
   avatar_url: string | null
   role: Role
+  // Set by /api/line/webhook the moment a phone number match resolves to exactly
+  // one tenant — a real signal that this person has used the Line bot successfully,
+  // not just "added the OA as a friend".
+  line_connected_at: string | null
   created_at: string
   updated_at: string
 }

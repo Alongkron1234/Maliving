@@ -11,12 +11,12 @@ type FieldOrigin = 'confirmed' | 'draft' | 'manual'
 type FieldState = { prev: string; curr: string; origin: FieldOrigin; inputMethod: 'manual' | 'ocr'; batchId: string | null }
 
 const MONTHS = [
-  { value: 1, label: 'January' }, { value: 2, label: 'February' },
-  { value: 3, label: 'March' }, { value: 4, label: 'April' },
-  { value: 5, label: 'May' }, { value: 6, label: 'June' },
-  { value: 7, label: 'July' }, { value: 8, label: 'August' },
-  { value: 9, label: 'September' }, { value: 10, label: 'October' },
-  { value: 11, label: 'November' }, { value: 12, label: 'December' },
+  { value: 1, label: 'มกราคม' }, { value: 2, label: 'กุมภาพันธ์' },
+  { value: 3, label: 'มีนาคม' }, { value: 4, label: 'เมษายน' },
+  { value: 5, label: 'พฤษภาคม' }, { value: 6, label: 'มิถุนายน' },
+  { value: 7, label: 'กรกฎาคม' }, { value: 8, label: 'สิงหาคม' },
+  { value: 9, label: 'กันยายน' }, { value: 10, label: 'ตุลาคม' },
+  { value: 11, label: 'พฤศจิกายน' }, { value: 12, label: 'ธันวาคม' },
 ]
 
 function fieldFor(
@@ -46,6 +46,7 @@ export default function MeterManualForm({
   confirmedByRoom,
   ocrDraftByRoom,
   ocrBatchId,
+  ocrImageUrl,
   defaultMonth,
   defaultYear,
   initialRoomId,
@@ -55,6 +56,7 @@ export default function MeterManualForm({
   confirmedByRoom: Record<string, { electric?: ConfirmedEntry; water?: ConfirmedEntry }>
   ocrDraftByRoom: Record<string, { electric?: number; water?: number }>
   ocrBatchId: string | null
+  ocrImageUrl?: string | null
   defaultMonth: number
   defaultYear: number
   initialRoomId?: string
@@ -187,26 +189,38 @@ export default function MeterManualForm({
         {/* ── LEFT: form card + buttons ── */}
         <div className="space-y-5">
           <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-            <h2 className="text-base font-bold text-[#241912] mb-1">Meter Details</h2>
-            <p className="text-sm text-[#897362] mb-7">
+            <h2 className="text-base font-bold text-[#241912] mb-1">รายละเอียดมิเตอร์</h2>
+            <p className="text-sm text-[#897362] mb-5">
               {isEditingConfirmed
                 ? 'ห้องนี้บันทึกมิเตอร์เดือนนี้ไว้แล้ว — แก้ไขแล้วกด Save Reading เพื่ออัปเดต'
-                : 'Select a room and enter the current readings from the meter.'}
+                : 'เลือกห้องแล้วกรอกเลขมิเตอร์ปัจจุบัน'}
             </p>
+
+            {(eField.origin === 'draft' || wField.origin === 'draft') && ocrImageUrl && (
+              <div className="mb-7">
+                <p className="text-xs font-semibold text-[#897362] uppercase tracking-wide mb-2">รูปมิเตอร์ที่ใช้อ่านค่า (Groq Vision)</p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={ocrImageUrl}
+                  alt="รูปมิเตอร์ที่อัปโหลด"
+                  className="w-full max-w-xs rounded-xl border border-[#ddc1ae] object-cover"
+                />
+              </div>
+            )}
 
             {/* Room + Period */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
-              <Field label="Room">
+              <Field label="ห้อง">
                 <select value={roomId} onChange={e => setRoomId(e.target.value)} className={inputClass}>
                   {rooms.map(r => (
                     <option key={r.id} value={r.id}>
-                      Room {r.room_number}{r.floor != null ? ` (Floor ${r.floor})` : ''}
+                      ห้อง {r.room_number}{r.floor != null ? ` (ชั้น ${r.floor})` : ''}
                     </option>
                   ))}
                 </select>
               </Field>
 
-              <Field label="Month">
+              <Field label="เดือน">
                 <select value={month} onChange={e => setMonth(parseInt(e.target.value))} className={inputClass}>
                   {MONTHS.map(m => (
                     <option key={m.value} value={m.value}>{m.label}</option>
@@ -214,7 +228,7 @@ export default function MeterManualForm({
                 </select>
               </Field>
 
-              <Field label="Year">
+              <Field label="ปี">
                 <input
                   type="number"
                   value={year}
@@ -289,14 +303,14 @@ export default function MeterManualForm({
               href="/admin/meters"
               className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
             >
-              Cancel
+              ยกเลิก
             </Link>
             <button
               type="submit"
               disabled={loading}
               className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {loading ? 'Saving…' : 'Save Reading'}
+              {loading ? 'กำลังบันทึก…' : 'บันทึกมิเตอร์'}
             </button>
           </div>
         </div>
@@ -306,7 +320,7 @@ export default function MeterManualForm({
           <div className="bg-white rounded-2xl border border-[#ddc1ae] p-6 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
             <h2 className="text-sm font-bold text-[#241912] mb-0.5">สรุปก่อนบันทึก</h2>
             <p className="text-xs text-[#897362] mb-5">
-              Room {selectedRoom?.room_number} · {MONTHS[month - 1]?.label} {year}
+              ห้อง {selectedRoom?.room_number} · {MONTHS[month - 1]?.label} {year}
             </p>
 
             {!hasAny ? (

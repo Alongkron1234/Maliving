@@ -55,32 +55,32 @@ export default function TenantNewForm({
   return (
     <form onSubmit={handleSubmit}>
       <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-        <h2 className="text-base font-bold text-[#241912] mb-1">Tenant Information</h2>
+        <h2 className="text-base font-bold text-[#241912] mb-1">ข้อมูลผู้เช่า</h2>
         <p className="text-sm text-[#897362] mb-7">
-          Fill in the details to register a new tenant and assign them a room.
+          กรอกรายละเอียดเพื่อลงทะเบียนผู้เช่าใหม่และมอบหมายห้องพัก
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
-          <Field label="Full Name">
+          <Field label="ชื่อ-นามสกุล">
             <input
               name="full_name"
               type="text"
               required
-              placeholder="e.g. Somchai Jaidee"
+              placeholder="เช่น สมชาย ใจดี"
               className={inputClass}
             />
           </Field>
 
-          <Field label="Phone Number">
+          <Field label="เบอร์โทรศัพท์">
             <input
               name="phone"
               type="tel"
-              placeholder="e.g. 0812345678"
+              placeholder="เช่น 0812345678"
               className={inputClass}
             />
           </Field>
 
-          <Field label="Email Address">
+          <Field label="อีเมล">
             <input
               name="email"
               type="email"
@@ -90,7 +90,7 @@ export default function TenantNewForm({
             />
           </Field>
 
-          <Field label="Password">
+          <Field label="รหัสผ่าน">
             <input
               name="password"
               type="text"
@@ -101,24 +101,24 @@ export default function TenantNewForm({
             />
           </Field>
 
-          <Field label="Assign Room">
+          <Field label="ห้องพัก">
             {rooms.length === 0 ? (
               <div className={`${inputClass} flex items-center text-[#897362] bg-[#fff1e9]`}>
-                No available rooms
+                ไม่มีห้องว่าง
               </div>
             ) : (
               <select name="room_id" required defaultValue={defaultRoomId ?? ''} className={inputClass}>
-                <option value="" disabled>Select a room</option>
+                <option value="" disabled>เลือกห้อง</option>
                 {rooms.map(r => (
                   <option key={r.id} value={r.id}>
-                    Room {r.room_number}{r.floor != null ? ` (Floor ${r.floor})` : ''}
+                    ห้อง {r.room_number}{r.floor != null ? ` (ชั้น ${r.floor})` : ''}
                   </option>
                 ))}
               </select>
             )}
           </Field>
 
-          <Field label="Move-in Date">
+          <Field label="วันที่เข้าพัก">
             <input
               name="move_in_date"
               type="date"
@@ -135,11 +135,11 @@ export default function TenantNewForm({
 
         {rooms.length === 0 && (
           <p className="text-sm text-[#897362] bg-[#fff1e9] px-4 py-2.5 rounded-lg mt-6">
-            All rooms are currently occupied or under maintenance.{' '}
+            ทุกห้องมีผู้เช่าหรืออยู่ระหว่างซ่อมบำรุง{' '}
             <Link href="/admin/rooms/new" className="text-[#ff8c00] font-semibold hover:text-[#904d00]">
-              Add a new room
+              เพิ่มห้องใหม่
             </Link>{' '}
-            first.
+            ก่อน
           </p>
         )}
       </div>
@@ -149,14 +149,14 @@ export default function TenantNewForm({
           href="/admin/tenants"
           className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
         >
-          Cancel
+          ยกเลิก
         </Link>
         <button
           type="submit"
           disabled={loading || rooms.length === 0}
           className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
-          {loading ? 'Adding…' : 'Add Tenant'}
+          {loading ? 'กำลังเพิ่ม…' : 'เพิ่มผู้เช่า'}
         </button>
       </div>
     </form>

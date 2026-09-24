@@ -101,6 +101,15 @@ async function handleEvents(rawBody: string) {
 
     const profile = matches[0]
 
+    // Real "connected" signal for the admin Tenants page — a phone match that
+    // resolved to exactly one tenant means this person has actually used the
+    // Line bot successfully, not just added the OA as a friend.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from('profiles')
+      .update({ line_connected_at: new Date().toISOString() })
+      .eq('id', profile.id)
+
     const { data: rawTenant } = await supabase
       .from('tenants')
       .select('id, room_id, rooms(room_number)')
