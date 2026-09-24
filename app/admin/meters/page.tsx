@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { Plus, Camera } from 'lucide-react'
+import { Plus, Camera, Building2, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { MeterReading, OcrReading } from '@/lib/types/database'
 import MeterMonthFilter from './MeterMonthFilter'
 import RateSettings from './RateSettings'
@@ -9,7 +9,7 @@ import MeterTable from './MeterTable'
 type RoomRow = { id: string; room_number: string; floor: number | null }
 type PrevRow  = { room_id: string; meter_type: string; current_reading: number; reading_month: number; reading_year: number }
 
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const MONTH_NAMES = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
 
 export default async function MetersPage({
   searchParams,
@@ -91,54 +91,46 @@ export default async function MetersPage({
   const withoutReadings = rooms.filter(r => !readingsByRoom[r.id]?.electric && !readingsByRoom[r.id]?.water)
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-7xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#241912]">Meter Readings</h1>
-          <p className="text-sm text-[#897362] mt-1">
-            Water &amp; electricity readings for {MONTH_NAMES[month - 1]} {year}.
+          <h1 className="text-3xl font-bold text-[#241912] tracking-tight">จดมิเตอร์น้ำ-ไฟ</h1>
+          <p className="text-sm text-[#897362] mt-1.5">
+            ข้อมูลมิเตอร์ประจำเดือน{MONTH_NAMES[month - 1]} {year}
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
           <Link
             href="/admin/meters/upload"
-            className="flex items-center justify-center gap-2 border border-[#ddc1ae] text-[#564334] text-sm font-semibold px-4 py-2.5 rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#eef4ff] border border-black/5 text-[#2563eb] text-sm font-semibold px-4 py-2.5 rounded-lg shadow-[0_1px_2px_rgba(36,25,18,0.04)] transition-all whitespace-nowrap"
           >
             <Camera size={15} />
-            Upload Photo (OCR)
+            ถ่ายรูปมิเตอร์ (OCR)
           </Link>
           <Link
             href={`/admin/meters/new?month=${month}&year=${year}`}
-            className="flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors whitespace-nowrap"
+            className="inline-flex items-center justify-center gap-2 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-4 py-2.5 rounded-lg shadow-sm shadow-[#ff8c00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 whitespace-nowrap"
           >
             <Plus size={15} />
-            Manual Entry
+            กรอกเอง
           </Link>
         </div>
+      </div>
+
+      {/* Summary strip */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+        <SummaryPill icon={Building2} tone="info" label="ห้องทั้งหมด" value={rooms.length} />
+        <SummaryPill icon={CheckCircle2} tone="success" label="บันทึกแล้ว" value={withReadings.length} />
+        <SummaryPill icon={AlertCircle} tone={withoutReadings.length > 0 ? 'danger' : 'success'} label="ยังไม่บันทึก" value={withoutReadings.length} />
       </div>
 
       {/* Rate Settings */}
       <RateSettings />
 
-      {/* Filter + Summary */}
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+      {/* Month filter */}
+      <div className="mb-6">
         <MeterMonthFilter currentMonth={month} currentYear={year} />
-        <div className="flex items-center gap-2 text-sm">
-          <span className="px-3 py-1 bg-[#fff1e9] text-[#897362] rounded-full font-medium">
-            {rooms.length} ห้องทั้งหมด
-          </span>
-          {withReadings.length > 0 && (
-            <span className="px-3 py-1 bg-[#ffeadd] text-[#904d00] rounded-full font-medium">
-              {withReadings.length} บันทึกแล้ว
-            </span>
-          )}
-          {withoutReadings.length > 0 && (
-            <span className="px-3 py-1 bg-[#ffdad6] text-[#93000a] rounded-full font-medium">
-              {withoutReadings.length} ยังไม่บันทึก
-            </span>
-          )}
-        </div>
       </div>
 
       {/* Table (client — handles row clicks) */}
@@ -150,6 +142,36 @@ export default async function MetersPage({
         month={month}
         year={year}
       />
+    </div>
+  )
+}
+
+const summaryTones = {
+  info:    'bg-[#eef4ff] text-[#2563eb]',
+  success: 'bg-[#e3f5ea] text-[#1e7e46]',
+  danger:  'bg-[#fee2e2] text-[#dc2626]',
+} as const
+
+function SummaryPill({
+  icon: Icon,
+  tone,
+  label,
+  value,
+}: {
+  icon: React.ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+  tone: keyof typeof summaryTones
+  label: string
+  value: number
+}) {
+  return (
+    <div className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04)]">
+      <span className={`inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0 ${summaryTones[tone]}`}>
+        <Icon size={16} strokeWidth={2.25} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-lg font-bold text-[#241912] leading-tight">{value}</p>
+        <p className="text-[11px] text-[#897362] truncate">{label}</p>
+      </div>
     </div>
   )
 }

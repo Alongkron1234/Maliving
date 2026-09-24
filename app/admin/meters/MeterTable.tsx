@@ -104,7 +104,7 @@ export default function MeterTable({
                 >
                   <td className="px-5 py-3.5">
                     <span className="font-semibold text-[#241912] group-hover:text-[#ff8c00] transition-colors">
-                      Room {room.room_number}
+                      ห้อง {room.room_number}
                     </span>
                   </td>
                   <td className="px-4 py-3.5 text-[#897362]">
@@ -163,7 +163,7 @@ export default function MeterTable({
                             รอตรวจสอบ (OCR)
                           </span>
                         ) : hasPrev ? (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ffdad6] text-[#93000a]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fee2e2] text-[#dc2626]">
                             ยังไม่บันทึก
                           </span>
                         ) : (
@@ -178,7 +178,7 @@ export default function MeterTable({
                         <button
                           onClick={e => handleDelete(e, room)}
                           disabled={isDeleting}
-                          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#897362] hover:text-[#93000a] hover:bg-[#ffdad6] transition-all disabled:opacity-40"
+                          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#897362] hover:text-[#dc2626] hover:bg-[#fee2e2] transition-all disabled:opacity-40"
                           title="ลบข้อมูลมิเตอร์เดือนนี้"
                         >
                           <Trash2 size={13} />
