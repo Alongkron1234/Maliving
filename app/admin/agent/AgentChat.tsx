@@ -54,7 +54,10 @@ export default function AgentChat() {
   const bottomRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    setSandbox(localStorage.getItem('maliving_agent_sandbox') === '1')
+    const frame = requestAnimationFrame(() => {
+      setSandbox(localStorage.getItem('maliving_agent_sandbox') === '1')
+    })
+    return () => cancelAnimationFrame(frame)
   }, [])
 
   function toggleSandbox() {
