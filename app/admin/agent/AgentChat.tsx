@@ -44,11 +44,17 @@ export default function AgentChat() {
   const [error, setError] = useState<string | null>(null)
   const [editedArgs, setEditedArgs] = useState<Record<string, Record<string, unknown>>>({})
   const [approved, setApproved] = useState<Record<string, boolean>>({})
-  const [sandbox, setSandbox] = useState(
-    () => typeof window !== 'undefined' && localStorage.getItem('maliving_agent_sandbox') === '1'
-  )
+  // Starts false to match the server-rendered markup exactly, then syncs from
+  // localStorage in an effect (after hydration) — reading localStorage during
+  // the initial render itself would make the client's first paint disagree
+  // with the server's and trigger a hydration mismatch.
+  const [sandbox, setSandbox] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    setSandbox(localStorage.getItem('maliving_agent_sandbox') === '1')
+  }, [])
 
   function toggleSandbox() {
     setSandbox(prev => {
