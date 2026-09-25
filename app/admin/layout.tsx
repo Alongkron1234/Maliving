@@ -1,6 +1,7 @@
 import AdminSidebar from '@/components/layout/AdminSidebar'
 import AdminTopBar from '@/components/layout/AdminTopBar'
 import PageTransition from '@/components/layout/PageTransition'
+import AgentFab from '@/components/layout/AgentFab'
 import { createClient } from '@/lib/supabase/server'
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -22,6 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <AdminTopBar fullName={fullName} />
         <PageTransition>{children}</PageTransition>
       </main>
+      <AgentFab />
     </div>
   )
 }
