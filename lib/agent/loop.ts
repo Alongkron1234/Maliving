@@ -15,6 +15,7 @@ const SYSTEM_PROMPT = `คุณคือผู้ช่วย AI ของร�
 - ถ้า action ต้องใช้ตัวเลขที่มาจาก OCR (เช่นค่ามิเตอร์) ให้บอกตัวเลขที่อ่านได้ให้ชัดเจนในข้อความ เพื่อให้ admin ตรวจสอบก่อนกดยืนยัน
 - ถ้าข้อมูลไม่พอที่จะเรียก tool ได้ (เช่นไม่รู้ room_id) ให้เรียก tool ที่อ่านข้อมูลก่อน (list_rooms, list_tenants ฯลฯ) แทนที่จะถามผู้ใช้กลับทันที ถ้าหาไม่เจอจริงๆค่อยถาม
 - ห้ามเรียก tool ที่เขียนข้อมูล (write) ทั้งที่ยัง "เดา" ค่า parameter ที่จำเป็นอยู่ (เช่น room_number, room_id) — ถ้าหลังเรียก tool อ่านข้อมูลแล้วยังไม่สามารถระบุได้ชัดเจนว่าเป็นห้องไหน/รายการไหน (เช่นผู้ใช้พิมพ์ "ห้องไหนก็ได้" หรือ "มั่วๆ" โดยไม่ระบุห้อง) ให้ถามกลับสั้นๆ ว่าต้องการห้อง/รายการไหน อย่าปฏิเสธคำขอเฉยๆ โดยไม่บอกเหตุผลหรือถามกลับ
+- tool ที่รับได้แค่ห้อง/รายการเดียวต่อครั้ง (เช่น save_meter_reading) ห้ามพยายามยัดหลายห้องเข้าไปใน 1 ครั้งที่เรียก (เช่น room_number เป็นลิสต์) — จะทำให้ tool call ผิด schema แล้ว error เสมอ ถ้าผู้ใช้ขอให้ทำกับหลายห้องพร้อมกัน (เช่น "ทุกห้องเลย") ให้เรียกทีละห้องเท่านั้น เริ่มจากห้องแรกก่อน แล้วหลัง admin ยืนยันห้องนั้นเสร็จค่อยถามหรือเรียกห้องถัดไปต่อในเทิร์นถัดมา ไม่ต้องพยายามทำทุกห้องในคำตอบเดียว
 - ถ้าเห็นผลลัพธ์ tool ที่บอกว่า "ผู้ใช้ไม่ยืนยัน action นี้" ห้ามเรียก tool เดิมซ้ำทันที ให้ตอบรับทราบสั้นๆ แล้วถามว่าต้องการให้ทำอะไรต่อแทน
 - ตอบด้วยหน่วยเงินเป็นบาท (฿) และจำนวนหน่วยไฟ/น้ำอย่างชัดเจนเมื่อเกี่ยวข้อง
 - วันนี้คือ ${new Date().toISOString().slice(0, 10)}`
@@ -102,14 +103,19 @@ export async function runAgentLoop(inputMessages: AgentMessage[], ctx: ExecutorC
         tool_choice: 'auto',
       })
     } catch (err) {
-      // Groq's Llama models occasionally emit a malformed function call (esp. when
-      // retrying right after a rejected tool call) and the API rejects it with a
-      // 400 — degrade to a plain message instead of throwing, so a bad model
-      // generation can never leave a confirmation card stuck open on the client.
+      // The model occasionally emits a malformed function call (esp. when retrying
+      // right after a rejected tool call, or when asked to act on many rooms/items
+      // at once and it tries to cram them into one call instead of one-per-call)
+      // and the API rejects it with a 400 — degrade to a plain message instead of
+      // throwing, so a bad model generation can never leave a confirmation card
+      // stuck open on the client.
       const message = err instanceof Error ? err.message : String(err)
+      const isBulkLikelyCause = /tool call validation failed/i.test(message)
       messages = [...messages, {
         role: 'assistant',
-        content: `ขอโทษค่ะ ประมวลผลคำสั่งนี้ไม่สำเร็จ (${message.slice(0, 150)}) ลองพิมพ์คำสั่งใหม่อีกครั้งได้ไหมคะ`,
+        content: isBulkLikelyCause
+          ? 'ขอโทษค่ะ คำสั่งนี้อาจครอบคลุมหลายห้อง/หลายรายการพร้อมกันเกินไปจนระบบสร้างคำสั่งไม่สำเร็จ ลองสั่งทีละห้อง/ทีละรายการแทนได้ไหมคะ'
+          : `ขอโทษค่ะ ประมวลผลคำสั่งนี้ไม่สำเร็จ (${message.slice(0, 150)}) ลองพิมพ์คำสั่งใหม่อีกครั้งได้ไหมคะ`,
       }]
       return { messages, pendingConfirmation: null }
     }
