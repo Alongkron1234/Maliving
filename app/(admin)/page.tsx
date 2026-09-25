@@ -1,7 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { BedDouble, Zap, Wrench, MessageCircle, Receipt, Users } from 'lucide-react'
-import LandingHoverNavbar from './LandingHoverNavbar'
 
 const features = [
   { icon: BedDouble, title: 'จัดการห้องพัก', desc: 'ดูสถานะห้องว่าง/ไม่ว่างแบบเรียลไทม์ จัดการผู้เช่าได้ในที่เดียว' },
@@ -15,10 +14,21 @@ const features = [
 export default function LandingPage() {
   return (
     <div className="flex-1 flex flex-col bg-[#FFFAF7]">
-      <LandingHoverNavbar />
+      {/* Header */}
+      <header className="border-b border-black/5 bg-white">
+        <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+          <span className="text-lg font-bold text-[#C2410C]">Maliving</span>
+          <Link
+            href="/login"
+            className="bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5"
+          >
+            เข้าสู่ระบบ
+          </Link>
+        </div>
+      </header>
 
       {/* Hero */}
-      <section className="relative h-screen min-h-[520px] w-full overflow-hidden">
+      <section className="relative h-[calc(100vh-64px)] min-h-[520px] w-full overflow-hidden">
         <Image
           src="/images/dormitory-hero.webp"
           alt="อาคารหอพัก Maliving"
