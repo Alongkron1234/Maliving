@@ -28,7 +28,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="relative h-[420px] sm:h-[540px] w-full overflow-hidden">
+      <section className="relative h-[calc(100vh-64px)] min-h-[520px] w-full overflow-hidden">
         <Image
           src="/images/dormitory-hero.webp"
           alt="อาคารหอพัก Maliving"
