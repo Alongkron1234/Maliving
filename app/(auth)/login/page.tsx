@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { BedDouble, Zap, Receipt } from 'lucide-react'
+import LoginHoverNavbar from './LoginHoverNavbar'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -36,6 +37,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
+      <LoginHoverNavbar />
       {/* Left — decorative hero panel, hidden on small screens */}
       <div className="hidden lg:block relative overflow-hidden">
         <Image
