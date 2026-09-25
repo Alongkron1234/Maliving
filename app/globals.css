@@ -87,16 +87,7 @@ body {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Floating AI-assistant shortcut (components/layout/AgentFab.tsx) — needs its own
-   transform/padding transition for the hover lift + label reveal, which the
-   blanket admin-shell rule above (higher specificity: .admin-shell a) would
-   otherwise clip to just color/shadow/opacity. */
-.admin-shell a.agent-fab {
-  transition-property: transform, box-shadow, padding;
-  transition-duration: 300ms;
-  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
-}
-
+/* Floating AI-assistant shortcut (components/layout/AgentFab.tsx) */
 @keyframes agent-fab-ping {
   0% {
     transform: scale(1);
