@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { FileText, Wrench, Megaphone, Home } from 'lucide-react'
 import { billStatusConfig, getEffectiveBillStatus } from '@/lib/bills'
 
-const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const monthNames = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.']
 
 type ActiveTenant = {
   id: string
@@ -28,10 +28,10 @@ export default async function TenantDashboardPage() {
 
   if (!activeTenant) {
     return (
-      <div className="p-8">
-        <div className="rounded-2xl border-2 border-dashed border-[#ddc1ae] p-16 text-center">
-          <p className="text-sm font-semibold text-[#564334]">คุณยังไม่ได้รับมอบหมายห้องพัก</p>
-          <p className="text-sm text-[#897362] mt-1">กรุณาติดต่อผู้ดูแลหอพัก</p>
+      <div className="p-6 sm:p-8">
+        <div className="rounded-2xl border-2 border-dashed border-[#E4E4E7] p-16 text-center">
+          <p className="text-sm font-semibold text-[#3F3F46]">คุณยังไม่ได้รับมอบหมายห้องพัก</p>
+          <p className="text-sm text-[#71717A] mt-1">กรุณาติดต่อผู้ดูแลหอพัก</p>
         </div>
       </div>
     )
@@ -66,18 +66,18 @@ export default async function TenantDashboardPage() {
   const room = activeTenant.rooms
 
   return (
-    <div className="p-8 space-y-5">
+    <div className="p-6 sm:p-8 space-y-5">
       {/* Room info */}
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+      <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
         <div className="flex items-center gap-3 mb-1">
-          <div className="w-10 h-10 rounded-xl bg-[#ffeadd] flex items-center justify-center shrink-0">
-            <Home size={18} className="text-[#904d00]" />
+          <div className="w-10 h-10 rounded-xl bg-[#FFE8D1] flex items-center justify-center shrink-0">
+            <Home size={18} className="text-[#C2410C]" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#241912]">
-              Room {room?.room_number ?? '—'}{room?.floor != null ? ` · Floor ${room.floor}` : ''}
+            <h1 className="text-xl font-bold text-[#18181B]">
+              ห้อง {room?.room_number ?? '—'}{room?.floor != null ? ` · ชั้น ${room.floor}` : ''}
             </h1>
-            <p className="text-sm text-[#897362]">
+            <p className="text-sm text-[#71717A]">
               ค่าเช่า ฿{room?.rent_price.toLocaleString('th-TH') ?? '—'}/เดือน
             </p>
           </div>
@@ -88,18 +88,18 @@ export default async function TenantDashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Link
           href="/tenant/bills"
-          className="bg-white rounded-2xl border border-[#ddc1ae] p-5 shadow-[0_0_15px_rgba(144,77,0,0.06)] hover:shadow-[0_0_24px_rgba(144,77,0,0.12)] hover:-translate-y-0.5 transition-all"
+          className="bg-white rounded-2xl border border-black/5 p-5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-0.5 transition-all"
         >
           <div className="flex items-center gap-2 mb-3">
-            <FileText size={15} className="text-[#897362]" />
-            <span className="text-xs font-semibold text-[#897362] uppercase tracking-wide">บิลล่าสุด</span>
+            <FileText size={15} className="text-[#71717A]" />
+            <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wide">บิลล่าสุด</span>
           </div>
           {latestBill ? (
             <>
-              <p className="text-lg font-bold text-[#241912]">
+              <p className="text-lg font-bold text-[#18181B]">
                 ฿{latestBill.total_amount.toLocaleString('th-TH')}
               </p>
-              <p className="text-xs text-[#897362] mt-0.5">
+              <p className="text-xs text-[#71717A] mt-0.5">
                 {monthNames[latestBill.billing_month - 1]} {latestBill.billing_year}
               </p>
               <span className={`inline-block mt-2 px-2.5 py-1 rounded-full text-xs font-semibold ${billStatusConfig[getEffectiveBillStatus(latestBill)].className}`}>
@@ -107,30 +107,30 @@ export default async function TenantDashboardPage() {
               </span>
             </>
           ) : (
-            <p className="text-sm text-[#c9a990]">ยังไม่มีบิล</p>
+            <p className="text-sm text-[#A1A1AA]">ยังไม่มีบิล</p>
           )}
         </Link>
 
         <Link
           href="/tenant/maintenance"
-          className="bg-white rounded-2xl border border-[#ddc1ae] p-5 shadow-[0_0_15px_rgba(144,77,0,0.06)] hover:shadow-[0_0_24px_rgba(144,77,0,0.12)] hover:-translate-y-0.5 transition-all"
+          className="bg-white rounded-2xl border border-black/5 p-5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-0.5 transition-all"
         >
           <div className="flex items-center gap-2 mb-3">
-            <Wrench size={15} className="text-[#897362]" />
-            <span className="text-xs font-semibold text-[#897362] uppercase tracking-wide">แจ้งซ่อมค้างอยู่</span>
+            <Wrench size={15} className="text-[#71717A]" />
+            <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wide">แจ้งซ่อมค้างอยู่</span>
           </div>
-          <p className="text-lg font-bold text-[#241912]">{openMaintenanceCount ?? 0} รายการ</p>
+          <p className="text-lg font-bold text-[#18181B]">{openMaintenanceCount ?? 0} รายการ</p>
         </Link>
 
         <Link
           href="/tenant/announcements"
-          className="bg-white rounded-2xl border border-[#ddc1ae] p-5 shadow-[0_0_15px_rgba(144,77,0,0.06)] hover:shadow-[0_0_24px_rgba(144,77,0,0.12)] hover:-translate-y-0.5 transition-all"
+          className="bg-white rounded-2xl border border-black/5 p-5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-0.5 transition-all"
         >
           <div className="flex items-center gap-2 mb-3">
-            <Megaphone size={15} className="text-[#897362]" />
-            <span className="text-xs font-semibold text-[#897362] uppercase tracking-wide">ประกาศล่าสุด</span>
+            <Megaphone size={15} className="text-[#71717A]" />
+            <span className="text-xs font-semibold text-[#71717A] uppercase tracking-wide">ประกาศล่าสุด</span>
           </div>
-          <p className="text-sm font-semibold text-[#241912] line-clamp-2">
+          <p className="text-sm font-semibold text-[#18181B] line-clamp-2">
             {latestAnnouncement?.title ?? 'ยังไม่มีประกาศ'}
           </p>
         </Link>
