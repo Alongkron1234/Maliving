@@ -19,13 +19,13 @@ export default async function EditAnnouncementPage({ params }: { params: Promise
       <div className="mb-7">
         <Link
           href="/admin/announcements"
-          className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
         >
           <ArrowLeft size={15} />
           Back to Announcements
         </Link>
-        <h1 className="text-2xl font-bold text-[#241912]">Edit Announcement</h1>
-        <p className="text-sm text-[#897362] mt-1">Update the title and content of this announcement.</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">Edit Announcement</h1>
+        <p className="text-sm text-[#71717A] mt-1">Update the title and content of this announcement.</p>
       </div>
 
       <div className="max-w-2xl">

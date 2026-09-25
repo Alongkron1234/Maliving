@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { Zap, AlertCircle } from 'lucide-react'
 
 const inputClass =
-  'w-20 h-[34px] px-2 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] ' +
-  'outline-none focus:border-[#ff8c00] text-center transition-all'
+  'w-20 h-[34px] px-2 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] ' +
+  'outline-none focus:border-[#FF6A00] text-center transition-all'
 
 export default function GenerateBillsPanel({
   month,
@@ -54,17 +54,17 @@ export default function GenerateBillsPanel({
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ddc1ae] px-5 py-4 shadow-[0_0_15px_rgba(144,77,0,0.06)] mb-6">
+    <div className="bg-white rounded-2xl border border-black/5 px-5 py-4 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] mb-6">
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-2">
-          <Zap size={14} className="text-[#897362]" />
-          <span className="text-sm font-bold text-[#241912]">ออกบิลเดือนนี้</span>
-          <span className="text-xs text-[#c9a990]">· ใช้อัตราค่าน้ำ/ไฟเดียวกับหน้ามิเตอร์</span>
+          <Zap size={14} className="text-[#71717A]" />
+          <span className="text-sm font-bold text-[#18181B]">ออกบิลเดือนนี้</span>
+          <span className="text-xs text-[#A1A1AA]">· ใช้อัตราค่าน้ำ/ไฟเดียวกับหน้ามิเตอร์</span>
         </div>
 
         <div className="flex items-center gap-4 flex-wrap">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[#897362] whitespace-nowrap">⚡ ค่าไฟ</span>
+            <span className="text-sm text-[#71717A] whitespace-nowrap">⚡ ค่าไฟ</span>
             <input
               type="number"
               value={eRate}
@@ -74,11 +74,11 @@ export default function GenerateBillsPanel({
               placeholder="8"
               className={inputClass}
             />
-            <span className="text-xs text-[#897362]">฿/หน่วย</span>
+            <span className="text-xs text-[#71717A]">฿/หน่วย</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[#897362] whitespace-nowrap">💧 ค่าน้ำ</span>
+            <span className="text-sm text-[#71717A] whitespace-nowrap">💧 ค่าน้ำ</span>
             <input
               type="number"
               value={wRate}
@@ -88,36 +88,36 @@ export default function GenerateBillsPanel({
               placeholder="18"
               className={inputClass}
             />
-            <span className="text-xs text-[#897362]">฿/หน่วย</span>
+            <span className="text-xs text-[#71717A]">฿/หน่วย</span>
           </div>
 
           <button
             onClick={handleGenerate}
             disabled={loading || !eRate || !wRate}
-            className="flex items-center gap-1.5 h-[34px] px-4 bg-[#ff8c00] hover:bg-[#904d00] text-white text-xs font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex items-center gap-1.5 h-[34px] px-4 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-xs font-semibold rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
           >
-            {loading ? 'กำลังออกบิล…' : 'Generate Bills'}
+            {loading ? 'กำลังออกบิล…' : 'ออกบิลตอนนี้'}
           </button>
         </div>
       </div>
 
       {error && (
-        <p className="text-sm text-[#ba1a1a] bg-[#ffdad6] px-4 py-2.5 rounded-lg mt-4">{error}</p>
+        <p className="text-sm text-[#DC2626] bg-[#FEE2E2] px-4 py-2.5 rounded-lg mt-4">{error}</p>
       )}
 
       {result && (
-        <div className="mt-4 pt-4 border-t border-[#f0e0d4]">
-          <p className="text-sm text-[#897362] mb-2">
+        <div className="mt-4 pt-4 border-t border-[#F4F4F5]">
+          <p className="text-sm text-[#71717A] mb-2">
             ออกบิลสำเร็จ {result.created} ห้อง
             {result.errors.length > 0 && ` · ข้าม ${result.errors.length} ห้อง`}
           </p>
           {result.errors.length > 0 && (
             <div className="space-y-1.5">
               {result.errors.map((err, i) => (
-                <div key={i} className="flex items-center gap-2 bg-[#fff3cd] rounded-lg px-3 py-2">
-                  <AlertCircle size={13} className="text-[#8a6100] shrink-0" />
-                  <span className="text-xs font-medium text-[#8a6100]">
-                    Room {err.room}: {err.reason}
+                <div key={i} className="flex items-center gap-2 bg-[#FEF3C7] rounded-lg px-3 py-2">
+                  <AlertCircle size={13} className="text-[#B45309] shrink-0" />
+                  <span className="text-xs font-medium text-[#B45309]">
+                    ห้อง {err.room}: {err.reason}
                   </span>
                 </div>
               ))}

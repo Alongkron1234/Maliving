@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import MeterManualForm from './MeterManualForm'
@@ -94,19 +95,31 @@ export default async function NewMeterPage({
     }
   }
 
+  // Signed URL for the OCR source photo — lets the admin cross-check the reading
+  // against the actual meter photo before confirming, same as when it was uploaded.
+  let ocrImageUrl: string | null = null
+  if (ocrBatchId) {
+    const { data: batchRow } = await supabase.from('ocr_batches').select('image_url').eq('id', ocrBatchId).single()
+    const imagePath = (batchRow as { image_url: string } | null)?.image_url
+    if (imagePath) {
+      const { data: signed } = await createAdminClient().storage.from('meter-images').createSignedUrl(imagePath, 3600)
+      ocrImageUrl = signed?.signedUrl ?? null
+    }
+  }
+
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-5xl mx-auto">
       <Link
         href="/admin/meters"
-        className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
-        Back to Meter Readings
+        กลับไปหน้าจดมิเตอร์
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#241912]">Manual Meter Entry</h1>
-        <p className="text-sm text-[#897362] mt-1">Enter electricity and water readings for one room.</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">กรอกเลขมิเตอร์</h1>
+        <p className="text-sm text-[#71717A] mt-1">กรอกหรือตรวจสอบเลขมิเตอร์ไฟฟ้าและน้ำของห้องนี้</p>
       </div>
 
       <div>
@@ -116,6 +129,7 @@ export default async function NewMeterPage({
           confirmedByRoom={confirmedByRoom}
           ocrDraftByRoom={ocrDraftByRoom}
           ocrBatchId={ocrBatchId}
+          ocrImageUrl={ocrImageUrl}
           defaultMonth={defaultMonth}
           defaultYear={defaultYear}
           initialRoomId={roomParam}

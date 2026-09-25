@@ -58,17 +58,17 @@ export default function MaintenanceNewForm({
 
   if (rooms.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
-        <p className="text-sm text-[#897362]">ยังไม่มีห้องพัก — เพิ่มห้องก่อน</p>
+      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
+        <p className="text-sm text-[#71717A]">ยังไม่มีห้องพัก — เพิ่มห้องก่อน</p>
       </div>
     )
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-        <h2 className="text-base font-bold text-[#241912] mb-1">Request Details</h2>
-        <p className="text-sm text-[#897362] mb-7">Describe the issue and where it&apos;s located.</p>
+      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+        <h2 className="text-base font-bold text-[#18181B] mb-1">Request Details</h2>
+        <p className="text-sm text-[#71717A] mb-7">Describe the issue and where it&apos;s located.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
           <Field label="Room">
@@ -90,8 +90,8 @@ export default function MaintenanceNewForm({
                   onClick={() => setPriority(p)}
                   className={`flex-1 rounded-lg text-xs font-semibold capitalize transition-colors ${
                     priority === p
-                      ? p === 'high' ? 'bg-[#ba1a1a] text-white shadow-sm' : 'bg-[#ff8c00] text-white shadow-sm'
-                      : 'bg-[#fff1e9] text-[#897362] hover:bg-[#ffeadd] hover:text-[#564334]'
+                      ? p === 'high' ? 'bg-[#DC2626] text-white shadow-sm' : 'bg-[#FF6A00] text-white shadow-sm'
+                      : 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]'
                   }`}
                 >
                   {p}
@@ -125,21 +125,21 @@ export default function MaintenanceNewForm({
         </div>
 
         {error && (
-          <p className="text-sm text-[#ba1a1a] bg-[#ffdad6] px-4 py-2.5 rounded-lg mt-6">{error}</p>
+          <p className="text-sm text-[#DC2626] bg-[#FEE2E2] px-4 py-2.5 rounded-lg mt-6">{error}</p>
         )}
       </div>
 
       <div className="flex justify-end gap-3 mt-5">
         <Link
           href="/admin/maintenance"
-          className="px-6 py-2.5 bg-white border border-[#ddc1ae] text-[#564334] text-sm font-semibold rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
+          className="px-6 py-2.5 bg-white border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
         >
           Cancel
         </Link>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
         >
           {loading ? 'Saving…' : 'Create Request'}
         </button>
@@ -151,13 +151,13 @@ export default function MaintenanceNewForm({
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <label className="block text-sm font-semibold text-[#241912] mb-2">{label}</label>
+      <label className="block text-sm font-semibold text-[#18181B] mb-2">{label}</label>
       {children}
     </div>
   )
 }
 
 const inputClass =
-  'w-full h-[42px] px-3.5 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] ' +
-  'outline-none focus:border-[#ff8c00] focus:ring-2 focus:ring-[#ff8c00]/20 transition-all ' +
-  'placeholder:text-[#c9a990]'
+  'w-full h-[42px] px-3.5 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] ' +
+  'outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/20 transition-all ' +
+  'placeholder:text-[#A1A1AA]'

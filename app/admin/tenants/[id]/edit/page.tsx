@@ -30,15 +30,15 @@ export default async function EditTenantPage({ params }: { params: Promise<{ id:
     <div className="p-8">
       <Link
         href={`/admin/tenants/${id}`}
-        className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
         Back to {profile.full_name}
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#241912]">Edit {profile.full_name}</h1>
-        <p className="text-sm text-[#897362] mt-1">Update this tenant&apos;s personal details.</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">Edit {profile.full_name}</h1>
+        <p className="text-sm text-[#71717A] mt-1">Update this tenant&apos;s personal details.</p>
       </div>
 
       <div className="max-w-2xl">

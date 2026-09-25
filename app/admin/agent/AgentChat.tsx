@@ -152,11 +152,11 @@ export default function AgentChat() {
   const visibleMessages = messages.filter(m => m.role === 'user' || (m.role === 'assistant' && m.content))
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-2xl border border-[#ddc1ae] overflow-hidden">
+    <div className="h-full flex flex-col bg-white rounded-2xl border border-[#E4E4E7] overflow-hidden">
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {visibleMessages.length === 0 && (
-          <div className="h-full flex flex-col items-center justify-center text-center text-[#897362]">
-            <Bot size={32} className="mb-3 text-[#ff8c00]" />
+          <div className="h-full flex flex-col items-center justify-center text-center text-[#71717A]">
+            <Bot size={32} className="mb-3 text-[#FF6A00]" />
             <p className="text-sm">ลองพิมพ์ เช่น &quot;สรุปภาพรวมหอพักตอนนี้&quot; หรือ &quot;ห้องไหนบิลค้างชำระบ้าง&quot;</p>
           </div>
         )}
@@ -164,7 +164,7 @@ export default function AgentChat() {
           <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             <div
               className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm whitespace-pre-wrap ${
-                m.role === 'user' ? 'bg-[#ff8c00] text-white' : 'bg-[#fff1e9] text-[#241912]'
+                m.role === 'user' ? 'bg-[#FF6A00] text-white' : 'bg-[#FFE8D1] text-[#18181B]'
               }`}
             >
               {m.content}
@@ -173,19 +173,19 @@ export default function AgentChat() {
         ))}
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-[#fff1e9] rounded-2xl px-4 py-2.5 text-sm text-[#897362] flex items-center gap-2">
+            <div className="bg-[#FFE8D1] rounded-2xl px-4 py-2.5 text-sm text-[#71717A] flex items-center gap-2">
               <Loader2 size={14} className="animate-spin" />
               กำลังคิด…
             </div>
           </div>
         )}
-        {error && <p className="text-sm text-[#ba1a1a] bg-[#ffdad6] px-4 py-2.5 rounded-lg">{error}</p>}
+        {error && <p className="text-sm text-[#DC2626] bg-[#FEE2E2] px-4 py-2.5 rounded-lg">{error}</p>}
         <div ref={bottomRef} />
       </div>
 
       {pending && pending.length > 0 && (
-        <div className="border-t border-[#ddc1ae] bg-[#fff8f5] p-4 space-y-3 max-h-[45%] overflow-y-auto">
-          <p className="text-xs font-semibold text-[#904d00] uppercase tracking-wide">รอการยืนยันก่อนบันทึกจริง</p>
+        <div className="border-t border-[#E4E4E7] bg-[#FFFAF7] p-4 space-y-3 max-h-[45%] overflow-y-auto">
+          <p className="text-xs font-semibold text-[#C2410C] uppercase tracking-wide">รอการยืนยันก่อนบันทึกจริง</p>
           {pending.map(pc => (
             <ConfirmCard
               key={pc.id}
@@ -200,14 +200,14 @@ export default function AgentChat() {
             <button
               onClick={handleCancelAll}
               disabled={loading}
-              className="px-4 py-2 text-sm font-semibold rounded-lg border border-[#ddc1ae] text-[#564334] hover:border-[#904d00] hover:text-[#904d00] transition-colors disabled:opacity-60"
+              className="px-4 py-2 text-sm font-semibold rounded-lg border border-[#E4E4E7] text-[#3F3F46] hover:border-[#C2410C] hover:text-[#C2410C] transition-colors disabled:opacity-60"
             >
               ยกเลิกทั้งหมด
             </button>
             <button
               onClick={handleConfirm}
               disabled={loading}
-              className="px-5 py-2 text-sm font-semibold rounded-lg bg-[#ff8c00] hover:bg-[#904d00] text-white transition-colors disabled:opacity-60"
+              className="px-5 py-2 text-sm font-semibold rounded-lg bg-[#FF6A00] hover:bg-[#C2410C] text-white transition-colors disabled:opacity-60"
             >
               ยืนยันทั้งหมด
             </button>
@@ -215,9 +215,9 @@ export default function AgentChat() {
         </div>
       )}
 
-      <div className="border-t border-[#ddc1ae] p-4">
+      <div className="border-t border-[#E4E4E7] p-4">
         {file && (
-          <div className="mb-2 inline-flex items-center gap-2 bg-[#fff1e9] text-[#904d00] text-xs font-medium px-3 py-1.5 rounded-full">
+          <div className="mb-2 inline-flex items-center gap-2 bg-[#FFE8D1] text-[#C2410C] text-xs font-medium px-3 py-1.5 rounded-full">
             {file.name}
             <button onClick={() => setFile(null)}>
               <X size={12} />
@@ -229,7 +229,7 @@ export default function AgentChat() {
             onClick={() => fileInputRef.current?.click()}
             disabled={loading || !!pending}
             title="แนบรูปมิเตอร์"
-            className="w-10 h-10 shrink-0 rounded-lg border border-[#ddc1ae] flex items-center justify-center text-[#897362] hover:border-[#904d00] hover:text-[#904d00] transition-colors disabled:opacity-50"
+            className="w-10 h-10 shrink-0 rounded-lg border border-[#E4E4E7] flex items-center justify-center text-[#71717A] hover:border-[#C2410C] hover:text-[#C2410C] transition-colors disabled:opacity-50"
           >
             <Paperclip size={16} />
           </button>
@@ -252,12 +252,12 @@ export default function AgentChat() {
             disabled={loading || !!pending}
             rows={1}
             placeholder={pending ? 'ยืนยัน action ด้านบนก่อนคุยต่อ' : 'พิมพ์คำสั่ง เช่น ออกบิลทุกห้องเดือนนี้…'}
-            className="flex-1 resize-none h-10 px-3.5 py-2.5 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] outline-none focus:border-[#ff8c00] focus:ring-2 focus:ring-[#ff8c00]/20 transition-all disabled:opacity-60"
+            className="flex-1 resize-none h-10 px-3.5 py-2.5 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] outline-none focus:border-[#FF6A00] focus:ring-2 focus:ring-[#FF6A00]/20 transition-all disabled:opacity-60"
           />
           <button
             onClick={handleSend}
             disabled={loading || !!pending || (!input.trim() && !file)}
-            className="w-10 h-10 shrink-0 rounded-lg bg-[#ff8c00] hover:bg-[#904d00] text-white flex items-center justify-center transition-colors disabled:opacity-50"
+            className="w-10 h-10 shrink-0 rounded-lg bg-[#FF6A00] hover:bg-[#C2410C] text-white flex items-center justify-center transition-colors disabled:opacity-50"
           >
             <Send size={16} />
           </button>
@@ -280,19 +280,19 @@ function ConfirmCard({
   const dangerous = DANGEROUS_TOOLS.has(call.name)
 
   return (
-    <div className={`bg-white rounded-xl border p-4 ${dangerous ? 'border-[#ffb4ab]' : 'border-[#ddc1ae]'}`}>
+    <div className={`bg-white rounded-xl border p-4 ${dangerous ? 'border-[#FCA5A5]' : 'border-[#E4E4E7]'}`}>
       <div className="flex items-center gap-2 mb-3">
-        {dangerous && <AlertTriangle size={14} className="text-[#ba1a1a]" />}
-        <p className={`text-sm font-bold ${dangerous ? 'text-[#ba1a1a]' : 'text-[#241912]'}`}>{label}</p>
+        {dangerous && <AlertTriangle size={14} className="text-[#DC2626]" />}
+        <p className={`text-sm font-bold ${dangerous ? 'text-[#DC2626]' : 'text-[#18181B]'}`}>{label}</p>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         {Object.entries(args).map(([key, value]) => (
           <label key={key} className="text-xs">
-            <span className="block text-[#897362] mb-1">{key}</span>
+            <span className="block text-[#71717A] mb-1">{key}</span>
             <input
               value={value == null ? '' : String(value)}
               onChange={e => onChange(key, typeof value === 'number' ? Number(e.target.value) : e.target.value)}
-              className="w-full h-8 px-2 bg-[#fff8f5] border border-[#ddc1ae] rounded-md text-xs text-[#241912] outline-none focus:border-[#ff8c00]"
+              className="w-full h-8 px-2 bg-[#FFFAF7] border border-[#E4E4E7] rounded-md text-xs text-[#18181B] outline-none focus:border-[#FF6A00]"
             />
           </label>
         ))}

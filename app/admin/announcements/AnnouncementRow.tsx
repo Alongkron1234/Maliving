@@ -44,41 +44,47 @@ export default function AnnouncementRow({
   }
 
   return (
-    <div className={`bg-white rounded-2xl border p-6 shadow-[0_0_15px_rgba(144,77,0,0.06)] ${isPinned ? 'border-[#ff8c00]' : 'border-[#ddc1ae]'}`}>
+    <div
+      className={`group bg-white rounded-2xl border p-6 transition-all hover:-translate-y-0.5 ${
+        isPinned
+          ? 'border-[#FFD9B3] shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(255,106,0,0.12)]'
+          : 'border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)]'
+      }`}
+    >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
             {isPinned && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fff1e9] text-[#904d00]">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FFE8D1] text-[#C2410C]">
                 <Pin size={10} />
-                Pinned
+                ปักหมุด
               </span>
             )}
-            <h2 className="text-base font-bold text-[#241912] truncate">{title}</h2>
+            <h2 className="text-base font-bold text-[#18181B] truncate">{title}</h2>
           </div>
-          <p className="text-sm text-[#564334] whitespace-pre-wrap">{body}</p>
-          <p className="text-xs text-[#c9a990] mt-3">{createdAt}</p>
+          <p className="text-sm text-[#3F3F46] whitespace-pre-wrap">{body}</p>
+          <p className="text-xs text-[#A1A1AA] mt-3">{createdAt}</p>
         </div>
 
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 shrink-0 opacity-60 group-hover:opacity-100 transition-opacity">
           <button
             onClick={togglePin}
             disabled={loading}
-            title={isPinned ? 'Unpin' : 'Pin to top'}
-            className="w-8 h-8 rounded-lg border border-[#ddc1ae] flex items-center justify-center hover:border-[#904d00] hover:text-[#904d00] text-[#897362] transition-colors disabled:opacity-50"
+            title={isPinned ? 'ยกเลิกปักหมุด' : 'ปักหมุดไว้บนสุด'}
+            className="w-8 h-8 rounded-lg border border-[#E4E4E7] flex items-center justify-center hover:border-[#C2410C] hover:text-[#C2410C] hover:-translate-y-0.5 text-[#71717A] transition-all disabled:opacity-50"
           >
             {isPinned ? <PinOff size={13} /> : <Pin size={13} />}
           </button>
           <Link
             href={`/admin/announcements/${id}/edit`}
-            className="w-8 h-8 rounded-lg border border-[#ddc1ae] flex items-center justify-center hover:border-[#904d00] hover:text-[#904d00] text-[#897362] transition-colors"
+            className="w-8 h-8 rounded-lg border border-[#E4E4E7] flex items-center justify-center hover:border-[#C2410C] hover:text-[#C2410C] hover:-translate-y-0.5 text-[#71717A] transition-all"
           >
             <Pencil size={13} />
           </Link>
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="w-8 h-8 rounded-lg border border-[#ffdad6] flex items-center justify-center hover:bg-[#ffdad6] text-[#93000a] transition-colors disabled:opacity-50"
+            className="w-8 h-8 rounded-lg border border-[#FEE2E2] flex items-center justify-center hover:bg-[#FEE2E2] hover:-translate-y-0.5 text-[#B91C1C] transition-all disabled:opacity-50"
           >
             <Trash2 size={13} />
           </button>

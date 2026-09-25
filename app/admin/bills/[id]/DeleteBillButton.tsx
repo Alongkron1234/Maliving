@@ -21,7 +21,7 @@ export default function DeleteBillButton({ billId }: { billId: string }) {
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="inline-flex items-center gap-2 border border-[#ffdad6] text-[#93000a] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#ffdad6] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+      className="inline-flex items-center gap-2 border border-[#FEE2E2] text-[#B91C1C] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#FEE2E2] transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
     >
       <Trash2 size={15} />
       {loading ? 'กำลังลบ…' : 'Delete'}

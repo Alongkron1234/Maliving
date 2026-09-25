@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { Building2, CheckCircle2, Clock, AlertCircle, type LucideIcon } from 'lucide-react'
 import type { Bill } from '@/lib/types/database'
 import BillMonthFilter from './BillMonthFilter'
 import GenerateBillsPanel from './GenerateBillsPanel'
@@ -74,43 +75,30 @@ export default async function BillsPage({
     !(readingTypesByRoom[r.id]?.has('electric') && readingTypesByRoom[r.id]?.has('water'))
   ).length
 
-  const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+  const MONTH_NAMES = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม']
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-7xl mx-auto">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#241912]">Bills</h1>
-        <p className="text-sm text-[#897362] mt-1">
-          Monthly bills for {MONTH_NAMES[month - 1]} {year}.
+        <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">บิล</h1>
+        <p className="text-sm text-[#71717A] mt-1.5">
+          บิลประจำเดือน{MONTH_NAMES[month - 1]} {year}
         </p>
       </div>
 
       <GenerateBillsPanel month={month} year={year} />
 
-      {/* Filter + Summary */}
-      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+      {/* Summary strip */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <SummaryPill icon={Building2} tone="info" label="ห้องทั้งหมด" value={rooms.length} />
+        <SummaryPill icon={CheckCircle2} tone="brand" label="ออกบิลแล้ว" value={billedCount} />
+        <SummaryPill icon={Clock} tone="warning" label="พร้อมออกบิล" value={readyCount} />
+        <SummaryPill icon={AlertCircle} tone={missingCount > 0 ? 'danger' : 'success'} label="ข้อมูลมิเตอร์ไม่ครบ" value={missingCount} />
+      </div>
+
+      <div className="mb-6">
         <BillMonthFilter currentMonth={month} currentYear={year} />
-        <div className="flex items-center gap-2 text-sm">
-          <span className="px-3 py-1 bg-[#fff1e9] text-[#897362] rounded-full font-medium">
-            {rooms.length} ห้องทั้งหมด
-          </span>
-          {billedCount > 0 && (
-            <span className="px-3 py-1 bg-[#ffeadd] text-[#904d00] rounded-full font-medium">
-              {billedCount} ออกบิลแล้ว
-            </span>
-          )}
-          {readyCount > 0 && (
-            <span className="px-3 py-1 bg-[#fff3cd] text-[#8a6100] rounded-full font-medium">
-              {readyCount} พร้อมออกบิล
-            </span>
-          )}
-          {missingCount > 0 && (
-            <span className="px-3 py-1 bg-[#ffdad6] text-[#93000a] rounded-full font-medium">
-              {missingCount} ข้อมูลมิเตอร์ไม่ครบ
-            </span>
-          )}
-        </div>
       </div>
 
       <BillsTable
@@ -122,6 +110,38 @@ export default async function BillsPage({
         month={month}
         year={year}
       />
+    </div>
+  )
+}
+
+const summaryTones = {
+  brand:   'bg-[#FFE8D1] text-[#C2410C]',
+  info:    'bg-[#EEF4FF] text-[#2563EB]',
+  success: 'bg-[#e3f5ea] text-[#1e7e46]',
+  warning: 'bg-[#FEF3C7] text-[#B45309]',
+  danger:  'bg-[#FEE2E2] text-[#B91C1C]',
+} as const
+
+function SummaryPill({
+  icon: Icon,
+  tone,
+  label,
+  value,
+}: {
+  icon: LucideIcon
+  tone: keyof typeof summaryTones
+  label: string
+  value: number
+}) {
+  return (
+    <div className="flex items-center gap-3 bg-white rounded-xl p-3.5 border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04)] hover:shadow-[0_4px_16px_rgba(36,25,18,0.08)] transition-shadow">
+      <span className={`inline-flex items-center justify-center w-9 h-9 rounded-lg shrink-0 ${summaryTones[tone]}`}>
+        <Icon size={16} strokeWidth={2.25} />
+      </span>
+      <div className="min-w-0">
+        <p className="text-lg font-bold text-[#18181B] leading-tight">{value}</p>
+        <p className="text-[11px] text-[#71717A] truncate">{label}</p>
+      </div>
     </div>
   )
 }

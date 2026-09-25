@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react'
 import { Settings2, Check } from 'lucide-react'
 
 const inputClass =
-  'w-20 h-[34px] px-2 bg-[#fff8f5] border border-[#ddc1ae] rounded-lg text-sm text-[#241912] ' +
-  'outline-none focus:border-[#ff8c00] text-center transition-all'
+  'w-20 h-[34px] px-2 bg-[#FFFAF7] border border-[#E4E4E7] rounded-lg text-sm text-[#18181B] ' +
+  'outline-none focus:border-[#FF6A00] text-center transition-all'
 
 export default function RateSettings() {
   const [eRate, setERate] = useState('')
@@ -25,16 +25,16 @@ export default function RateSettings() {
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ddc1ae] px-5 py-4 shadow-[0_0_15px_rgba(144,77,0,0.06)] mb-6 flex items-center justify-between flex-wrap gap-4">
+    <div className="bg-white rounded-2xl border border-[#E4E4E7] px-5 py-4 shadow-[0_0_15px_rgba(144,77,0,0.06)] mb-6 flex items-center justify-between flex-wrap gap-4">
       <div className="flex items-center gap-2">
-        <Settings2 size={14} className="text-[#897362]" />
-        <span className="text-sm font-bold text-[#241912]">อัตราค่าสาธารณูปโภค</span>
-        <span className="text-xs text-[#c9a990]">· ตั้งค่าทีเดียวใช้ทุกห้อง</span>
+        <Settings2 size={14} className="text-[#71717A]" />
+        <span className="text-sm font-bold text-[#18181B]">อัตราค่าสาธารณูปโภค</span>
+        <span className="text-xs text-[#A1A1AA]">· ตั้งค่าทีเดียวใช้ทุกห้อง</span>
       </div>
 
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2">
-          <span className="text-sm text-[#897362] whitespace-nowrap">⚡ ค่าไฟ</span>
+          <span className="text-sm text-[#71717A] whitespace-nowrap">⚡ ค่าไฟ</span>
           <input
             type="number"
             value={eRate}
@@ -44,11 +44,11 @@ export default function RateSettings() {
             placeholder="8"
             className={inputClass}
           />
-          <span className="text-xs text-[#897362]">฿/หน่วย</span>
+          <span className="text-xs text-[#71717A]">฿/หน่วย</span>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-[#897362] whitespace-nowrap">💧 ค่าน้ำ</span>
+          <span className="text-sm text-[#71717A] whitespace-nowrap">💧 ค่าน้ำ</span>
           <input
             type="number"
             value={wRate}
@@ -58,7 +58,7 @@ export default function RateSettings() {
             placeholder="18"
             className={inputClass}
           />
-          <span className="text-xs text-[#897362]">฿/หน่วย</span>
+          <span className="text-xs text-[#71717A]">฿/หน่วย</span>
         </div>
 
         <button
@@ -66,7 +66,7 @@ export default function RateSettings() {
           className={`flex items-center gap-1.5 h-[34px] px-4 text-xs font-semibold rounded-lg transition-colors ${
             saved
               ? 'bg-[#f0fdf4] border border-[#86efac] text-[#16a34a]'
-              : 'bg-[#ff8c00] hover:bg-[#904d00] text-white'
+              : 'bg-[#FF6A00] hover:bg-[#C2410C] text-white'
           }`}
         >
           {saved ? (

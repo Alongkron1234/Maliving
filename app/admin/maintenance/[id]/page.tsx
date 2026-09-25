@@ -18,16 +18,16 @@ type RequestDetail = {
 }
 
 const statusConfig: Record<MaintenanceStatus, { label: string; className: string }> = {
-  open:        { label: 'Open',        className: 'bg-[#ffdad6] text-[#93000a]' },
-  in_progress: { label: 'In Progress', className: 'bg-[#fff3cd] text-[#8a6100]' },
+  open:        { label: 'Open',        className: 'bg-[#FEE2E2] text-[#B91C1C]' },
+  in_progress: { label: 'In Progress', className: 'bg-[#FEF3C7] text-[#B45309]' },
   resolved:    { label: 'Resolved',    className: 'bg-[#f0fdf4] text-[#16a34a]' },
-  closed:      { label: 'Closed',      className: 'bg-[#f5f5f5] text-[#897362]' },
+  closed:      { label: 'Closed',      className: 'bg-[#F4F4F5] text-[#71717A]' },
 }
 
 const priorityConfig: Record<MaintenancePriority, { label: string; className: string }> = {
-  low:    { label: 'Low',    className: 'bg-[#f5f5f5] text-[#897362]' },
-  medium: { label: 'Medium', className: 'bg-[#fff1e9] text-[#904d00]' },
-  high:   { label: 'High',   className: 'bg-[#ffdad6] text-[#93000a]' },
+  low:    { label: 'Low',    className: 'bg-[#F4F4F5] text-[#71717A]' },
+  medium: { label: 'Medium', className: 'bg-[#FFE8D1] text-[#C2410C]' },
+  high:   { label: 'High',   className: 'bg-[#FEE2E2] text-[#B91C1C]' },
 }
 
 export default async function MaintenanceDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -51,7 +51,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
     <div className="p-8">
       <Link
         href="/admin/maintenance"
-        className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
         Back to Maintenance
@@ -61,7 +61,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-7">
         <div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#241912]">{request.title}</h1>
+            <h1 className="text-2xl font-bold text-[#18181B]">{request.title}</h1>
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusConfig[request.status].className}`}>
               {statusConfig[request.status].label}
             </span>
@@ -69,13 +69,13 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
               {priorityConfig[request.priority].label} priority
             </span>
           </div>
-          <p className="text-sm text-[#897362] mt-0.5">แจ้งเมื่อ {createdAt}</p>
+          <p className="text-sm text-[#71717A] mt-0.5">แจ้งเมื่อ {createdAt}</p>
         </div>
         <div className="flex flex-wrap items-start gap-3">
           {room && (
             <Link
               href={`/admin/rooms/${room.id}`}
-              className="inline-flex items-center gap-2 border border-[#ddc1ae] text-[#564334] text-sm font-semibold px-4 py-2.5 rounded-lg hover:border-[#904d00] hover:text-[#904d00] transition-colors"
+              className="inline-flex items-center gap-2 border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold px-4 py-2.5 rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
             >
               <Home size={15} />
               Room {room.room_number}
@@ -86,13 +86,13 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
       </div>
 
       <div className="max-w-2xl space-y-5">
-        <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-          <h2 className="text-base font-bold text-[#241912] mb-1">Request Details</h2>
-          <p className="text-sm text-[#897362] mb-6">
+        <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+          <h2 className="text-base font-bold text-[#18181B] mb-1">Request Details</h2>
+          <p className="text-sm text-[#71717A] mb-6">
             {room ? `Room ${room.room_number}${room.floor != null ? ` · Floor ${room.floor}` : ''}` : 'No room'}
           </p>
-          <p className="text-sm text-[#564334] whitespace-pre-wrap">
-            {request.description || <span className="text-[#c9a990]">ไม่มีรายละเอียดเพิ่มเติม</span>}
+          <p className="text-sm text-[#3F3F46] whitespace-pre-wrap">
+            {request.description || <span className="text-[#A1A1AA]">ไม่มีรายละเอียดเพิ่มเติม</span>}
           </p>
 
           {request.image_url && (
@@ -100,7 +100,7 @@ export default async function MaintenanceDetailPage({ params }: { params: Promis
             <img
               src={request.image_url}
               alt="Maintenance issue"
-              className="mt-5 rounded-xl border border-[#ddc1ae] max-h-80 object-cover"
+              className="mt-5 rounded-xl border border-[#E4E4E7] max-h-80 object-cover"
             />
           )}
         </div>

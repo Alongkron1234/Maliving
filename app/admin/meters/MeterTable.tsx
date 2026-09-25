@@ -40,21 +40,21 @@ export default function MeterTable({
 
   if (rooms.length === 0) {
     return (
-      <div className="bg-white rounded-2xl border border-[#ddc1ae] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
-        <p className="text-sm text-[#897362]">ยังไม่มีห้องพัก — เพิ่มห้องก่อนบันทึกมิเตอร์</p>
+      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-12 shadow-[0_0_15px_rgba(144,77,0,0.06)] text-center">
+        <p className="text-sm text-[#71717A]">ยังไม่มีห้องพัก — เพิ่มห้องก่อนบันทึกมิเตอร์</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#ddc1ae] shadow-[0_0_15px_rgba(144,77,0,0.06)] overflow-hidden">
+    <div className="bg-white rounded-2xl border border-[#E4E4E7] shadow-[0_0_15px_rgba(144,77,0,0.06)] overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm min-w-[700px]">
           <thead>
-            <tr className="bg-[#fff8f5] border-b border-[#ddc1ae]">
-              <th className="text-left px-5 py-3 text-xs font-semibold text-[#897362] uppercase tracking-wide">ห้อง</th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-[#897362] uppercase tracking-wide">ชั้น</th>
-              <th className="text-center px-2 py-3 text-xs font-semibold text-[#ff8c00] uppercase tracking-wide" colSpan={3}>
+            <tr className="bg-[#FFFAF7] border-b border-[#E4E4E7]">
+              <th className="text-left px-5 py-3 text-xs font-semibold text-[#71717A] uppercase tracking-wide">ห้อง</th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-[#71717A] uppercase tracking-wide">ชั้น</th>
+              <th className="text-center px-2 py-3 text-xs font-semibold text-[#FF6A00] uppercase tracking-wide" colSpan={3}>
                 ⚡ ไฟฟ้า
               </th>
               <th className="text-center px-2 py-3 text-xs font-semibold text-[#3b82f6] uppercase tracking-wide" colSpan={3}>
@@ -62,18 +62,18 @@ export default function MeterTable({
               </th>
               <th className="px-4 py-3" />
             </tr>
-            <tr className="border-b border-[#f0e0d4]">
+            <tr className="border-b border-[#F4F4F5]">
               <th colSpan={2} />
-              <th className="px-4 py-2 text-[10px] font-semibold text-[#897362] text-left">ก่อน</th>
-              <th className="px-4 py-2 text-[10px] font-semibold text-[#897362] text-left">หลัง</th>
-              <th className="px-4 py-2 text-[10px] font-semibold text-[#ff8c00] text-left">หน่วย</th>
-              <th className="px-4 py-2 text-[10px] font-semibold text-[#897362] text-left">ก่อน</th>
-              <th className="px-4 py-2 text-[10px] font-semibold text-[#897362] text-left">หลัง</th>
+              <th className="px-4 py-2 text-[10px] font-semibold text-[#71717A] text-left">ก่อน</th>
+              <th className="px-4 py-2 text-[10px] font-semibold text-[#71717A] text-left">หลัง</th>
+              <th className="px-4 py-2 text-[10px] font-semibold text-[#FF6A00] text-left">หน่วย</th>
+              <th className="px-4 py-2 text-[10px] font-semibold text-[#71717A] text-left">ก่อน</th>
+              <th className="px-4 py-2 text-[10px] font-semibold text-[#71717A] text-left">หลัง</th>
               <th className="px-4 py-2 text-[10px] font-semibold text-[#3b82f6] text-left">หน่วย</th>
               <th />
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#f0e0d4]">
+          <tbody className="divide-y divide-[#F4F4F5]">
             {rooms.map(room => {
               const e = readingsByRoom[room.id]?.electric
               const w = readingsByRoom[room.id]?.water
@@ -95,7 +95,7 @@ export default function MeterTable({
                 <tr
                   key={room.id}
                   onClick={() => !isDeleting && router.push(`/admin/meters/new?month=${month}&year=${year}&room=${room.id}`)}
-                  className="cursor-pointer hover:bg-[#fff8f5] transition-colors group"
+                  className="cursor-pointer hover:bg-[#FFFAF7] transition-colors group"
                   title={
                     hasReading ? `แก้ไข / ลบมิเตอร์ห้อง ${room.room_number}` :
                     hasDraft ? `ตรวจสอบและยืนยันมิเตอร์ห้อง ${room.room_number} (OCR)` :
@@ -103,45 +103,45 @@ export default function MeterTable({
                   }
                 >
                   <td className="px-5 py-3.5">
-                    <span className="font-semibold text-[#241912] group-hover:text-[#ff8c00] transition-colors">
-                      Room {room.room_number}
+                    <span className="font-semibold text-[#18181B] group-hover:text-[#FF6A00] transition-colors">
+                      ห้อง {room.room_number}
                     </span>
                   </td>
-                  <td className="px-4 py-3.5 text-[#897362]">
+                  <td className="px-4 py-3.5 text-[#71717A]">
                     {room.floor != null ? `F${room.floor}` : '—'}
                   </td>
 
                   {/* Electric */}
-                  <td className="px-4 py-3.5 tabular-nums text-[#564334]">
-                    {ePrevVal != null ? ePrevVal : <span className="text-[#c9a990]">—</span>}
+                  <td className="px-4 py-3.5 tabular-nums text-[#3F3F46]">
+                    {ePrevVal != null ? ePrevVal : <span className="text-[#A1A1AA]">—</span>}
                   </td>
-                  <td className="px-4 py-3.5 tabular-nums text-[#564334]">
+                  <td className="px-4 py-3.5 tabular-nums text-[#3F3F46]">
                     {eCurrVal != null
-                      ? (e ? eCurrVal : <span className="italic text-[#1565c0]">{eCurrVal}?</span>)
-                      : <span className="text-[#c9a990]">—</span>
+                      ? (e ? eCurrVal : <span className="italic text-[#2563EB]">{eCurrVal}?</span>)
+                      : <span className="text-[#A1A1AA]">—</span>
                     }
                   </td>
                   <td className="px-4 py-3.5 tabular-nums">
                     {e
-                      ? <span className="font-semibold text-[#904d00]">{e.units_used}</span>
-                      : <span className="text-[#c9a990]">—</span>
+                      ? <span className="font-semibold text-[#C2410C]">{e.units_used}</span>
+                      : <span className="text-[#A1A1AA]">—</span>
                     }
                   </td>
 
                   {/* Water */}
-                  <td className="px-4 py-3.5 tabular-nums text-[#564334]">
-                    {wPrevVal != null ? wPrevVal : <span className="text-[#c9a990]">—</span>}
+                  <td className="px-4 py-3.5 tabular-nums text-[#3F3F46]">
+                    {wPrevVal != null ? wPrevVal : <span className="text-[#A1A1AA]">—</span>}
                   </td>
-                  <td className="px-4 py-3.5 tabular-nums text-[#564334]">
+                  <td className="px-4 py-3.5 tabular-nums text-[#3F3F46]">
                     {wCurrVal != null
-                      ? (w ? wCurrVal : <span className="italic text-[#1565c0]">{wCurrVal}?</span>)
-                      : <span className="text-[#c9a990]">—</span>
+                      ? (w ? wCurrVal : <span className="italic text-[#2563EB]">{wCurrVal}?</span>)
+                      : <span className="text-[#A1A1AA]">—</span>
                     }
                   </td>
                   <td className="px-4 py-3.5 tabular-nums">
                     {w
                       ? <span className="font-semibold text-[#3b82f6]">{w.units_used}</span>
-                      : <span className="text-[#c9a990]">—</span>
+                      : <span className="text-[#A1A1AA]">—</span>
                     }
                   </td>
 
@@ -153,21 +153,21 @@ export default function MeterTable({
                         {hasReading ? (
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             method === 'ocr'
-                              ? 'bg-[#e8f4fd] text-[#1565c0]'
-                              : 'bg-[#fff1e9] text-[#897362]'
+                              ? 'bg-[#EEF4FF] text-[#2563EB]'
+                              : 'bg-[#FFE8D1] text-[#71717A]'
                           }`}>
                             {method === 'ocr' ? 'OCR' : 'Manual'}
                           </span>
                         ) : hasDraft ? (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fff3cd] text-[#8a6100]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#FEF3C7] text-[#B45309]">
                             รอตรวจสอบ (OCR)
                           </span>
                         ) : hasPrev ? (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#ffdad6] text-[#93000a]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#fee2e2] text-[#dc2626]">
                             ยังไม่บันทึก
                           </span>
                         ) : (
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#f5f5f5] text-[#897362]">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#F4F4F5] text-[#71717A]">
                             ไม่มีข้อมูล
                           </span>
                         )}
@@ -178,7 +178,7 @@ export default function MeterTable({
                         <button
                           onClick={e => handleDelete(e, room)}
                           disabled={isDeleting}
-                          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#897362] hover:text-[#93000a] hover:bg-[#ffdad6] transition-all disabled:opacity-40"
+                          className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg text-[#71717A] hover:text-[#dc2626] hover:bg-[#fee2e2] transition-all disabled:opacity-40"
                           title="ลบข้อมูลมิเตอร์เดือนนี้"
                         >
                           <Trash2 size={13} />
