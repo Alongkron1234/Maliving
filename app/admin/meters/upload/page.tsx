@@ -8,8 +8,8 @@ type ExtractedReading = { room: string; electric?: number; water?: number }
 type ReadingError = { room: string; reason: string }
 
 const MONTHS = [
-  'January','February','March','April','May','June',
-  'July','August','September','October','November','December',
+  'มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม',
 ]
 
 const inputClass =
@@ -57,34 +57,39 @@ export default function MeterUploadPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-4xl mx-auto">
       <Link
         href="/admin/meters"
         className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
-        Back to Meter Readings
+        กลับไปหน้าจดมิเตอร์
       </Link>
 
-      <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#18181B]">OCR Upload</h1>
-        <p className="text-sm text-[#71717A] mt-1">
-          Upload a photo of the meter sheet — AI will extract all room readings automatically.
-        </p>
+      <div className="flex items-center gap-4 mb-7">
+        <span className="inline-flex items-center justify-center w-14 h-14 rounded-2xl shrink-0 bg-[#EEF4FF] text-[#2563EB]">
+          <Camera size={26} strokeWidth={2.25} />
+        </span>
+        <div>
+          <h1 className="text-3xl font-bold text-[#18181B] tracking-tight">อัปโหลดรูปมิเตอร์ (OCR)</h1>
+          <p className="text-sm text-[#71717A] mt-1">
+            อัปโหลดรูปกระดาษจดมิเตอร์ — AI จะอ่านเลขมิเตอร์ของทุกห้องให้อัตโนมัติ
+          </p>
+        </div>
       </div>
 
-      <div className="max-w-2xl space-y-5">
+      <div className="space-y-5">
         <form onSubmit={handleSubmit}>
-          <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-            <h2 className="text-base font-bold text-[#18181B] mb-1">Upload Meter Sheet</h2>
+          <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
+            <h2 className="text-base font-bold text-[#18181B] mb-1">อัปโหลดรูปกระดาษมิเตอร์</h2>
             <p className="text-sm text-[#71717A] mb-7">
-              Select the billing month and upload a clear photo of the handwritten meter sheet.
+              เลือกเดือนที่จะบันทึกบิล แล้วอัปโหลดรูปกระดาษจดมิเตอร์ที่ชัดเจน
             </p>
 
             {/* Month + Year */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6 mb-7">
               <div>
-                <label className="block text-sm font-semibold text-[#18181B] mb-2">Month</label>
+                <label className="block text-sm font-semibold text-[#18181B] mb-2">เดือน</label>
                 <select
                   value={month}
                   onChange={e => setMonth(parseInt(e.target.value))}
@@ -96,7 +101,7 @@ export default function MeterUploadPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-[#18181B] mb-2">Year</label>
+                <label className="block text-sm font-semibold text-[#18181B] mb-2">ปี</label>
                 <input
                   type="number"
                   value={year}
@@ -110,7 +115,7 @@ export default function MeterUploadPage() {
 
             {/* File Drop Zone */}
             <div>
-              <label className="block text-sm font-semibold text-[#18181B] mb-2">Meter Sheet Photo</label>
+              <label className="block text-sm font-semibold text-[#18181B] mb-2">รูปกระดาษมิเตอร์</label>
               <div
                 onClick={() => fileInputRef.current?.click()}
                 className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
@@ -156,12 +161,12 @@ export default function MeterUploadPage() {
               href="/admin/meters"
               className="px-6 py-2.5 bg-white border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
             >
-              Cancel
+              ยกเลิก
             </Link>
             <button
               type="submit"
               disabled={loading || !file}
-              className="flex items-center gap-2 px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
             >
               <Upload size={15} />
               {loading ? 'กำลังวิเคราะห์รูป…' : 'อัปโหลดและประมวลผล'}
@@ -171,14 +176,14 @@ export default function MeterUploadPage() {
 
         {/* Result Panel */}
         {result && (
-          <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
+          <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
             <h2 className="text-base font-bold text-[#18181B] mb-1">ผลการประมวลผล</h2>
             <p className="text-sm text-[#71717A] mb-5">
               อ่านค่าได้ {result.readings.length} ห้อง — ยังไม่บันทึกลงระบบ
               {result.errors.length > 0 && ` · ข้อผิดพลาด ${result.errors.length} ห้อง`}
             </p>
             <p className="text-xs text-[#A1A1AA] mb-5 -mt-4">
-              เปิดแต่ละห้องเพื่อตรวจสอบเลขมิเตอร์แล้วกด &quot;Save Reading&quot; เพื่อยืนยัน
+              เปิดแต่ละห้องเพื่อตรวจสอบเลขมิเตอร์แล้วกด &quot;บันทึกมิเตอร์&quot; เพื่อยืนยัน
             </p>
 
             {result.readings.length > 0 && (
@@ -190,7 +195,7 @@ export default function MeterUploadPage() {
                   >
                     <CheckCircle size={15} className="text-[#16a34a] shrink-0" />
                     <span className="text-sm font-medium text-[#15803d]">
-                      Room {r.room}
+                      ห้อง {r.room}
                       {r.electric != null && <span className="ml-2 font-normal">⚡ {r.electric}</span>}
                       {r.water != null && <span className="ml-2 font-normal">💧 {r.water}</span>}
                     </span>
@@ -208,7 +213,7 @@ export default function MeterUploadPage() {
                   >
                     <AlertCircle size={15} className="text-[#B91C1C] shrink-0" />
                     <span className="text-sm font-medium text-[#B91C1C]">
-                      Room {err.room}: {err.reason}
+                      ห้อง {err.room}: {err.reason}
                     </span>
                   </div>
                 ))}
@@ -217,7 +222,7 @@ export default function MeterUploadPage() {
 
             <Link
               href={`/admin/meters?month=${month}&year=${year}`}
-              className="inline-flex items-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
+              className="inline-flex items-center gap-2 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5"
             >
               ดูมิเตอร์เดือนนี้ →
             </Link>

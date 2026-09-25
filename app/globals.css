@@ -53,6 +53,13 @@ body {
   font-family: var(--font-inter), Inter, sans-serif;
 }
 
+/* Bumps every rem-based Tailwind size (text-*, p-*, gap-*, etc.) up ~6% site-wide
+   for readability — fixed-pixel values (arbitrary [Npx] widths like the sidebar
+   rail, icon badges) are untouched since they don't use rem. */
+html {
+  font-size: 17px;
+}
+
 /* Admin panel page-enter flourish — see components/layout/PageTransition.tsx */
 @keyframes admin-page-in {
   from {
@@ -85,4 +92,20 @@ body {
   transition-property: background-color, border-color, color, box-shadow, opacity;
   transition-duration: 180ms;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Floating AI-assistant shortcut (components/layout/AgentFab.tsx) */
+@keyframes agent-fab-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  75%, 100% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: agent-fab-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
 }

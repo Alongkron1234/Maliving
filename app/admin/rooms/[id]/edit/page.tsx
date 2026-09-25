@@ -23,23 +23,21 @@ export default async function EditRoomPage({ params }: { params: Promise<{ id: s
   const hasActiveTenants = (count ?? 0) > 0
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-3xl mx-auto">
       <Link
         href={`/admin/rooms/${room.id}`}
         className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
-        Back to Room {room.room_number}
+        กลับไปหน้าห้อง {room.room_number}
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#18181B]">Edit Room {room.room_number}</h1>
-        <p className="text-sm text-[#71717A] mt-1">Update the specifications for this room unit.</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">แก้ไขห้อง {room.room_number}</h1>
+        <p className="text-sm text-[#71717A] mt-1">แก้ไขรายละเอียดของห้องนี้</p>
       </div>
 
-      <div className="max-w-2xl">
-        <RoomEditForm room={room} hasActiveTenants={hasActiveTenants} />
-      </div>
+      <RoomEditForm room={room} hasActiveTenants={hasActiveTenants} />
     </div>
   )
 }

@@ -3,7 +3,10 @@ import { toGroqTools, toolModeByName } from './tools'
 import { executors } from './executors'
 import type { ExecutorCtx } from './executors/types'
 
-const MODEL = 'llama-3.3-70b-versatile'
+// llama-3.3-70b-versatile moved behind Groq's Enterprise tier ("Contact Sales" pricing) and
+// now 404s with "does not exist or you do not have access to it" on a normal developer key.
+// gpt-oss-120b is Groq's current publicly-priced production model with tool-calling support.
+const MODEL = 'openai/gpt-oss-120b'
 const MAX_ITERATIONS = 6
 
 const SYSTEM_PROMPT = `คุณคือผู้ช่วย AI ของระบบจัดการหอพัก Maliving พูดภาษาไทย สุภาพ กระชับ ตรงประเด็น
@@ -11,9 +14,19 @@ const SYSTEM_PROMPT = `คุณคือผู้ช่วย AI ของร�
 - action ที่มีผลจริงต่อข้อมูล (บันทึก/แก้ไข/ลบ) ระบบจะหยุดรอให้ admin กดยืนยันก่อนเสมอโดยอัตโนมัติ ไม่ต้องขอ permission ซ้ำในข้อความ แค่บอกสั้นๆว่ากำลังจะทำอะไร
 - ถ้า action ต้องใช้ตัวเลขที่มาจาก OCR (เช่นค่ามิเตอร์) ให้บอกตัวเลขที่อ่านได้ให้ชัดเจนในข้อความ เพื่อให้ admin ตรวจสอบก่อนกดยืนยัน
 - ถ้าข้อมูลไม่พอที่จะเรียก tool ได้ (เช่นไม่รู้ room_id) ให้เรียก tool ที่อ่านข้อมูลก่อน (list_rooms, list_tenants ฯลฯ) แทนที่จะถามผู้ใช้กลับทันที ถ้าหาไม่เจอจริงๆค่อยถาม
+- ห้ามเรียก tool ที่เขียนข้อมูล (write) ทั้งที่ยัง "เดา" ค่า parameter ที่จำเป็นอยู่ (เช่น room_number, room_id) — ถ้าหลังเรียก tool อ่านข้อมูลแล้วยังไม่สามารถระบุได้ชัดเจนว่าเป็นห้องไหน/รายการไหน (เช่นผู้ใช้พิมพ์ "ห้องไหนก็ได้" หรือ "มั่วๆ" โดยไม่ระบุห้อง) ให้ถามกลับสั้นๆ ว่าต้องการห้อง/รายการไหน อย่าปฏิเสธคำขอเฉยๆ โดยไม่บอกเหตุผลหรือถามกลับ
+- ก่อนเรียก save_meter_reading หรือ save_meter_readings_bulk (ไม่ว่าจะเป็นค่าจริงจาก OCR หรือค่าสุ่ม/มั่วๆ ตามคำขอผู้ใช้) ให้เรียก list_meter_readings หนึ่งครั้งโดยระบุ month/year เป็น "เดือนก่อนหน้า" ของรอบที่จะบันทึกเท่านั้น (เช่นจะบันทึกเดือน 9 ปี 2026 ให้ดูเดือน 8 ปี 2026 — ถ้าจะบันทึกเดือน 1 ให้ดูเดือน 12 ปีก่อนหน้า) ห้ามเรียกแบบไม่ระบุเดือน/ปีเพราะจะดึงประวัติทั้งหมดมาจนคำขอใหญ่เกินไปสำหรับโมเดล แล้วใช้ current_reading ที่เจอของแต่ละห้องในเดือนนั้นเป็นค่า electric_previous/water_previous ของรอบนี้ ห้ามปล่อยเป็น 0 ถ้าเดือนก่อนมีข้อมูลจริง — เพราะ previous=0 ทั้งที่จริงมีเลขก่อนหน้า จะทำให้หน่วยที่ใช้คำนวณผิดพลาดมหาศาลและกระทบยอดบิลจริง ใช้ 0 เฉพาะห้องที่เดือนก่อนไม่มีข้อมูลมิเตอร์เลยจริงๆ เท่านั้น
+- ถ้าผู้ใช้ขอให้บันทึกเลขมิเตอร์หลายห้อง/ทุกห้องพร้อมกัน (เช่น "กรอกเลขมิเตอร์มั่วๆ ให้ทุกห้องเลย") ให้ใช้ save_meter_readings_bulk ตัวเดียว ใส่ทุกห้องใน readings ในคำตอบเดียว ห้ามเรียก save_meter_reading วนหลายครั้งแทน
+- tool อื่นที่ไม่มีเวอร์ชัน bulk และรับได้แค่ห้อง/รายการเดียวต่อครั้ง ห้ามพยายามยัดหลายห้องเข้าไปใน 1 ครั้งที่เรียก (เช่น room_number เป็นลิสต์) — จะทำให้ tool call ผิด schema แล้ว error เสมอ ถ้าผู้ใช้ขอให้ทำกับหลายห้องพร้อมกัน ให้เรียกทีละห้องเท่านั้น เริ่มจากห้องแรกก่อน แล้วหลัง admin ยืนยันห้องนั้นเสร็จค่อยถามหรือเรียกห้องถัดไปต่อในเทิร์นถัดมา
 - ถ้าเห็นผลลัพธ์ tool ที่บอกว่า "ผู้ใช้ไม่ยืนยัน action นี้" ห้ามเรียก tool เดิมซ้ำทันที ให้ตอบรับทราบสั้นๆ แล้วถามว่าต้องการให้ทำอะไรต่อแทน
 - ตอบด้วยหน่วยเงินเป็นบาท (฿) และจำนวนหน่วยไฟ/น้ำอย่างชัดเจนเมื่อเกี่ยวข้อง
 - วันนี้คือ ${new Date().toISOString().slice(0, 10)}`
+
+const SANDBOX_NOTE = `
+
+- ⚠️ ขณะนี้อยู่ใน "โหมดทดลอง (Sandbox)" — action ที่มีผลจริงต่อข้อมูล (write) ทุกตัวจะถูกจำลองเท่านั้น ไม่ได้บันทึกลงระบบจริงแต่อย่างใด แม้ admin จะกดยืนยันก็ตาม
+- หลังเรียก tool ที่ผลลัพธ์มี "sandbox": true ให้บอกผู้ใช้ให้ชัดเจนว่านี่เป็นการจำลอง ("จำลองว่า...แล้วนะคะ ระบบจริงไม่ถูกแก้ไข") อย่าพูดราวกับว่าบันทึกจริงแล้ว
+- tool ที่เป็น read (list_rooms, get_bill ฯลฯ) ยังคงดึงข้อมูลจริงตามปกติ — เฉพาะ write เท่านั้นที่ถูกจำลอง`
 
 export interface AgentToolCall {
   id: string
@@ -40,14 +53,35 @@ export interface AgentLoopResult {
   pendingConfirmation: PendingToolCall[] | null
 }
 
-function ensureSystemPrompt(messages: AgentMessage[]): AgentMessage[] {
-  if (messages.length > 0 && messages[0].role === 'system') return messages
-  return [{ role: 'system', content: SYSTEM_PROMPT }, ...messages]
+// Rebuilds the system message every call (not just when missing) so toggling
+// sandbox mode mid-conversation is reflected immediately, not just for new chats.
+function ensureSystemPrompt(messages: AgentMessage[], sandbox: boolean): AgentMessage[] {
+  const content = sandbox ? SYSTEM_PROMPT + SANDBOX_NOTE : SYSTEM_PROMPT
+  if (messages.length > 0 && messages[0].role === 'system') {
+    return [{ role: 'system', content }, ...messages.slice(1)]
+  }
+  return [{ role: 'system', content }, ...messages]
 }
 
 export async function runTool(name: string, args: Record<string, unknown>, ctx: ExecutorCtx) {
   const fn = executors[name]
   if (!fn) return { ok: false, error: `ไม่รู้จัก tool ชื่อ "${name}"` }
+
+  // Sandbox mode: every 'write' tool is short-circuited here, before its executor
+  // (whether it calls internalFetch or writes to ctx.supabase directly) ever runs —
+  // one gate covers every write tool regardless of how it's implemented underneath.
+  if (ctx.sandbox && toolModeByName[name] === 'write') {
+    return {
+      ok: true,
+      data: {
+        sandbox: true,
+        note: 'จำลองการทำงานในโหมดทดลอง — ไม่ได้บันทึกจริงลงระบบ',
+        tool: name,
+        would_apply: args,
+      },
+    }
+  }
+
   try {
     const data = await fn(args, ctx)
     return { ok: true, data }
@@ -58,7 +92,7 @@ export async function runTool(name: string, args: Record<string, unknown>, ctx: 
 
 export async function runAgentLoop(inputMessages: AgentMessage[], ctx: ExecutorCtx): Promise<AgentLoopResult> {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! })
-  let messages = ensureSystemPrompt(inputMessages)
+  let messages = ensureSystemPrompt(inputMessages, ctx.sandbox)
 
   for (let i = 0; i < MAX_ITERATIONS; i++) {
     let completion
@@ -71,14 +105,19 @@ export async function runAgentLoop(inputMessages: AgentMessage[], ctx: ExecutorC
         tool_choice: 'auto',
       })
     } catch (err) {
-      // Groq's Llama models occasionally emit a malformed function call (esp. when
-      // retrying right after a rejected tool call) and the API rejects it with a
-      // 400 — degrade to a plain message instead of throwing, so a bad model
-      // generation can never leave a confirmation card stuck open on the client.
+      // The model occasionally emits a malformed function call (esp. when retrying
+      // right after a rejected tool call, or when asked to act on many rooms/items
+      // at once and it tries to cram them into one call instead of one-per-call)
+      // and the API rejects it with a 400 — degrade to a plain message instead of
+      // throwing, so a bad model generation can never leave a confirmation card
+      // stuck open on the client.
       const message = err instanceof Error ? err.message : String(err)
+      const isBulkLikelyCause = /tool call validation failed/i.test(message)
       messages = [...messages, {
         role: 'assistant',
-        content: `ขอโทษค่ะ ประมวลผลคำสั่งนี้ไม่สำเร็จ (${message.slice(0, 150)}) ลองพิมพ์คำสั่งใหม่อีกครั้งได้ไหมคะ`,
+        content: isBulkLikelyCause
+          ? 'ขอโทษค่ะ คำสั่งนี้อาจครอบคลุมหลายห้อง/หลายรายการพร้อมกันเกินไปจนระบบสร้างคำสั่งไม่สำเร็จ ลองสั่งทีละห้อง/ทีละรายการแทนได้ไหมคะ'
+          : `ขอโทษค่ะ ประมวลผลคำสั่งนี้ไม่สำเร็จ (${message.slice(0, 150)}) ลองพิมพ์คำสั่งใหม่อีกครั้งได้ไหมคะ`,
       }]
       return { messages, pendingConfirmation: null }
     }

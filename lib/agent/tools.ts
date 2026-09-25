@@ -192,13 +192,43 @@ export const agentTools: ToolDef[] = [
         month: num('เดือน 1-12'),
         year: num('ปี ค.ศ.'),
         electric_current: num('เลขมิเตอร์ไฟปัจจุบัน'),
-        electric_previous: num('เลขมิเตอร์ไฟเดือนก่อน (ไม่ใส่ = 0)'),
+        electric_previous: num('เลขมิเตอร์ไฟเดือนก่อน — ต้องดึงจากเลขมิเตอร์ล่าสุดจริงในระบบ (เรียก list_meter_readings ก่อน) ห้ามปล่อยเป็น 0 ถ้ามีประวัติอยู่จริง'),
         water_current: num('เลขมิเตอร์น้ำปัจจุบัน'),
-        water_previous: num('เลขมิเตอร์น้ำเดือนก่อน (ไม่ใส่ = 0)'),
+        water_previous: num('เลขมิเตอร์น้ำเดือนก่อน — ต้องดึงจากเลขมิเตอร์ล่าสุดจริงในระบบ (เรียก list_meter_readings ก่อน) ห้ามปล่อยเป็น 0 ถ้ามีประวัติอยู่จริง'),
         input_method: enumStr('manual หรือ ocr', ['manual', 'ocr']),
         ocr_batch_id: str('UUID ของ ocr batch ถ้ามาจาก OCR'),
       },
       required: ['room_number', 'month', 'year', 'electric_current', 'water_current'],
+    },
+  },
+  {
+    name: 'save_meter_readings_bulk',
+    mode: 'write',
+    description:
+      'บันทึกเลขมิเตอร์ไฟและน้ำของหลายห้องพร้อมกันในคำสั่งเดียว ใช้เมื่อผู้ใช้ขอให้ทำหลายห้อง/ทุกห้องพร้อมกัน ' +
+      '(เช่น "กรอกเลขมิเตอร์มั่วๆ ให้ทุกห้องเลย") — ห้ามเรียก save_meter_reading วนหลายครั้งแทน ให้ใช้ตัวนี้ตัวเดียวแล้วใส่ทุกห้องใน readings',
+    parameters: {
+      type: 'object',
+      properties: {
+        month: num('เดือน 1-12 ของทุกห้องในชุดนี้'),
+        year: num('ปี ค.ศ. ของทุกห้องในชุดนี้'),
+        readings: {
+          type: 'array',
+          description: 'รายการเลขมิเตอร์ต่อห้อง อย่างน้อย 1 รายการ',
+          items: {
+            type: 'object',
+            properties: {
+              room_number: str('เลขห้อง'),
+              electric_current: num('เลขมิเตอร์ไฟปัจจุบัน'),
+              electric_previous: num('เลขมิเตอร์ไฟเดือนก่อน — ต้องดึงจากเลขมิเตอร์ล่าสุดจริงในระบบ (เรียก list_meter_readings ก่อน) ห้ามปล่อยเป็น 0 ถ้ามีประวัติอยู่จริง'),
+              water_current: num('เลขมิเตอร์น้ำปัจจุบัน'),
+              water_previous: num('เลขมิเตอร์น้ำเดือนก่อน — ต้องดึงจากเลขมิเตอร์ล่าสุดจริงในระบบ (เรียก list_meter_readings ก่อน) ห้ามปล่อยเป็น 0 ถ้ามีประวัติอยู่จริง'),
+            },
+            required: ['room_number', 'electric_current', 'water_current'],
+          },
+        },
+      },
+      required: ['month', 'year', 'readings'],
     },
   },
   {

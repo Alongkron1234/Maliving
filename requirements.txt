@@ -1,0 +1,33 @@
+# ==============================================================================
+# Maliving Project Requirements & Dependencies Summary
+# ------------------------------------------------------------------------------
+# NOTE: This project is built with Next.js (Node.js / TypeScript).
+# In Node.js projects, package dependencies are managed via package.json.
+# This requirements.txt file provides an overview of all installed packages.
+# ==============================================================================
+
+# --- Core Framework & UI ---
+next@16.2.9               # Next.js App Router Framework
+react@19.2.4              # React UI Library
+react-dom@19.2.4          # React Rendering Engine
+lucide-react@^1.22.0      # UI Icons Library
+
+# --- Backend Services & Database ---
+@supabase/supabase-js@^2.109.0  # Supabase Client SDK
+@supabase/ssr@^0.12.0           # Supabase Server-Side Rendering Utilities
+
+# --- AI & External APIs ---
+groq-sdk@^1.3.0           # Groq AI Cloud SDK
+
+# --- Styling & Design ---
+tailwindcss@^4            # Tailwind CSS v4 Engine
+@tailwindcss/postcss@^4   # PostCSS Integration for Tailwind
+
+# --- Development & Testing Tools ---
+typescript@^5             # TypeScript Static Type Checker
+eslint@^9                 # Code Quality Linter
+eslint-config-next@16.2.9 # Next.js ESLint Preset
+playwright@^1.61.1        # End-to-End Automated Testing
+@types/node@^20           # TypeScript Types for Node.js
+@types/react@^19          # TypeScript Types for React
+@types/react-dom@^19      # TypeScript Types for React DOM

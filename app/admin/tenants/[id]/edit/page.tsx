@@ -27,23 +27,21 @@ export default async function EditTenantPage({ params }: { params: Promise<{ id:
   const profile = tenant.profiles
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-3xl mx-auto">
       <Link
         href={`/admin/tenants/${id}`}
         className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
-        Back to {profile.full_name}
+        กลับไปหน้า {profile.full_name}
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#18181B]">Edit {profile.full_name}</h1>
-        <p className="text-sm text-[#71717A] mt-1">Update this tenant&apos;s personal details.</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">แก้ไข {profile.full_name}</h1>
+        <p className="text-sm text-[#71717A] mt-1">แก้ไขข้อมูลส่วนตัวของผู้เช่าคนนี้</p>
       </div>
 
-      <div className="max-w-2xl">
-        <TenantEditForm tenant={{ ...tenant, profiles: profile }} />
-      </div>
+      <TenantEditForm tenant={{ ...tenant, profiles: profile }} />
     </div>
   )
 }

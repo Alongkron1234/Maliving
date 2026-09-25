@@ -39,7 +39,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
     if (updateError) {
       setError(
         updateError.message.includes('unique')
-          ? `Room "${room_number}" already exists`
+          ? `ห้อง "${room_number}" มีอยู่แล้ว`
           : updateError.message
       )
       setLoading(false)
@@ -51,19 +51,19 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
   }
 
   const statusOptions: { value: RoomStatus; label: string; active: string; inactive: string }[] = [
-    { value: 'available',   label: 'Available',   active: 'bg-[#FF6A00] text-white shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
-    { value: 'occupied',    label: 'Occupied',    active: 'bg-[#FFD9B3] text-[#C2410C] shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
-    { value: 'maintenance', label: 'Maintenance', active: 'bg-[#DC2626] text-white shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
+    { value: 'available',   label: 'ว่าง',       active: 'bg-[#1e7e46] text-white shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
+    { value: 'occupied',    label: 'มีผู้เช่า',  active: 'bg-[#FFD9B3] text-[#C2410C] shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
+    { value: 'maintenance', label: 'ซ่อมบำรุง', active: 'bg-[#DC2626] text-white shadow-sm', inactive: 'bg-[#FFE8D1] text-[#71717A] hover:bg-[#FFD9B3] hover:text-[#3F3F46]' },
   ]
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="bg-white rounded-2xl border border-[#E4E4E7] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-        <h2 className="text-base font-bold text-[#18181B] mb-1">Room Specifications</h2>
-        <p className="text-sm text-[#71717A] mb-7">Update the details for this room unit.</p>
+      <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
+        <h2 className="text-base font-bold text-[#18181B] mb-1">ข้อมูลห้องพัก</h2>
+        <p className="text-sm text-[#71717A] mb-7">แก้ไขรายละเอียดของห้องนี้</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-6">
-          <Field label="Room Number">
+          <Field label="เลขห้อง">
             <input
               name="room_number"
               type="text"
@@ -73,16 +73,16 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
             />
           </Field>
 
-          <Field label="Floor Number">
+          <Field label="ชั้น">
             <select name="floor" defaultValue={room.floor ?? ''} className={inputClass}>
-              <option value="">No floor</option>
+              <option value="">ไม่ระบุชั้น</option>
               {Array.from({ length: 10 }, (_, i) => i + 1).map(f => (
-                <option key={f} value={f}>Floor {f}</option>
+                <option key={f} value={f}>ชั้น {f}</option>
               ))}
             </select>
           </Field>
 
-          <Field label="Monthly Rent (฿)">
+          <Field label="ค่าเช่ารายเดือน (฿)">
             <div className="relative">
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#71717A] font-medium select-none">฿</span>
               <input
@@ -96,7 +96,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
             </div>
           </Field>
 
-          <Field label="Status">
+          <Field label="สถานะ">
             <div className="flex gap-1.5 h-[42px]">
               {statusOptions.map(opt => {
                 const locked = opt.value === 'available' && hasActiveTenants
@@ -106,7 +106,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
                     type="button"
                     disabled={locked}
                     onClick={() => !locked && setStatus(opt.value)}
-                    title={locked ? 'Room still has active tenants — move them out first' : undefined}
+                    title={locked ? 'ห้องนี้ยังมีผู้เช่าอยู่ — ต้องย้ายผู้เช่าออกก่อน' : undefined}
                     className={`flex-1 rounded-lg text-xs font-semibold transition-colors ${
                       locked
                         ? 'opacity-40 cursor-not-allowed bg-[#FFE8D1] text-[#71717A]'
@@ -120,7 +120,7 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
             </div>
             {hasActiveTenants && (
               <p className="text-xs text-[#71717A] mt-2">
-                "Available" is locked — move out all tenants before changing status.
+                สถานะ &quot;ว่าง&quot; ถูกล็อกไว้ — ต้องย้ายผู้เช่าออกทั้งหมดก่อนถึงจะเปลี่ยนสถานะได้
               </p>
             )}
           </Field>
@@ -136,14 +136,14 @@ export default function RoomEditForm({ room, hasActiveTenants }: { room: Room; h
           href={`/admin/rooms/${room.id}`}
           className="px-6 py-2.5 bg-white border border-[#E4E4E7] text-[#3F3F46] text-sm font-semibold rounded-lg hover:border-[#C2410C] hover:text-[#C2410C] transition-colors"
         >
-          Cancel
+          ยกเลิก
         </Link>
         <button
           type="submit"
           disabled={loading}
-          className="px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+          className="px-6 py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5 disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
         >
-          {loading ? 'Saving…' : 'Save Changes'}
+          {loading ? 'กำลังบันทึก…' : 'บันทึกการเปลี่ยนแปลง'}
         </button>
       </div>
     </form>

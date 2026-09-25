@@ -22,25 +22,23 @@ export default async function NewTenantPage({
   const rooms: RoomOption[] = (rawRooms as any) ?? []
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8 max-w-3xl mx-auto">
       <Link
         href="/admin/tenants"
         className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
-        Back to Tenants
+        กลับไปหน้าผู้เช่า
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#18181B]">Add New Tenant</h1>
+        <h1 className="text-2xl font-bold text-[#18181B]">เพิ่มผู้เช่าใหม่</h1>
         <p className="text-sm text-[#71717A] mt-1">
-          Register a new tenant and assign them to an available room.
+          ลงทะเบียนผู้เช่าใหม่และมอบหมายห้องพักที่ว่าง
         </p>
       </div>
 
-      <div className="max-w-2xl">
-        <TenantNewForm rooms={rooms} defaultRoomId={room} />
-      </div>
+      <TenantNewForm rooms={rooms} defaultRoomId={room} />
     </div>
   )
 }

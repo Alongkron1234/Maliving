@@ -9,6 +9,9 @@ export interface ExecutorCtx {
   // (reading cookies via createClient()) sees the same session as this request —
   // internal fetches are a fresh HTTP request and don't inherit cookies otherwise.
   cookie: string
+  // When true, runTool() in lib/agent/loop.ts short-circuits every 'write' tool
+  // before its executor runs — no executor here ever needs to check this itself.
+  sandbox: boolean
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

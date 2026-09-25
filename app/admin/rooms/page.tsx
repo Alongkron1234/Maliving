@@ -294,7 +294,7 @@ function RoomCard({
       <Link href={`/admin/rooms/${room.id}`} className="absolute inset-0 rounded-2xl z-0" />
 
       {/* Top row: icon + badge */}
-      <div className="relative z-10 flex items-start justify-between">
+      <div className="relative z-10 flex items-start justify-between pointer-events-none">
         <div className={`w-10 h-10 rounded-xl ${bg} flex items-center justify-center`}>
           {icon}
         </div>
@@ -304,7 +304,7 @@ function RoomCard({
       </div>
 
       {/* Room info */}
-      <div className="relative z-10">
+      <div className="relative z-10 pointer-events-none">
         <p className="text-base font-bold text-[#18181B]">ห้อง {room.room_number}</p>
         <p className="text-xs text-[#71717A] mt-0.5">
           {room.floor != null ? `ชั้น ${room.floor}` : 'ไม่ระบุชั้น'}
@@ -314,7 +314,7 @@ function RoomCard({
       </div>
 
       {/* Status-specific content */}
-      <div className="relative z-10 flex flex-col gap-2.5">
+      <div className="relative z-10 flex flex-col gap-2.5 pointer-events-none">
         {status === 'occupied' && tenant && (
           <div className="flex items-center gap-2.5 bg-[#FFFAF7] rounded-xl p-3">
             <div className="w-8 h-8 rounded-full bg-[#FFD9B3] flex items-center justify-center text-xs font-bold text-[#C2410C] shrink-0">
