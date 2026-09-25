@@ -22,7 +22,7 @@ export default function RemoveTenantButton({
   async function handleRemove() {
     if (
       !window.confirm(
-        `Move out ${tenantName}? Their account will be deleted and the room will be set to available if no other tenants remain.`
+        `ให้ ${tenantName} ย้ายออก? บัญชีผู้ใช้จะถูกลบ และห้องจะถูกตั้งเป็นว่างถ้าไม่มีผู้เช่าคนอื่นเหลืออยู่`
       )
     )
       return
@@ -56,7 +56,7 @@ export default function RemoveTenantButton({
         className="inline-flex items-center gap-2 border border-[#FEE2E2] text-[#B91C1C] text-sm font-semibold px-4 py-2.5 rounded-lg hover:bg-[#FEE2E2] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <LogOut size={15} />
-        {loading ? 'Moving out…' : 'Move Out'}
+        {loading ? 'กำลังย้ายออก…' : 'ย้ายออก'}
       </button>
       {error && (
         <p className="text-xs text-[#DC2626] max-w-xs text-right">{error}</p>

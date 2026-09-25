@@ -53,6 +53,13 @@ body {
   font-family: var(--font-inter), Inter, sans-serif;
 }
 
+/* Bumps every rem-based Tailwind size (text-*, p-*, gap-*, etc.) up ~6% site-wide
+   for readability — fixed-pixel values (arbitrary [Npx] widths like the sidebar
+   rail, icon badges) are untouched since they don't use rem. */
+html {
+  font-size: 17px;
+}
+
 /* Admin panel page-enter flourish — see components/layout/PageTransition.tsx */
 @keyframes admin-page-in {
   from {
