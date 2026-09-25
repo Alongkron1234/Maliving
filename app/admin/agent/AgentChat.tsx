@@ -10,6 +10,7 @@ interface PendingToolCall { id: string; name: string; arguments: Record<string, 
 
 const TOOL_LABELS: Record<string, string> = {
   save_meter_reading: 'บันทึกเลขมิเตอร์',
+  save_meter_readings_bulk: 'บันทึกเลขมิเตอร์หลายห้องพร้อมกัน',
   generate_bill: 'ออกบิล',
   delete_bill: 'ลบบิล',
   record_payment: 'บันทึกการชำระเงิน',
@@ -327,6 +328,17 @@ function ConfirmCard({
   const label = TOOL_LABELS[call.name] ?? call.name
   const dangerous = DANGEROUS_TOOLS.has(call.name)
 
+  // Bulk tools (currently just save_meter_readings_bulk) carry an array-of-objects
+  // "readings" field — that renders as a small editable table instead of the flat
+  // key/value grid every other tool's scalar args use.
+  const readings = Array.isArray(args.readings) ? (args.readings as Record<string, unknown>[]) : null
+  const scalarEntries = Object.entries(args).filter(([key]) => key !== 'readings')
+
+  function updateReading(index: number, field: string, value: unknown) {
+    if (!readings) return
+    onChange('readings', readings.map((r, i) => (i === index ? { ...r, [field]: value } : r)))
+  }
+
   return (
     <div className={`bg-white rounded-xl border p-4 ${sandbox ? 'border-[#DDD6FE]' : dangerous ? 'border-[#FCA5A5]' : 'border-[#E4E4E7]'}`}>
       <div className="flex items-center gap-2 mb-3">
@@ -338,10 +350,11 @@ function ConfirmCard({
         <p className={`text-sm font-bold ${sandbox ? 'text-[#6D28D9]' : dangerous ? 'text-[#DC2626]' : 'text-[#18181B]'}`}>
           {label}
           {sandbox && <span className="text-xs font-medium text-[#7C3AED]"> (จำลอง)</span>}
+          {readings && <span className="text-xs font-medium text-[#71717A]"> · {readings.length} ห้อง</span>}
         </p>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-        {Object.entries(args).map(([key, value]) => (
+        {scalarEntries.map(([key, value]) => (
           <label key={key} className="text-xs">
             <span className="block text-[#71717A] mb-1">{key}</span>
             <input
@@ -352,6 +365,38 @@ function ConfirmCard({
           </label>
         ))}
       </div>
+
+      {readings && (
+        <div className="mt-3 -mx-1 overflow-x-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-[#71717A]">
+                <th className="text-left px-1 pb-1.5">ห้อง</th>
+                <th className="text-left px-1 pb-1.5">⚡ ก่อน</th>
+                <th className="text-left px-1 pb-1.5">⚡ หลัง</th>
+                <th className="text-left px-1 pb-1.5">💧 ก่อน</th>
+                <th className="text-left px-1 pb-1.5">💧 หลัง</th>
+              </tr>
+            </thead>
+            <tbody>
+              {readings.map((r, i) => (
+                <tr key={i}>
+                  <td className="px-1 py-0.5 font-semibold text-[#18181B] whitespace-nowrap">{String(r.room_number ?? '—')}</td>
+                  {(['electric_previous', 'electric_current', 'water_previous', 'water_current'] as const).map(field => (
+                    <td key={field} className="px-1 py-0.5">
+                      <input
+                        value={r[field] == null ? '' : String(r[field])}
+                        onChange={e => updateReading(i, field, Number(e.target.value))}
+                        className="w-16 h-7 px-1.5 bg-[#FFFAF7] border border-[#E4E4E7] rounded text-xs text-[#18181B] outline-none focus:border-[#FF6A00]"
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   )
 }

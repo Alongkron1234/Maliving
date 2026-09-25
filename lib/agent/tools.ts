@@ -202,6 +202,36 @@ export const agentTools: ToolDef[] = [
     },
   },
   {
+    name: 'save_meter_readings_bulk',
+    mode: 'write',
+    description:
+      'บันทึกเลขมิเตอร์ไฟและน้ำของหลายห้องพร้อมกันในคำสั่งเดียว ใช้เมื่อผู้ใช้ขอให้ทำหลายห้อง/ทุกห้องพร้อมกัน ' +
+      '(เช่น "กรอกเลขมิเตอร์มั่วๆ ให้ทุกห้องเลย") — ห้ามเรียก save_meter_reading วนหลายครั้งแทน ให้ใช้ตัวนี้ตัวเดียวแล้วใส่ทุกห้องใน readings',
+    parameters: {
+      type: 'object',
+      properties: {
+        month: num('เดือน 1-12 ของทุกห้องในชุดนี้'),
+        year: num('ปี ค.ศ. ของทุกห้องในชุดนี้'),
+        readings: {
+          type: 'array',
+          description: 'รายการเลขมิเตอร์ต่อห้อง อย่างน้อย 1 รายการ',
+          items: {
+            type: 'object',
+            properties: {
+              room_number: str('เลขห้อง'),
+              electric_current: num('เลขมิเตอร์ไฟปัจจุบัน'),
+              electric_previous: num('เลขมิเตอร์ไฟเดือนก่อน (ไม่ใส่ = 0)'),
+              water_current: num('เลขมิเตอร์น้ำปัจจุบัน'),
+              water_previous: num('เลขมิเตอร์น้ำเดือนก่อน (ไม่ใส่ = 0)'),
+            },
+            required: ['room_number', 'electric_current', 'water_current'],
+          },
+        },
+      },
+      required: ['month', 'year', 'readings'],
+    },
+  },
+  {
     name: 'generate_bill',
     mode: 'write',
     description: 'ออกบิลสำหรับเดือน/ปีที่ระบุ ระบุ room_number เพื่อออกบิลห้องเดียว หรือไม่ใส่เพื่อออกบิลทุกห้องที่พร้อม',

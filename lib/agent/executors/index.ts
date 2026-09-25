@@ -29,6 +29,7 @@ export const executors: Record<string, ExecutorFn> = {
   get_ocr_batch: meters.get_ocr_batch,
   run_meter_ocr: meters.run_meter_ocr,
   save_meter_reading: meters.save_meter_reading,
+  save_meter_readings_bulk: meters.save_meter_readings_bulk,
 
   list_bills: bills.list_bills,
   get_bill: bills.get_bill,

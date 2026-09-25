@@ -165,3 +165,54 @@ export async function save_meter_reading(args: ToolArgs, ctx: ExecutorCtx) {
     }),
   })
 }
+
+type BulkReading = {
+  room_number: string
+  electric_current: number
+  electric_previous?: number
+  water_current: number
+  water_previous?: number
+}
+
+// One call handles every room in a single confirm — the whole thing is still
+// a single 'write'-mode tool, so sandbox mode simulates it atomically (nothing
+// partially applies) exactly like every other write tool, with no special-casing.
+export async function save_meter_readings_bulk(args: ToolArgs, ctx: ExecutorCtx) {
+  const month = args.month
+  const year = args.year
+  const readings: BulkReading[] = Array.isArray(args.readings) ? args.readings : []
+  if (readings.length === 0) throw new Error('ต้องระบุ readings อย่างน้อย 1 ห้อง')
+
+  const results: { room_number: string; ok: boolean; error?: string }[] = []
+
+  for (const r of readings) {
+    try {
+      const room_id = await resolveRoomId(ctx.supabase, { room_number: r.room_number })
+      await internalFetch(ctx.origin, '/api/admin/meter-reading', ctx.cookie, {
+        method: 'POST',
+        body: JSON.stringify({
+          room_id,
+          reading_month: month,
+          reading_year: year,
+          electric_previous: r.electric_previous ?? 0,
+          electric_current: r.electric_current,
+          electric_input_method: 'manual',
+          electric_ocr_batch_id: null,
+          water_previous: r.water_previous ?? 0,
+          water_current: r.water_current,
+          water_input_method: 'manual',
+          water_ocr_batch_id: null,
+        }),
+      })
+      results.push({ room_number: r.room_number, ok: true })
+    } catch (err) {
+      results.push({ room_number: r.room_number, ok: false, error: err instanceof Error ? err.message : String(err) })
+    }
+  }
+
+  return {
+    saved: results.filter(r => r.ok).length,
+    failed: results.filter(r => !r.ok).length,
+    results,
+  }
+}
