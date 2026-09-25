@@ -84,15 +84,13 @@ export default async function TenantsPage() {
             const lineConnectedAt = profile?.line_connected_at
 
             return (
-              <div
+              <Link
                 key={t.id}
-                className="group relative bg-white rounded-2xl border border-black/5 p-5 flex flex-col gap-4 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-0.5 transition-all cursor-pointer"
+                href={`/admin/tenants/${t.id}`}
+                className="group bg-white rounded-2xl border border-black/5 p-5 flex flex-col gap-4 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-0.5 transition-all"
               >
-                {/* Stretched link */}
-                <Link href={`/admin/tenants/${t.id}`} className="absolute inset-0 rounded-2xl z-0" />
-
                 {/* Avatar + room badge */}
-                <div className="relative z-10 flex items-start justify-between">
+                <div className="flex items-start justify-between">
                   <div className="w-10 h-10 rounded-full bg-[#FFD9B3] flex items-center justify-center text-sm font-bold text-[#C2410C] shrink-0">
                     {initials}
                   </div>
@@ -104,7 +102,7 @@ export default async function TenantsPage() {
                 </div>
 
                 {/* Name + phone */}
-                <div className="relative z-10">
+                <div>
                   <p className="text-base font-bold text-[#18181B] truncate">{profile?.full_name ?? '—'}</p>
                   <div className="flex items-center gap-1.5 mt-1">
                     <Phone size={11} className={profile?.phone ? 'text-[#71717A]' : 'text-[#dc2626]'} />
@@ -115,7 +113,7 @@ export default async function TenantsPage() {
                 </div>
 
                 {/* Move-in */}
-                <div className="relative z-10 flex items-center gap-2 bg-[#FFFAF7] rounded-xl p-3">
+                <div className="flex items-center gap-2 bg-[#FFFAF7] rounded-xl p-3">
                   <Calendar size={14} className="text-[#71717A] shrink-0" />
                   <div className="min-w-0">
                     <p className="text-[10px] text-[#71717A] uppercase tracking-wide font-semibold">เข้าพักเมื่อ</p>
@@ -124,14 +122,14 @@ export default async function TenantsPage() {
                 </div>
 
                 {/* Line bot status — real, set by the webhook on a successful phone match */}
-                <div className="relative z-10">
+                <div>
                   <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium ${
                     lineConnectedAt ? 'bg-[#e3f5ea] text-[#1e7e46]' : 'bg-[#F4F4F5] text-[#71717A]'
                   }`}>
                     <MessageCircle size={11} /> {lineConnectedAt ? 'เชื่อม Line แล้ว' : 'ยังไม่เชื่อม Line'}
                   </span>
                 </div>
-              </div>
+              </Link>
             )
           })}
 
