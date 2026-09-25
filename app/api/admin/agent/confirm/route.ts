@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   }
 
-  const { messages, decisions } = (await req.json()) as { messages: AgentMessage[]; decisions: Decision[] }
+  const { messages, decisions, sandbox } = (await req.json()) as { messages: AgentMessage[]; decisions: Decision[]; sandbox?: boolean }
   if (!Array.isArray(messages) || messages.length === 0 || !Array.isArray(decisions)) {
     return NextResponse.json({ error: 'Missing messages or decisions' }, { status: 400 })
   }
@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
   const origin = new URL(req.url).origin
   const cookie = req.headers.get('cookie') ?? ''
-  const ctx = { origin, supabase, cookie }
+  const ctx = { origin, supabase, cookie, sandbox: !!sandbox }
 
   const allRejected = pendingCalls.every(tc => !decisions.find(d => d.id === tc.id)?.approved)
 

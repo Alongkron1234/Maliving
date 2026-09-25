@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { Send, Paperclip, X, Loader2, AlertTriangle, Bot } from 'lucide-react'
+import { Send, Paperclip, X, Loader2, AlertTriangle, Bot, FlaskConical } from 'lucide-react'
 
 type Role = 'system' | 'user' | 'assistant' | 'tool'
 interface ToolCall { id: string; type: 'function'; function: { name: string; arguments: string } }
@@ -44,8 +44,19 @@ export default function AgentChat() {
   const [error, setError] = useState<string | null>(null)
   const [editedArgs, setEditedArgs] = useState<Record<string, Record<string, unknown>>>({})
   const [approved, setApproved] = useState<Record<string, boolean>>({})
+  const [sandbox, setSandbox] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem('maliving_agent_sandbox') === '1'
+  )
   const fileInputRef = useRef<HTMLInputElement>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+
+  function toggleSandbox() {
+    setSandbox(prev => {
+      const next = !prev
+      localStorage.setItem('maliving_agent_sandbox', next ? '1' : '0')
+      return next
+    })
+  }
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -74,7 +85,7 @@ export default function AgentChat() {
       const res = await fetch('/api/admin/agent/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: msgs }),
+        body: JSON.stringify({ messages: msgs, sandbox }),
       })
       const body = await res.json()
       if (!res.ok) throw new Error(body.error ?? 'เกิดข้อผิดพลาด')
@@ -121,7 +132,7 @@ export default function AgentChat() {
       const res = await fetch('/api/admin/agent/confirm', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages, decisions }),
+        body: JSON.stringify({ messages, decisions, sandbox }),
       })
       const body = await res.json()
       if (!res.ok) throw new Error(body.error ?? 'เกิดข้อผิดพลาด')
@@ -152,7 +163,31 @@ export default function AgentChat() {
   const visibleMessages = messages.filter(m => m.role === 'user' || (m.role === 'assistant' && m.content))
 
   return (
-    <div className="h-full flex flex-col bg-white rounded-2xl border border-[#E4E4E7] overflow-hidden">
+    <div className={`h-full flex flex-col bg-white rounded-2xl border overflow-hidden transition-colors ${sandbox ? 'border-[#7C3AED]' : 'border-[#E4E4E7]'}`}>
+      {/* Sandbox toggle bar */}
+      <div className={`flex items-center justify-between gap-3 px-4 py-2.5 border-b transition-colors ${sandbox ? 'bg-[#F5F3FF] border-[#DDD6FE]' : 'bg-[#FFFAF7] border-[#E4E4E7]'}`}>
+        <div className="flex items-center gap-2 min-w-0">
+          <FlaskConical size={15} className={sandbox ? 'text-[#7C3AED]' : 'text-[#A1A1AA]'} />
+          <div className="min-w-0">
+            <p className={`text-xs font-semibold truncate ${sandbox ? 'text-[#6D28D9]' : 'text-[#3F3F46]'}`}>
+              โหมดทดลอง (Sandbox)
+            </p>
+            <p className="text-[10px] text-[#71717A] truncate">
+              {sandbox ? 'action ที่มีผลจริงจะถูกจำลอง ไม่บันทึกลงระบบจริง' : 'ทดสอบคำสั่งได้โดยไม่กระทบข้อมูลจริง'}
+            </p>
+          </div>
+        </div>
+        <button
+          onClick={toggleSandbox}
+          disabled={loading || !!pending}
+          role="switch"
+          aria-checked={sandbox}
+          className={`relative shrink-0 w-10 h-6 rounded-full transition-colors disabled:opacity-50 ${sandbox ? 'bg-[#7C3AED]' : 'bg-[#E4E4E7]'}`}
+        >
+          <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${sandbox ? 'translate-x-4' : 'translate-x-0'}`} />
+        </button>
+      </div>
+
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {visibleMessages.length === 0 && (
           <div className="h-full flex flex-col items-center justify-center text-center text-[#71717A]">
@@ -184,13 +219,16 @@ export default function AgentChat() {
       </div>
 
       {pending && pending.length > 0 && (
-        <div className="border-t border-[#E4E4E7] bg-[#FFFAF7] p-4 space-y-3 max-h-[45%] overflow-y-auto">
-          <p className="text-xs font-semibold text-[#C2410C] uppercase tracking-wide">รอการยืนยันก่อนบันทึกจริง</p>
+        <div className={`border-t p-4 space-y-3 max-h-[45%] overflow-y-auto ${sandbox ? 'bg-[#F5F3FF] border-[#DDD6FE]' : 'bg-[#FFFAF7] border-[#E4E4E7]'}`}>
+          <p className={`text-xs font-semibold uppercase tracking-wide ${sandbox ? 'text-[#6D28D9]' : 'text-[#C2410C]'}`}>
+            {sandbox ? 'รอยืนยัน (โหมดทดลอง — จะไม่บันทึกจริง)' : 'รอการยืนยันก่อนบันทึกจริง'}
+          </p>
           {pending.map(pc => (
             <ConfirmCard
               key={pc.id}
               call={pc}
               args={editedArgs[pc.id] ?? pc.arguments}
+              sandbox={sandbox}
               onChange={(key, value) =>
                 setEditedArgs(prev => ({ ...prev, [pc.id]: { ...prev[pc.id], [key]: value } }))
               }
@@ -207,9 +245,11 @@ export default function AgentChat() {
             <button
               onClick={handleConfirm}
               disabled={loading}
-              className="px-5 py-2 text-sm font-semibold rounded-lg bg-[#FF6A00] hover:bg-[#C2410C] text-white transition-colors disabled:opacity-60"
+              className={`px-5 py-2 text-sm font-semibold rounded-lg text-white transition-colors disabled:opacity-60 ${
+                sandbox ? 'bg-[#7C3AED] hover:bg-[#6D28D9]' : 'bg-[#FF6A00] hover:bg-[#C2410C]'
+              }`}
             >
-              ยืนยันทั้งหมด
+              {sandbox ? 'ยืนยัน (จำลอง)' : 'ยืนยันทั้งหมด'}
             </button>
           </div>
         </div>
@@ -270,20 +310,29 @@ export default function AgentChat() {
 function ConfirmCard({
   call,
   args,
+  sandbox,
   onChange,
 }: {
   call: PendingToolCall
   args: Record<string, unknown>
+  sandbox: boolean
   onChange: (key: string, value: unknown) => void
 }) {
   const label = TOOL_LABELS[call.name] ?? call.name
   const dangerous = DANGEROUS_TOOLS.has(call.name)
 
   return (
-    <div className={`bg-white rounded-xl border p-4 ${dangerous ? 'border-[#FCA5A5]' : 'border-[#E4E4E7]'}`}>
+    <div className={`bg-white rounded-xl border p-4 ${sandbox ? 'border-[#DDD6FE]' : dangerous ? 'border-[#FCA5A5]' : 'border-[#E4E4E7]'}`}>
       <div className="flex items-center gap-2 mb-3">
-        {dangerous && <AlertTriangle size={14} className="text-[#DC2626]" />}
-        <p className={`text-sm font-bold ${dangerous ? 'text-[#DC2626]' : 'text-[#18181B]'}`}>{label}</p>
+        {sandbox ? (
+          <FlaskConical size={14} className="text-[#7C3AED]" />
+        ) : dangerous ? (
+          <AlertTriangle size={14} className="text-[#DC2626]" />
+        ) : null}
+        <p className={`text-sm font-bold ${sandbox ? 'text-[#6D28D9]' : dangerous ? 'text-[#DC2626]' : 'text-[#18181B]'}`}>
+          {label}
+          {sandbox && <span className="text-xs font-medium text-[#7C3AED]"> (จำลอง)</span>}
+        </p>
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-2">
         {Object.entries(args).map(([key, value]) => (

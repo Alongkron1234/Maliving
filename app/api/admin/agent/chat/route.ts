@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
   }
 
-  const { messages } = (await req.json()) as { messages: AgentMessage[] }
+  const { messages, sandbox } = (await req.json()) as { messages: AgentMessage[]; sandbox?: boolean }
   if (!Array.isArray(messages) || messages.length === 0) {
     return NextResponse.json({ error: 'Missing messages' }, { status: 400 })
   }
@@ -18,7 +18,7 @@ export async function POST(req: Request) {
   const cookie = req.headers.get('cookie') ?? ''
 
   try {
-    const result = await runAgentLoop(messages, { origin, supabase, cookie })
+    const result = await runAgentLoop(messages, { origin, supabase, cookie, sandbox: !!sandbox })
     return NextResponse.json(result)
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err)
