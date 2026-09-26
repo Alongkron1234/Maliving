@@ -2,6 +2,23 @@ import { createClient } from '@/lib/supabase/server'
 import { Wallet, Receipt, TrendingUp, type LucideIcon } from 'lucide-react'
 import PaymentsTable from './PaymentsTable'
 import PaymentsMonthFilter from './PaymentsMonthFilter'
+import PendingSlipsList from './PendingSlipsList'
+
+type PendingSlipRaw = {
+  id: string
+  amount: number
+  slip_url: string | null
+  created_at: string
+  bill_id: string
+  bills: {
+    billing_month: number
+    billing_year: number
+    rooms: { room_number: string; floor: number | null } | null
+  } | null
+  tenants: {
+    profiles: { full_name: string } | null
+  } | null
+}
 
 type PaymentRaw = {
   id: string
@@ -37,6 +54,7 @@ export default async function PaymentsPage({
   let query = supabase
     .from('payments')
     .select('id, amount, method, paid_at, bill_id, bills!inner(billing_month, billing_year, rooms(room_number, floor)), tenants(profiles(full_name))')
+    .eq('status', 'confirmed')
     .order('paid_at', { ascending: false })
 
   if (!showAll) {
@@ -44,6 +62,34 @@ export default async function PaymentsPage({
   }
 
   const { data: rawPayments } = await query
+
+  const { data: rawPending } = await supabase
+    .from('payments')
+    .select('id, amount, slip_url, created_at, bill_id, bills!inner(billing_month, billing_year, rooms(room_number, floor)), tenants(profiles(full_name))')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false })
+
+  const pendingSlips = await Promise.all(
+    ((rawPending as unknown as PendingSlipRaw[]) ?? []).map(async p => {
+      let signedUrl: string | null = null
+      if (p.slip_url) {
+        const { data } = await supabase.storage.from('payment-slips').createSignedUrl(p.slip_url, 600)
+        signedUrl = data?.signedUrl ?? null
+      }
+      return {
+        id: p.id,
+        amount: p.amount,
+        created_at: p.created_at,
+        bill_id: p.bill_id,
+        slip_signed_url: signedUrl,
+        tenant_name: p.tenants?.profiles?.full_name ?? '—',
+        room_number: p.bills?.rooms?.room_number ?? '—',
+        floor: p.bills?.rooms?.floor ?? null,
+        billing_month: p.bills?.billing_month ?? 1,
+        billing_year: p.bills?.billing_year ?? 0,
+      }
+    })
+  )
 
   const payments = ((rawPayments as unknown as PaymentRaw[]) ?? []).map(p => ({
     id: p.id,
@@ -77,6 +123,14 @@ export default async function PaymentsPage({
         <SummaryPill icon={Receipt} tone="info" label="จำนวนรายการ" value={payments.length} />
         <SummaryPill icon={TrendingUp} tone="brand" label="เฉลี่ยต่อรายการ" value={`฿${avg.toLocaleString('th-TH')}`} />
       </div>
+
+      {pendingSlips.length > 0 && (
+        <div className="mb-8">
+          <h2 className="text-lg font-bold text-[#18181B] mb-1">สลิปรอตรวจสอบ</h2>
+          <p className="text-sm text-[#71717A] mb-4">ผู้เช่าแจ้งชำระเงินไว้ {pendingSlips.length} รายการ รอการยืนยัน</p>
+          <PendingSlipsList slips={pendingSlips} />
+        </div>
+      )}
 
       <div className="mb-6">
         <PaymentsMonthFilter currentMonth={month} currentYear={year} showAll={showAll} />
