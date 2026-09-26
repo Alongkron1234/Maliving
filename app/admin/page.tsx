@@ -45,7 +45,7 @@ export default async function AdminDashboard() {
   ] = await Promise.all([
     supabase.from('rooms').select('id, room_number, floor, rent_price, status').order('room_number') as unknown as Promise<{ data: { id: string; room_number: string; floor: number | null; rent_price: number; status: string }[] | null }>,
     supabase.from('bills').select('total_amount, due_date').eq('status', 'unpaid') as unknown as Promise<{ data: { total_amount: number; due_date: string | null }[] | null }>,
-    supabase.from('payments').select('amount').gte('paid_at', firstOfMonth).lt('paid_at', firstOfNextMonth) as unknown as Promise<{ data: { amount: number }[] | null }>,
+    supabase.from('payments').select('amount').eq('status', 'confirmed').gte('paid_at', firstOfMonth).lt('paid_at', firstOfNextMonth) as unknown as Promise<{ data: { amount: number }[] | null }>,
     supabase.from('maintenance_requests').select('id, title, priority, rooms(room_number)').in('status', ['open', 'in_progress']).order('created_at', { ascending: false }).limit(3) as unknown as Promise<{ data: { id: string; title: string; priority: string; rooms: { room_number: string } | null }[] | null }>,
     supabase.from('maintenance_requests').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress']),
     supabase.from('maintenance_requests').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress']).eq('priority', 'high'),
@@ -53,7 +53,7 @@ export default async function AdminDashboard() {
     supabase.from('tenants').select('room_id, profiles(full_name)').eq('status', 'active') as unknown as Promise<{ data: { room_id: string; profiles: { full_name: string } | null }[] | null }>,
     supabase.from('meter_readings').select('room_id, meter_type').eq('reading_month', currentMonth).eq('reading_year', currentYear) as unknown as Promise<{ data: { room_id: string; meter_type: string }[] | null }>,
     supabase.from('bills').select('room_id, status, due_date, total_amount').eq('billing_month', currentMonth).eq('billing_year', currentYear) as unknown as Promise<{ data: { room_id: string; status: string; due_date: string | null; total_amount: number }[] | null }>,
-    supabase.from('payments').select('amount, paid_at').gte('paid_at', trendStart) as unknown as Promise<{ data: { amount: number; paid_at: string }[] | null }>,
+    supabase.from('payments').select('amount, paid_at').eq('status', 'confirmed').gte('paid_at', trendStart) as unknown as Promise<{ data: { amount: number; paid_at: string }[] | null }>,
   ])
 
   const totalRooms = rooms?.length ?? 0
@@ -110,6 +110,11 @@ export default async function AdminDashboard() {
     revenueByMonth.push({ label: `${MONTH_SHORT[d.getMonth()]} ${String(d.getFullYear()).slice(-2)}`, total })
   }
   const maxRevenue = Math.max(1, ...revenueByMonth.map(m => m.total))
+  const monthsWithRevenue = revenueByMonth.filter(m => m.total > 0)
+  const avgRevenue = monthsWithRevenue.length > 0
+    ? monthsWithRevenue.reduce((sum, m) => sum + m.total, 0) / monthsWithRevenue.length
+    : 0
+  const avgLinePercent = avgRevenue > 0 ? Math.min(100, (avgRevenue / maxRevenue) * 100) : 0
 
   const priorityLabel: Record<string, string> = { low: 'ทั่วไป', medium: 'ปานกลาง', high: 'เร่งด่วน' }
 
@@ -314,21 +319,45 @@ export default async function AdminDashboard() {
 
       {/* Revenue trend */}
       <div className="bg-white rounded-2xl border border-black/5 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] p-5 mt-8">
-        <h2 className="text-sm font-bold text-[#18181B] mb-1">แนวโน้มรายรับย้อนหลัง 5 เดือน</h2>
-        <p className="text-xs text-[#71717A] mb-5">ยอดชำระที่รับแล้วจริง ตามวันที่ชำระ</p>
-        <div className="flex items-end justify-between gap-3 h-40">
-          {revenueByMonth.map(m => (
-            <div key={m.label} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-              <span className="text-[11px] font-semibold text-[#3F3F46]">
-                {m.total > 0 ? `฿${(m.total / 1000).toFixed(1)}k` : '—'}
-              </span>
-              <div
-                className="w-full rounded-t-lg bg-gradient-to-t from-[#FF6A00] to-[#FDBA74] min-h-[4px]"
-                style={{ height: `${Math.max(4, (m.total / maxRevenue) * 100)}%` }}
-              />
-              <span className="text-[11px] text-[#71717A]">{m.label}</span>
+        <div className="flex items-start justify-between gap-3 mb-5">
+          <div>
+            <h2 className="text-sm font-bold text-[#18181B] mb-1">แนวโน้มรายรับย้อนหลัง 5 เดือน</h2>
+            <p className="text-xs text-[#71717A]">ยอดชำระที่รับแล้วจริง ตามวันที่ชำระ</p>
+          </div>
+          {avgRevenue > 0 && (
+            <div className="flex items-center gap-1.5 text-xs text-[#71717A] shrink-0">
+              <span className="w-3 border-t-2 border-dashed border-[#A1A1AA]" />
+              เฉลี่ย ฿{(avgRevenue / 1000).toFixed(1)}k
             </div>
-          ))}
+          )}
+        </div>
+        <div className="relative flex items-end justify-between gap-3 h-56">
+          {avgLinePercent > 0 && (
+            <div
+              className="absolute left-0 right-0 border-t-2 border-dashed border-[#A1A1AA]/60 pointer-events-none"
+              style={{ bottom: `${avgLinePercent}%` }}
+            />
+          )}
+          {revenueByMonth.map(m => {
+            const heightPercent = Math.max(4, (m.total / maxRevenue) * 100)
+            const isAboveAvg = avgRevenue > 0 && m.total > avgRevenue
+            return (
+              <div key={m.label} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+                <span className="text-[11px] font-semibold text-[#3F3F46]">
+                  {m.total > 0 ? `฿${(m.total / 1000).toFixed(1)}k` : '—'}
+                </span>
+                <div
+                  className={`w-full rounded-t-lg min-h-[4px] ${
+                    isAboveAvg
+                      ? 'bg-gradient-to-t from-[#FF6A00] to-[#FDBA74]'
+                      : 'bg-gradient-to-t from-[#C2410C] to-[#FF6A00]'
+                  }`}
+                  style={{ height: `${heightPercent}%` }}
+                />
+                <span className="text-[11px] text-[#71717A]">{m.label}</span>
+              </div>
+            )
+          })}
         </div>
       </div>
     </div>

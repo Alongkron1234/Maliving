@@ -48,6 +48,7 @@ export default async function TenantBillsPage() {
       .from('payments')
       .select('amount, paid_at')
       .eq('tenant_id', activeTenant.id)
+      .eq('status', 'confirmed')
       .order('paid_at', { ascending: false })
       .limit(1)
       .maybeSingle(),

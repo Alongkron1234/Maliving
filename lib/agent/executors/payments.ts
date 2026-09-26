@@ -9,6 +9,7 @@ export async function list_payments(args: ToolArgs, ctx: ExecutorCtx) {
   let query = (ctx.supabase as any)
     .from('payments')
     .select('id, amount, method, paid_at, bill_id, bills!inner(billing_month, billing_year, rooms(room_number)), tenants(profiles(full_name))')
+    .eq('status', 'confirmed')
     .order('paid_at', { ascending: false })
 
   if (!args.all) {

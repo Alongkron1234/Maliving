@@ -21,7 +21,7 @@ export async function get_dashboard_stats(_args: ToolArgs, ctx: ExecutorCtx) {
   ] = await Promise.all([
     supabase.from('rooms').select('status') as unknown as Promise<{ data: { status: string }[] | null }>,
     supabase.from('bills').select('total_amount, due_date').eq('status', 'unpaid') as unknown as Promise<{ data: { total_amount: number; due_date: string | null }[] | null }>,
-    supabase.from('payments').select('amount').gte('paid_at', firstOfMonth).lt('paid_at', firstOfNextMonth) as unknown as Promise<{ data: { amount: number }[] | null }>,
+    supabase.from('payments').select('amount').eq('status', 'confirmed').gte('paid_at', firstOfMonth).lt('paid_at', firstOfNextMonth) as unknown as Promise<{ data: { amount: number }[] | null }>,
     supabase.from('maintenance_requests').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress']),
     supabase.from('maintenance_requests').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress']).eq('priority', 'high'),
     supabase.from('tenants').select('*', { count: 'exact', head: true }).eq('status', 'active'),
