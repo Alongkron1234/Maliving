@@ -45,7 +45,7 @@ export default async function AdminDashboard() {
   ] = await Promise.all([
     supabase.from('rooms').select('id, room_number, floor, rent_price, status').order('room_number') as unknown as Promise<{ data: { id: string; room_number: string; floor: number | null; rent_price: number; status: string }[] | null }>,
     supabase.from('bills').select('total_amount, due_date').eq('status', 'unpaid') as unknown as Promise<{ data: { total_amount: number; due_date: string | null }[] | null }>,
-    supabase.from('payments').select('amount').gte('paid_at', firstOfMonth).lt('paid_at', firstOfNextMonth) as unknown as Promise<{ data: { amount: number }[] | null }>,
+    supabase.from('payments').select('amount').eq('status', 'confirmed').gte('paid_at', firstOfMonth).lt('paid_at', firstOfNextMonth) as unknown as Promise<{ data: { amount: number }[] | null }>,
     supabase.from('maintenance_requests').select('id, title, priority, rooms(room_number)').in('status', ['open', 'in_progress']).order('created_at', { ascending: false }).limit(3) as unknown as Promise<{ data: { id: string; title: string; priority: string; rooms: { room_number: string } | null }[] | null }>,
     supabase.from('maintenance_requests').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress']),
     supabase.from('maintenance_requests').select('*', { count: 'exact', head: true }).in('status', ['open', 'in_progress']).eq('priority', 'high'),
@@ -53,7 +53,7 @@ export default async function AdminDashboard() {
     supabase.from('tenants').select('room_id, profiles(full_name)').eq('status', 'active') as unknown as Promise<{ data: { room_id: string; profiles: { full_name: string } | null }[] | null }>,
     supabase.from('meter_readings').select('room_id, meter_type').eq('reading_month', currentMonth).eq('reading_year', currentYear) as unknown as Promise<{ data: { room_id: string; meter_type: string }[] | null }>,
     supabase.from('bills').select('room_id, status, due_date, total_amount').eq('billing_month', currentMonth).eq('billing_year', currentYear) as unknown as Promise<{ data: { room_id: string; status: string; due_date: string | null; total_amount: number }[] | null }>,
-    supabase.from('payments').select('amount, paid_at').gte('paid_at', trendStart) as unknown as Promise<{ data: { amount: number; paid_at: string }[] | null }>,
+    supabase.from('payments').select('amount, paid_at').eq('status', 'confirmed').gte('paid_at', trendStart) as unknown as Promise<{ data: { amount: number; paid_at: string }[] | null }>,
   ])
 
   const totalRooms = rooms?.length ?? 0
