@@ -1,47 +1,79 @@
 # Maliving
 
-ระบบจัดการหอพักออนไลน์ **Maliving** (Malee + Living) — ให้ admin จัดการห้อง ผู้เช่า มิเตอร์น้ำ/ไฟ บิล และแจ้งซ่อมได้ในที่เดียว พร้อม Line OA Bot ให้ผู้เช่าเช็คยอดบิลได้ทันที
+Maliving is a web app for running a small apartment building day to day — rooms, tenants, utility meters, monthly bills, payments, repair requests, and announcements, all in one place. Tenants get their own portal to check bills and pay, and can also check what they owe straight from LINE without logging in anywhere.
 
-## ฟีเจอร์หลัก
+It's a real, working system — deployed on Vercel and used for actual monthly billing, not a demo.
 
-**ฝั่ง Admin**
-- แดชบอร์ด: ภาพรวมการเงิน, อัตราการเข้าพัก, ผังห้องพัก, แนวโน้มรายรับย้อนหลัง
-- จัดการห้องพัก, ผู้เช่า (ตั้ง/รีเซ็ตรหัสผ่านได้), มิเตอร์น้ำ/ไฟ, บิล, การชำระเงิน, แจ้งซ่อม, ประกาศ
-- จดมิเตอร์แบบ manual หรืออัปโหลดรูปให้ AI (Groq Vision) อ่านค่าให้อัตโนมัติ (ตรวจสอบ/แก้ไขก่อนยืนยันเสมอ)
-- **ผู้ช่วย AI** (`/admin/agent`) — คุยเป็นภาษาไทยธรรมชาติแล้วให้ AI เรียกใช้ฟังก์ชันของระบบแทนการกดปุ่มเอง มีโหมดทดลอง (sandbox) ให้ลองคำสั่งโดยไม่กระทบข้อมูลจริง
-- ตรวจสอบสลิปการโอนเงินที่ผู้เช่าส่งมา (อนุมัติ/ปฏิเสธ)
+## What it does
 
-**ฝั่งผู้เช่า**
-- ดูบิล พร้อมพิมพ์/ดาวน์โหลดใบเสร็จ
-- **ชำระเงินผ่าน QR PromptPay** แล้วแนบสลิปแจ้งชำระ (รอ admin ตรวจสอบยืนยัน)
-- แจ้งซ่อม, ดูประกาศ, แก้ไขโปรไฟล์ตัวเอง
+**For the admin**
+- A dashboard with occupancy rate, revenue this month, overdue bills, and a floor-by-floor room map
+- Manage rooms, tenants, meters, bills, payments, repair requests, and announcements
+- Read electricity/water meters from a photo instead of typing them in by hand (see [Meter OCR](#meter-ocr) below)
+- Check payment slips tenants upload and approve or reject them
+- An AI assistant (`/admin/agent`) you can talk to in plain Thai — it calls the same backend actions the UI does, and has a sandbox mode so you can try commands without touching real data
 
-**Line OA Bot**
-- ผู้เช่าพิมพ์เบอร์โทรใน Line เพื่อเช็คยอดบิลค้างชำระทั้งหมดได้ทันที (ไม่ต้อง login)
+**For tenants**
+- View bills, print or download a receipt
+- Pay a bill by scanning a PromptPay QR code and uploading the transfer slip for the admin to confirm
+- Submit repair requests, read announcements, edit their own profile
 
-## Tech Stack
+**LINE bot**
+- A tenant types their phone number into the building's LINE account and gets their current unpaid balance back immediately — no login needed
 
-- **Frontend**: Next.js 15 (App Router) + Tailwind CSS 4
-- **Database / Auth / Storage**: Supabase (PostgreSQL, RLS ทุกตาราง)
-- **OCR**: Groq Vision API (`meta-llama/llama-4-scout-17b-16e-instruct`) — อ่านค่ามิเตอร์จากรูป
-- **AI Agent**: Groq (`openai/gpt-oss-120b`) — function calling เรียกใช้ backend เดิม
-- **Line Bot**: Line Messaging API ผ่าน Next.js API route
-- **Payment QR**: `promptpay-qr` + `qrcode` — generate QR PromptPay ฝั่งเซิร์ฟเวอร์
-- **Deploy**: Vercel (auto-deploy จาก `main`)
+## How it's built
 
-ไม่มี backend แยก — ทุกอย่างรันผ่าน Next.js API routes และ Supabase โดยตรง
+Everything runs through Next.js — there's no separate backend server. Supabase provides the database, auth, and file storage, all protected by row-level security policies so the database itself enforces who can see what.
 
-## เริ่มต้นใช้งาน (Local Development)
+```
+Browser (admin / tenant portal)
+        |
+        v
+Next.js App Router  ---- API routes ---->  Supabase (Postgres + Auth + Storage)
+        |                                          ^
+        |                                          |
+        +--> Groq Vision (reads meter photos) ------+
+        |
+        +--> Groq LLM (AI assistant, function calling)
+        |
+        +--> LINE Messaging API (webhook in / messages out)
+```
 
-### 1. ติดตั้ง dependencies
+Requests are checked twice: `proxy.ts` keeps a tenant out of `/admin` pages (and vice versa) at the page level, and every API route re-checks the caller's role itself, since API routes aren't covered by the page-level check.
+
+### Meter OCR
+
+Admin uploads a photo of the meter → it's sent to Groq's vision model, which reads back the numbers for every room in that photo. Those numbers land as a **draft**, not a finished record — the admin opens each room, checks the number against what the camera actually shows, fixes it if the model misread a digit, and only then confirms it. A bill can't be generated for a room until its meter reading for that month has been confirmed this way. Same form works for typing a reading in by hand, in case a photo isn't practical.
+
+### Payments
+
+A tenant can either wait for the admin to record a cash/transfer payment, or pay themselves: scan a PromptPay QR generated for that exact bill amount, upload the slip, and it sits as **pending** until the admin looks at it and approves (marks the bill paid) or rejects it (tenant re-uploads). Nothing is marked paid just because a slip was uploaded — a person always confirms it.
+
+### AI assistant
+
+Instead of clicking through the UI, an admin can just describe what they want in Thai (“fill in this month's meters”, “generate bills for August”) and the assistant calls the real backend functions to do it. Anything that only reads data runs right away; anything that changes data stops and shows the admin exactly what it's about to do, waiting for a yes. A sandbox toggle lets you try commands risk-free — writes get simulated instead of applied.
+
+## Tech stack
+
+- **Framework**: Next.js 15 (App Router), Tailwind CSS 4
+- **Database, auth, file storage**: Supabase (Postgres, with row-level security on every table)
+- **Meter OCR**: Groq Vision (`meta-llama/llama-4-scout-17b-16e-instruct`)
+- **AI assistant**: Groq (`openai/gpt-oss-120b`), function calling
+- **Messaging**: LINE Messaging API
+- **QR payments**: `promptpay-qr` + `qrcode`, generated server-side
+- **Hosting**: Vercel, auto-deployed from `main`
+
+## Running it locally
+
+**1. Install dependencies**
 
 ```bash
 npm install
 ```
 
-### 2. ตั้งค่า Environment Variables
+**2. Set environment variables**
 
-สร้างไฟล์ `.env.local` แล้วใส่ค่าดังนี้:
+Create `.env.local`:
 
 ```
 NEXT_PUBLIC_SUPABASE_URL=
@@ -50,54 +82,53 @@ SUPABASE_SERVICE_ROLE_KEY=
 GROQ_API_KEY=
 LINE_CHANNEL_ACCESS_TOKEN=
 LINE_CHANNEL_SECRET=
-PROMPTPAY_ID=          # เบอร์โทร/เลขผู้เสียภาษีที่ผูก PromptPay ของหอพัก
+PROMPTPAY_ID=          # the building's own PromptPay phone number or tax ID
 ```
 
-### 3. ตั้งค่า Supabase
+**3. Set up Supabase**
 
-รันไฟล์ SQL ต่อไปนี้ใน **Supabase SQL Editor** ตามลำดับ:
+Run these files in the Supabase SQL editor, in order:
 
-1. `supabase/schema.sql` — สร้าง 9 ตารางหลัก + RLS policies
-2. `supabase/seed-admin.sql` — สร้างบัญชี admin คนแรก
+1. `supabase/schema.sql` — the 9 core tables and their RLS policies
+2. `supabase/seed-admin.sql` — creates the first admin account
 3. `supabase/migration_002_line_connected_at.sql`
-4. `supabase/migration_003_payment_slips.sql` — คอลัมน์สถานะการชำระเงิน + storage bucket สำหรับสลิป
+4. `supabase/migration_003_payment_slips.sql` — payment status tracking + the storage bucket for slips
 
-นอกจากนี้ต้องสร้าง Storage bucket **`meter-images`** (private) ด้วยตัวเองใน Supabase Dashboard สำหรับรูปมิเตอร์ที่ใช้ OCR
+Also create a private storage bucket called **`meter-images`** in the Supabase dashboard, for the meter photos used in OCR.
 
-### 4. รัน dev server
+**4. Start the dev server**
 
 ```bash
 npm run dev
 ```
 
-เปิด [http://localhost:3000](http://localhost:3000)
+Then open [http://localhost:3000](http://localhost:3000).
 
-## โครงสร้างโปรเจกต์ (คร่าวๆ)
+## Project layout
 
 ```
 app/
-  (admin)/          — หน้า landing page สาธารณะ
-  (auth)/login/     — หน้าเข้าสู่ระบบ
-  admin/            — หน้าทั้งหมดฝั่ง admin (ห้อง, ผู้เช่า, มิเตอร์, บิล, ชำระเงิน, แจ้งซ่อม, ประกาศ, ผู้ช่วย AI)
-  tenant/           — หน้าทั้งหมดฝั่งผู้เช่า
-  api/              — API routes (admin, tenant, Line webhook)
+  (admin)/          public landing page
+  (auth)/login/     login page
+  admin/            everything the admin sees — rooms, tenants, meters, bills,
+                     payments, repairs, announcements, AI assistant
+  tenant/           everything the tenant sees
+  api/              API routes (admin, tenant, LINE webhook)
 lib/
-  agent/            — AI agent: tool registry, executors, loop
-  supabase/         — Supabase client helpers + auth guards (requireAdmin, requireTenant)
-  promptpay.ts       — สร้าง QR PromptPay
-  bills.ts           — ตรรกะสถานะบิล (unpaid/paid/overdue)
-supabase/            — schema, migrations, seed script
+  agent/            AI assistant: what it can do, how it does it, the loop that runs it
+  supabase/         Supabase clients + the auth checks each API route runs
+  promptpay.ts      builds the PromptPay QR
+  bills.ts          bill status logic (unpaid / paid / overdue)
+supabase/           schema, migrations, seed script
 ```
 
-## Roles & Access
+## Roles
 
-- **admin** — จัดการทุกอย่างในระบบ
-- **tenant** — ดูบิล/แจ้งซ่อม/ประกาศ/โปรไฟล์ตัวเอง, แจ้งชำระเงินผ่านสลิป (admin เป็นคนยืนยันสุดท้าย)
+- **admin** — full access to everything
+- **tenant** — their own bills, repair requests, announcements, and profile; can submit a payment slip but can't mark anything as paid themselves
 
-ไม่มีระบบสมัครสมาชิกเอง — **admin เป็นคนสร้างบัญชีผู้เช่าให้เท่านั้น** ผ่านหน้า "เพิ่มผู้เช่า"
+There's no self sign-up. An admin creates every tenant account by hand, since each one has to be tied to a real room. Roles live on `app_metadata.role` in Supabase Auth and are enforced by RLS everywhere, not just in the UI.
 
-Role คุมด้วย `app_metadata.role` (Supabase Auth) + RLS ทุกตาราง, ป้องกัน route ด้วย `proxy.ts`
+## Deploying
 
-## Deploy
-
-Push ขึ้น `main` แล้ว Vercel จะ auto-deploy ให้ (เชื่อมกับ GitHub repo ไว้แล้ว) — อย่าลืมตั้งค่า Environment Variables ชุดเดียวกันไว้ใน Vercel Project Settings ด้วย
+Pushing to `main` triggers an automatic deploy on Vercel. Remember to set the same environment variables there too, PromptPay ID included, or QR codes just won't show up on the live site.
