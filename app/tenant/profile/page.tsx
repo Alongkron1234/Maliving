@@ -26,28 +26,28 @@ export default async function TenantProfilePage() {
   const activeTenant = rawTenant as unknown as ActiveTenant | null
 
   const moveIn = activeTenant
-    ? new Date(activeTenant.move_in_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    ? new Date(activeTenant.move_in_date).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' })
     : null
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#241912]">โปรไฟล์</h1>
-        <p className="text-sm text-[#897362] mt-1">ข้อมูลส่วนตัวของคุณ</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">โปรไฟล์</h1>
+        <p className="text-sm text-[#71717A] mt-1">ข้อมูลส่วนตัวของคุณ</p>
       </div>
 
       <div className="max-w-2xl space-y-5">
         {activeTenant && (
-          <div className="bg-white rounded-2xl border border-[#ddc1ae] p-7 shadow-[0_0_15px_rgba(144,77,0,0.06)]">
-            <h2 className="text-base font-bold text-[#241912] mb-1">ข้อมูลห้องพัก</h2>
-            <p className="text-sm text-[#897362] mb-6">จัดการโดยผู้ดูแลหอพัก แก้ไขเองไม่ได้</p>
+          <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
+            <h2 className="text-base font-bold text-[#18181B] mb-1">ข้อมูลห้องพัก</h2>
+            <p className="text-sm text-[#71717A] mb-6">จัดการโดยผู้ดูแลหอพัก แก้ไขเองไม่ได้</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
               <InfoField
-                label="Room"
-                value={activeTenant.rooms ? `Room ${activeTenant.rooms.room_number}${activeTenant.rooms.floor != null ? ` · Floor ${activeTenant.rooms.floor}` : ''}` : '—'}
+                label="ห้องพัก"
+                value={activeTenant.rooms ? `ห้อง ${activeTenant.rooms.room_number}${activeTenant.rooms.floor != null ? ` · ชั้น ${activeTenant.rooms.floor}` : ''}` : '—'}
               />
-              <InfoField label="Move-in Date" value={moveIn ?? '—'} />
+              <InfoField label="วันที่เข้าพัก" value={moveIn ?? '—'} />
             </div>
           </div>
         )}
@@ -61,8 +61,8 @@ export default async function TenantProfilePage() {
 function InfoField({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs font-semibold text-[#897362] uppercase tracking-wide mb-1.5">{label}</p>
-      <p className="text-sm font-semibold text-[#241912]">{value}</p>
+      <p className="text-xs font-semibold text-[#71717A] uppercase tracking-wide mb-1.5">{label}</p>
+      <p className="text-sm font-semibold text-[#18181B]">{value}</p>
     </div>
   )
 }

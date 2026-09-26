@@ -13,14 +13,14 @@ const features = [
 
 export default function LandingPage() {
   return (
-    <div className="flex-1 flex flex-col bg-[#fff8f5]">
+    <div className="flex-1 flex flex-col bg-[#FFFAF7]">
       {/* Header */}
-      <header className="border-b border-[#ddc1ae] bg-white">
+      <header className="border-b border-black/5 bg-white">
         <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="text-lg font-bold text-[#904d00]">Maliving</span>
+          <span className="text-lg font-bold text-[#C2410C]">Maliving</span>
           <Link
             href="/login"
-            className="bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors"
+            className="bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-5 py-2.5 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5"
           >
             เข้าสู่ระบบ
           </Link>
@@ -28,7 +28,7 @@ export default function LandingPage() {
       </header>
 
       {/* Hero */}
-      <section className="relative h-[420px] sm:h-[540px] w-full overflow-hidden">
+      <section className="relative h-[calc(100vh-64px)] min-h-[520px] w-full overflow-hidden">
         <Image
           src="/images/dormitory-hero.webp"
           alt="อาคารหอพัก Maliving"
@@ -37,14 +37,23 @@ export default function LandingPage() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
+
+        {/* Soft floating orbs — purely decorative, sit above the dim overlay */}
+        <div className="absolute top-24 left-[8%] w-24 h-24 rounded-full bg-[#FF6A00]/25 blur-2xl animate-float-slow" />
+        <div className="absolute bottom-32 right-[10%] w-32 h-32 rounded-full bg-white/20 blur-2xl animate-float-slower" />
+
         <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-14 sm:pb-20">
-          <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight">Maliving</h1>
-          <p className="text-white/90 mt-3 max-w-xl text-sm sm:text-base">
+          <h1 className="animate-fade-in-up text-4xl sm:text-6xl font-bold text-white tracking-tight">Maliving</h1>
+          <p
+            className="animate-fade-in-up text-white/90 mt-3 max-w-xl text-sm sm:text-base"
+            style={{ animationDelay: '120ms' }}
+          >
             ระบบจัดการหอพักออนไลน์ครบวงจร — ห้องพัก ผู้เช่า มิเตอร์น้ำ/ไฟ บิล และแจ้งซ่อม ในที่เดียว
           </p>
           <Link
             href="/login"
-            className="mt-6 inline-flex bg-[#ff8c00] hover:bg-[#904d00] text-white text-sm font-semibold px-6 py-3 rounded-lg transition-colors"
+            className="animate-fade-in-up mt-6 inline-flex bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-6 py-3 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-1 hover:scale-105"
+            style={{ animationDelay: '240ms' }}
           >
             เข้าสู่ระบบ
           </Link>
@@ -53,28 +62,29 @@ export default function LandingPage() {
 
       {/* Features */}
       <section className="max-w-6xl mx-auto px-6 py-16 w-full">
-        <h2 className="text-2xl font-bold text-[#241912] text-center mb-2">ทุกอย่างที่หอพักต้องการ ในระบบเดียว</h2>
-        <p className="text-sm text-[#897362] text-center mb-10">ตั้งแต่จัดการห้องไปจนถึงแจ้งเตือนผู้เช่าผ่าน Line</p>
+        <h2 className="text-2xl font-bold text-[#18181B] text-center mb-2">ทุกอย่างที่หอพักต้องการ ในระบบเดียว</h2>
+        <p className="text-sm text-[#71717A] text-center mb-10">ตั้งแต่จัดการห้องไปจนถึงแจ้งเตือนผู้เช่าผ่าน Line</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map(f => (
+          {features.map((f, i) => (
             <div
               key={f.title}
-              className="bg-white rounded-2xl border border-[#ddc1ae] p-6 shadow-[0_0_15px_rgba(144,77,0,0.06)]"
+              className="group animate-fade-in-up bg-white rounded-2xl border border-black/5 p-6 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-1 transition-all"
+              style={{ animationDelay: `${i * 90}ms` }}
             >
-              <div className="w-11 h-11 rounded-xl bg-[#fff1e9] flex items-center justify-center mb-4">
-                <f.icon size={20} className="text-[#904d00]" />
+              <div className="w-11 h-11 rounded-xl bg-[#FFE8D1] flex items-center justify-center mb-4 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
+                <f.icon size={20} className="text-[#C2410C]" />
               </div>
-              <h3 className="text-sm font-bold text-[#241912] mb-1">{f.title}</h3>
-              <p className="text-sm text-[#897362]">{f.desc}</p>
+              <h3 className="text-sm font-bold text-[#18181B] mb-1">{f.title}</h3>
+              <p className="text-sm text-[#71717A]">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#ddc1ae] bg-white py-6 mt-auto">
-        <p className="text-center text-xs text-[#897362]">© {new Date().getFullYear()} Maliving. All rights reserved.</p>
+      <footer className="border-t border-black/5 bg-white py-6 mt-auto">
+        <p className="text-center text-xs text-[#71717A]">© {new Date().getFullYear()} Maliving. All rights reserved.</p>
       </footer>
     </div>
   )

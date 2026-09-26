@@ -23,30 +23,30 @@ export default async function NewTenantMaintenanceRequestPage() {
   const activeTenant = raw as unknown as ActiveTenant | null
 
   return (
-    <div className="p-8">
+    <div className="p-6 sm:p-8">
       <Link
         href="/tenant/maintenance"
-        className="inline-flex items-center gap-1.5 text-sm text-[#897362] hover:text-[#564334] transition-colors mb-4"
+        className="inline-flex items-center gap-1.5 text-sm text-[#71717A] hover:text-[#3F3F46] transition-colors mb-4"
       >
         <ArrowLeft size={15} />
-        Back to Maintenance
+        กลับไปหน้าแจ้งซ่อม
       </Link>
 
       <div className="mb-7">
-        <h1 className="text-2xl font-bold text-[#241912]">แจ้งซ่อมใหม่</h1>
-        <p className="text-sm text-[#897362] mt-1">อธิบายปัญหาที่พบในห้องของคุณ</p>
+        <h1 className="text-2xl font-bold text-[#18181B]">แจ้งซ่อมใหม่</h1>
+        <p className="text-sm text-[#71717A] mt-1">อธิบายปัญหาที่พบในห้องของคุณ</p>
       </div>
 
       {!activeTenant ? (
-        <div className="max-w-2xl rounded-2xl border-2 border-dashed border-[#ddc1ae] p-16 text-center">
-          <p className="text-sm font-semibold text-[#564334]">คุณยังไม่ได้รับมอบหมายห้องพัก</p>
-          <p className="text-sm text-[#897362] mt-1">กรุณาติดต่อผู้ดูแลหอพัก</p>
+        <div className="max-w-2xl rounded-2xl border-2 border-dashed border-[#E4E4E7] p-16 text-center">
+          <p className="text-sm font-semibold text-[#3F3F46]">คุณยังไม่ได้รับมอบหมายห้องพัก</p>
+          <p className="text-sm text-[#71717A] mt-1">กรุณาติดต่อผู้ดูแลหอพัก</p>
         </div>
       ) : (
         <div className="max-w-2xl">
           <MaintenanceNewForm
             roomId={activeTenant.room_id}
-            roomLabel={`Room ${activeTenant.rooms?.room_number ?? '—'}${activeTenant.rooms?.floor != null ? ` (Floor ${activeTenant.rooms.floor})` : ''}`}
+            roomLabel={`ห้อง ${activeTenant.rooms?.room_number ?? '—'}${activeTenant.rooms?.floor != null ? ` (ชั้น ${activeTenant.rooms.floor})` : ''}`}
           />
         </div>
       )}
