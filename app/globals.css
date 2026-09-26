@@ -115,3 +115,45 @@ html {
 .animate-ping-slow {
   animation: agent-fab-ping 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
+
+/* Landing page + login page entrance/decoration flourishes */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(-14px) translateX(6px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 7s ease-in-out infinite;
+}
+
+@keyframes float-slower {
+  0%, 100% {
+    transform: translateY(0) translateX(0);
+  }
+  50% {
+    transform: translateY(12px) translateX(-8px);
+  }
+}
+
+.animate-float-slower {
+  animation: float-slower 9s ease-in-out infinite;
+}

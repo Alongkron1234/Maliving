@@ -37,14 +37,23 @@ export default function LandingPage() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-black/10" />
+
+        {/* Soft floating orbs — purely decorative, sit above the dim overlay */}
+        <div className="absolute top-24 left-[8%] w-24 h-24 rounded-full bg-[#FF6A00]/25 blur-2xl animate-float-slow" />
+        <div className="absolute bottom-32 right-[10%] w-32 h-32 rounded-full bg-white/20 blur-2xl animate-float-slower" />
+
         <div className="absolute inset-0 flex flex-col items-center justify-end text-center px-6 pb-14 sm:pb-20">
-          <h1 className="text-4xl sm:text-6xl font-bold text-white tracking-tight">Maliving</h1>
-          <p className="text-white/90 mt-3 max-w-xl text-sm sm:text-base">
+          <h1 className="animate-fade-in-up text-4xl sm:text-6xl font-bold text-white tracking-tight">Maliving</h1>
+          <p
+            className="animate-fade-in-up text-white/90 mt-3 max-w-xl text-sm sm:text-base"
+            style={{ animationDelay: '120ms' }}
+          >
             ระบบจัดการหอพักออนไลน์ครบวงจร — ห้องพัก ผู้เช่า มิเตอร์น้ำ/ไฟ บิล และแจ้งซ่อม ในที่เดียว
           </p>
           <Link
             href="/login"
-            className="mt-6 inline-flex bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-6 py-3 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5"
+            className="animate-fade-in-up mt-6 inline-flex bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold px-6 py-3 rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-1 hover:scale-105"
+            style={{ animationDelay: '240ms' }}
           >
             เข้าสู่ระบบ
           </Link>
@@ -57,12 +66,13 @@ export default function LandingPage() {
         <p className="text-sm text-[#71717A] text-center mb-10">ตั้งแต่จัดการห้องไปจนถึงแจ้งเตือนผู้เช่าผ่าน Line</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {features.map(f => (
+          {features.map((f, i) => (
             <div
               key={f.title}
-              className="bg-white rounded-2xl border border-black/5 p-6 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-0.5 transition-all"
+              className="group animate-fade-in-up bg-white rounded-2xl border border-black/5 p-6 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)] hover:shadow-[0_2px_4px_rgba(36,25,18,0.06),0_12px_32px_rgba(36,25,18,0.08)] hover:-translate-y-1 transition-all"
+              style={{ animationDelay: `${i * 90}ms` }}
             >
-              <div className="w-11 h-11 rounded-xl bg-[#FFE8D1] flex items-center justify-center mb-4">
+              <div className="w-11 h-11 rounded-xl bg-[#FFE8D1] flex items-center justify-center mb-4 transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                 <f.icon size={20} className="text-[#C2410C]" />
               </div>
               <h3 className="text-sm font-bold text-[#18181B] mb-1">{f.title}</h3>

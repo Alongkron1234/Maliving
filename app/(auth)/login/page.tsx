@@ -46,32 +46,46 @@ export default function LoginPage() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/10" />
+
+        {/* Soft floating orbs — purely decorative */}
+        <div className="absolute top-20 right-16 w-28 h-28 rounded-full bg-[#FF6A00]/25 blur-2xl animate-float-slow" />
+        <div className="absolute bottom-40 left-10 w-20 h-20 rounded-full bg-white/20 blur-2xl animate-float-slower" />
+
         <div className="absolute inset-0 flex flex-col justify-between p-10">
-          <Link href="/" className="text-2xl font-bold text-white tracking-tight">
+          <Link href="/" className="animate-fade-in-up text-2xl font-bold text-white tracking-tight">
             Maliving
           </Link>
           <div>
-            <h2 className="text-3xl font-bold text-white tracking-tight max-w-md">
+            <h2 className="animate-fade-in-up text-3xl font-bold text-white tracking-tight max-w-md">
               จัดการหอพักของคุณได้ง่ายขึ้น ในที่เดียว
             </h2>
-            <p className="text-white/80 text-sm mt-3 max-w-sm">
+            <p className="animate-fade-in-up text-white/80 text-sm mt-3 max-w-sm" style={{ animationDelay: '100ms' }}>
               ห้องพัก ผู้เช่า มิเตอร์น้ำ/ไฟ บิล และแจ้งซ่อม ครบทุกอย่างที่หอพักต้องการ
             </p>
             <div className="flex items-center gap-5 mt-6">
-              <div className="flex items-center gap-2 text-white/90 text-xs font-medium">
-                <span className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+              <div
+                className="animate-fade-in-up group flex items-center gap-2 text-white/90 text-xs font-medium"
+                style={{ animationDelay: '180ms' }}
+              >
+                <span className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                   <BedDouble size={15} />
                 </span>
                 จัดการห้องพัก
               </div>
-              <div className="flex items-center gap-2 text-white/90 text-xs font-medium">
-                <span className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+              <div
+                className="animate-fade-in-up group flex items-center gap-2 text-white/90 text-xs font-medium"
+                style={{ animationDelay: '260ms' }}
+              >
+                <span className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                   <Zap size={15} />
                 </span>
                 มิเตอร์อัตโนมัติ
               </div>
-              <div className="flex items-center gap-2 text-white/90 text-xs font-medium">
-                <span className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center">
+              <div
+                className="animate-fade-in-up group flex items-center gap-2 text-white/90 text-xs font-medium"
+                style={{ animationDelay: '340ms' }}
+              >
+                <span className="w-8 h-8 rounded-lg bg-white/15 flex items-center justify-center transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110">
                   <Receipt size={15} />
                 </span>
                 ออกบิลอัตโนมัติ
@@ -83,7 +97,7 @@ export default function LoginPage() {
 
       {/* Right — login form */}
       <div className="flex items-center justify-center px-4 py-16 bg-[#FFFAF7]">
-        <div className="w-full max-w-sm">
+        <div className="w-full max-w-sm animate-fade-in-up">
           <div className="mb-8 text-center lg:text-left">
             <Link href="/" className="lg:hidden inline-block text-2xl font-bold text-[#C2410C] tracking-tight mb-6">
               Maliving
@@ -135,8 +149,8 @@ export default function LoginPage() {
               type="submit"
               disabled={loading}
               className="w-full py-2.5 bg-[#FF6A00] hover:bg-[#C2410C] text-white text-sm font-semibold
-                         rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md
-                         disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:shadow-sm mt-2"
+                         rounded-lg shadow-sm shadow-[#FF6A00]/30 transition-all hover:shadow-md hover:-translate-y-0.5
+                         disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 mt-2"
             >
               {loading ? 'กำลังเข้าสู่ระบบ…' : 'เข้าสู่ระบบ'}
             </button>
