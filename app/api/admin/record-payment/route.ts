@@ -38,8 +38,9 @@ export async function POST(req: Request) {
     .from('payments')
     .select('id')
     .eq('bill_id', bill_id)
+    .in('status', ['pending', 'confirmed'])
   if (existingPayments && existingPayments.length > 0) {
-    return NextResponse.json({ error: 'บิลนี้มีการชำระเงินบันทึกไว้แล้ว' }, { status: 400 })
+    return NextResponse.json({ error: 'บิลนี้มีการชำระเงิน (หรือสลิปรอตรวจสอบ) บันทึกไว้แล้ว' }, { status: 400 })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -52,6 +53,7 @@ export async function POST(req: Request) {
       method,
       paid_at: paid_at ? new Date(paid_at).toISOString() : new Date().toISOString(),
       slip_url: null,
+      status: 'confirmed',
     })
     .select()
     .single()

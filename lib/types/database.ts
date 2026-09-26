@@ -117,6 +117,8 @@ export interface Bill {
   updated_at: string
 }
 
+export type PaymentStatus = 'pending' | 'confirmed' | 'rejected'
+
 export interface Payment {
   id: string
   bill_id: string
@@ -124,6 +126,10 @@ export interface Payment {
   amount: number
   method: PaymentMethod
   slip_url: string | null
+  status: PaymentStatus
+  note: string | null
+  reviewed_at: string | null
+  reviewed_by: string | null
   paid_at: string
   created_at: string
 }

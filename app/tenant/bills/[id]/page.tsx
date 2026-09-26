@@ -4,7 +4,9 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import type { Bill } from '@/lib/types/database'
 import { billStatusConfig, getEffectiveBillStatus } from '@/lib/bills'
+import { generatePromptPayQr } from '@/lib/promptpay'
 import PrintReceiptButton from './PrintReceiptButton'
+import SlipUploadForm from './SlipUploadForm'
 
 const methodLabels: Record<string, string> = {
   cash: 'เงินสด',
@@ -38,13 +40,22 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
 
   const { data: rawBill } = await supabase
     .from('bills')
-    .select('*, rooms(id, room_number, floor), payments(amount, method, paid_at)')
+    .select('*, rooms(id, room_number, floor), payments(id, amount, method, paid_at, status, note, created_at)')
     .eq('id', id)
     .eq('tenant_id', activeTenant.id)
     .single()
+  type PaymentRow = {
+    id: string
+    amount: number
+    method: string
+    paid_at: string
+    status: 'pending' | 'confirmed' | 'rejected'
+    note: string | null
+    created_at: string
+  }
   type BillWithExtras = Bill & {
     rooms: { id: string; room_number: string; floor: number | null } | null
-    payments: { amount: number; method: string; paid_at: string }[]
+    payments: PaymentRow[]
   }
   const bill = rawBill as unknown as BillWithExtras | null
 
@@ -75,7 +86,14 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
   const dueDate = bill.due_date ? formatThaiDate(bill.due_date) : '—'
   const createdAt = formatThaiDate(bill.created_at)
   const { label, className } = billStatusConfig[getEffectiveBillStatus(bill)]
-  const payment = bill.payments[0]
+  const paymentsByNewest = [...bill.payments].sort((a, b) => b.created_at.localeCompare(a.created_at))
+  const confirmedPayment = paymentsByNewest.find(p => p.status === 'confirmed')
+  const pendingPayment = paymentsByNewest.find(p => p.status === 'pending')
+  const latestRejected = paymentsByNewest.find(p => p.status === 'rejected')
+
+  const qrDataUrl = bill.status === 'unpaid' && !pendingPayment
+    ? await generatePromptPayQr(bill.total_amount)
+    : null
 
   return (
     <div className="p-6 sm:p-8">
@@ -196,15 +214,60 @@ export default async function TenantBillDetailPage({ params }: { params: Promise
           </div>
         </div>
 
-        {payment && (
+        {confirmedPayment && (
           <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
             <h2 className="text-base font-bold text-[#18181B] mb-1">ข้อมูลการชำระเงิน</h2>
             <p className="text-sm text-[#71717A] mb-6">บิลนี้ชำระเรียบร้อยแล้ว</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-5">
-              <InfoField label="วิธีชำระ" value={methodLabels[payment.method] ?? payment.method} />
-              <InfoField label="วันที่ชำระ" value={formatThaiDate(payment.paid_at)} />
+              <InfoField label="วิธีชำระ" value={methodLabels[confirmedPayment.method] ?? confirmedPayment.method} />
+              <InfoField label="วันที่ชำระ" value={formatThaiDate(confirmedPayment.paid_at)} />
             </div>
+          </div>
+        )}
+
+        {bill.status === 'unpaid' && (
+          <div className="bg-white rounded-2xl border border-black/5 p-7 shadow-[0_1px_2px_rgba(36,25,18,0.04),0_8px_24px_rgba(36,25,18,0.04)]">
+            <h2 className="text-base font-bold text-[#18181B] mb-1">ชำระเงินผ่าน PromptPay</h2>
+            <p className="text-sm text-[#71717A] mb-6">สแกน QR เพื่อโอนเงิน แล้วแนบสลิปเพื่อแจ้งชำระ</p>
+
+            {pendingPayment ? (
+              <div className="rounded-xl bg-[#FEF3C7] border border-[#FDE68A] p-5">
+                <p className="text-sm font-semibold text-[#B45309]">ส่งสลิปแล้ว รอผู้ดูแลตรวจสอบ</p>
+                <p className="text-xs text-[#B45309]/80 mt-1">
+                  ส่งเมื่อ {formatThaiDate(pendingPayment.created_at)} — เมื่อผู้ดูแลยืนยันแล้ว บิลนี้จะเปลี่ยนเป็น &quot;ชำระแล้ว&quot; อัตโนมัติ
+                </p>
+              </div>
+            ) : (
+              <>
+                {latestRejected && (
+                  <div className="rounded-xl bg-[#fee2e2] border border-[#fecaca] p-4 mb-5">
+                    <p className="text-sm font-semibold text-[#dc2626]">สลิปก่อนหน้าถูกปฏิเสธ</p>
+                    {latestRejected.note && (
+                      <p className="text-xs text-[#dc2626]/80 mt-1">เหตุผล: {latestRejected.note}</p>
+                    )}
+                    <p className="text-xs text-[#dc2626]/80 mt-1">กรุณาตรวจสอบยอดโอนแล้วอัปโหลดสลิปใหม่อีกครั้ง</p>
+                  </div>
+                )}
+
+                {qrDataUrl ? (
+                  <div className="flex flex-col items-center mb-6">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- data: URL, next/image can't optimize it */}
+                    <img src={qrDataUrl} alt="PromptPay QR" className="w-52 h-52 rounded-xl border border-[#E4E4E7]" />
+                    <p className="text-sm text-[#71717A] mt-3">ยอดที่ต้องชำระ</p>
+                    <p className="text-2xl font-bold text-[#FF6A00]">฿{bill.total_amount.toLocaleString('th-TH')}</p>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-[#E4E4E7] p-5 text-center mb-6">
+                    <p className="text-sm text-[#71717A]">ยอดที่ต้องชำระ</p>
+                    <p className="text-xl font-bold text-[#18181B] mt-1">฿{bill.total_amount.toLocaleString('th-TH')}</p>
+                    <p className="text-xs text-[#A1A1AA] mt-2">ผู้ดูแลยังไม่ได้ตั้งค่า PromptPay QR — โอนเงินตามช่องทางปกติแล้วแนบสลิปด้านล่าง</p>
+                  </div>
+                )}
+
+                <SlipUploadForm billId={bill.id} />
+              </>
+            )}
           </div>
         )}
       </div>
