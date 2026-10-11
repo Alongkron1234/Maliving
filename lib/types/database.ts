@@ -117,6 +117,7 @@ export interface Bill {
   updated_at: string
 }
 
+export type ContractStatus = 'active' | 'renewed' | 'terminated'
 export type PaymentStatus = 'pending' | 'confirmed' | 'rejected'
 
 export interface Payment {
@@ -132,6 +133,22 @@ export interface Payment {
   reviewed_by: string | null
   paid_at: string
   created_at: string
+}
+
+export interface Contract {
+  id: string
+  tenant_id: string
+  room_id: string
+  start_date: string
+  end_date: string
+  rent_amount: number
+  deposit_amount: number
+  status: ContractStatus
+  renewed_from: string | null
+  terminated_at: string | null
+  termination_note: string | null
+  created_at: string
+  updated_at: string
 }
 
 export interface Database {
@@ -176,6 +193,11 @@ export interface Database {
         Row: Bill
         Insert: Omit<Bill, 'id' | 'total_amount' | 'created_at' | 'updated_at'> & { id?: string; created_at?: string; updated_at?: string }
         Update: Partial<Omit<Bill, 'id' | 'total_amount' | 'created_at'>> & { updated_at?: string }
+      }
+      contracts: {
+        Row: Contract
+        Insert: Omit<Contract, 'id' | 'created_at' | 'updated_at'> & { id?: string; created_at?: string; updated_at?: string }
+        Update: Partial<Omit<Contract, 'id' | 'created_at'>> & { updated_at?: string }
       }
       payments: {
         Row: Payment
