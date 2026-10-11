@@ -9,6 +9,7 @@ It's a real, working system — deployed on Vercel and used for actual monthly b
 **For the admin**
 - A dashboard with occupancy rate, revenue this month, overdue bills, and a floor-by-floor room map
 - Manage rooms, tenants, meters, bills, payments, repair requests, and announcements
+- Track lease contracts: create them, see which are about to expire, renew them, or end them early (see [Contracts](#contracts) below)
 - Read electricity/water meters from a photo instead of typing them in by hand (see [Meter OCR](#meter-ocr) below)
 - Check payment slips tenants upload and approve or reject them
 - An AI assistant (`/admin/agent`) you can talk to in plain Thai — it calls the same backend actions the UI does, and has a sandbox mode so you can try commands without touching real data
@@ -16,6 +17,7 @@ It's a real, working system — deployed on Vercel and used for actual monthly b
 **For tenants**
 - View bills, print or download a receipt
 - Pay a bill by scanning a PromptPay QR code and uploading the transfer slip for the admin to confirm
+- See their current lease (dates, rent, deposit, days left) on their profile
 - Submit repair requests, read announcements, edit their own profile
 
 **LINE bot**
@@ -48,6 +50,15 @@ Admin uploads a photo of the meter → it's sent to Groq's vision model, which r
 ### Payments
 
 A tenant can either wait for the admin to record a cash/transfer payment, or pay themselves: scan a PromptPay QR generated for that exact bill amount, upload the slip, and it sits as **pending** until the admin looks at it and approves (marks the bill paid) or rejects it (tenant re-uploads). Nothing is marked paid just because a slip was uploaded — a person always confirms it.
+
+### Contracts
+
+Each lease is one row in the `contracts` table: tenant, room, start and end date, rent, and deposit. A contract moves through a simple life: **active**, then either **renewed** (a new active contract is created that points back to the old one) or **terminated** (ended early, with a note). Renewing never edits the old row, so the full history is kept.
+
+Two design choices worth knowing:
+
+- **One active contract per tenant is enforced by the database.** A partial unique index (`unique ... where status = 'active'`) allows any number of old contracts but only one active one, so a double-click or a bug can't create two.
+- **"Expiring soon" and "expired" are not stored.** They're worked out from the end date every time a page loads (30 days or less left = expiring soon), so there's no daily job and nothing that can go out of date.
 
 ### AI assistant
 
@@ -93,6 +104,7 @@ Run these files in the Supabase SQL editor, in order:
 2. `supabase/seed-admin.sql` — creates the first admin account
 3. `supabase/migration_002_line_connected_at.sql`
 4. `supabase/migration_003_payment_slips.sql` — payment status tracking + the storage bucket for slips
+5. `supabase/migration_004_contracts.sql` — adds the 10th table, `contracts`, with its index and RLS policies
 
 Also create a private storage bucket called **`meter-images`** in the Supabase dashboard, for the meter photos used in OCR.
 
@@ -125,7 +137,7 @@ supabase/           schema, migrations, seed script
 ## Roles
 
 - **admin** — full access to everything
-- **tenant** — their own bills, repair requests, announcements, and profile; can submit a payment slip but can't mark anything as paid themselves
+- **tenant** — their own bills, contract, repair requests, announcements, and profile; can submit a payment slip but can't mark anything as paid themselves
 
 There's no self sign-up. An admin creates every tenant account by hand, since each one has to be tied to a real room. Roles live on `app_metadata.role` in Supabase Auth and are enforced by RLS everywhere, not just in the UI.
 
